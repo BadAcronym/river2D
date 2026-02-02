@@ -46,6 +46,32 @@
 //     }
 // }
 
+void river2D_resizeBackbuffer
+(
+    EngineData *engine,
+    uint32_t   width,
+    uint32_t   height
+){
+    Win32Backbuffer buf = engine->backbuffer;
+
+    if(buf.data)
+    {
+        VirtualFree(buf.data, 0, MEM_RELEASE);
+    }
+
+    buf.width  = width;
+    buf.height = height;
+
+    buf.info.bmiHeader.biSize   = sizeof(buf.info.bmiHeader);
+    buf.info.bmiHeader.biWidth  = (long)buf.width;
+    buf.info.bmiHeader.biHeight = (long)buf.height;
+    buf.info.bmiHeader.biPlanes = 1;
+    buf.info.bmiHeader.biBitCount = 32;
+    buf.info.bmiHeader.biCompression = BI_RGB;
+
+    buf.data = VirtualAlloc(0, width * height * RIVER2D_BPP, MEM_COMMIT, PAGE_READWRITE);
+}
+
 void river2D_init
 (
     EngineData         *engine,
@@ -69,7 +95,7 @@ void river2D_init
     if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
     {
         //TODO: get from config, worry about scaling
-        // river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
+        river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
 
     River2D_Time time;
@@ -88,38 +114,14 @@ int32_t river2D_shutdown
     return 0;
 }
 
-// void win32ResizeDIBSection
-// (
-//     Win32OffscreenBuffer *buf,
-//     uint32_t             width,
-//     uint32_t             height
-// ){
-//     if(buf->memory)
-//     {
-//         VirtualFree(buf->memory, 0, MEM_RELEASE);
-//     }
-//
-//     buf->width  = width;
-//     buf->height = height;
-//
-//     buf->info.bmiHeader.biSize        = sizeof(buf->info.bmiHeader);
-//     buf->info.bmiHeader.biWidth       = buf->width;
-//     buf->info.bmiHeader.biHeight      = buf->height;
-//     buf->info.bmiHeader.biPlanes      = 1;
-//     buf->info.bmiHeader.biBitCount    = 32;
-//     buf->info.bmiHeader.biCompression = BI_RGB;
-//
-//     uint32_t bitmapMemorySize = buf->width * buf->height * RIVER_BPP;
-//
-//     buf->memory = VirtualAlloc(0, bitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
-// }
-
 void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    Win32Backbuffer *buf = engine->backbuffer;
-    //FIXME: fixup StretchDIBits call or use something else
+    Win32Backbuffer buf = engine->backbuffer;
+
     StretchDIBits(engine->context, 0, 0, (int)engine->width, (int)engine->height,
-                  0, 0, (int)buf->width, (int)buf->height, buf->data, &buf->info, DIB_RGB_COLORS, SRCCOPY);
+                  0, 0, (int)buf.width, (int)buf.height, buf.data, &buf.info, DIB_RGB_COLORS, SRCCOPY);
+
+    river2D_queryTime(&engine->lastFrametime);
 }

@@ -173,7 +173,7 @@ typedef struct EngineData
     HINSTANCE          instance;
     HWND               window;
     HDC                context;
-    Win32Backbuffer    *backbuffer;
+    Win32Backbuffer    backbuffer;
 #endif
 }
 EngineData;

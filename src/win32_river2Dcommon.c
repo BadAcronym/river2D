@@ -18,12 +18,12 @@ void river2D_queryTime
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&freq);
 
-    time->s  = t1.QuadPart / freq.QuadPart;
-    time->ns = t1.QuadPart * 1000000000 / freq.QuadPart;
+    time->s  = (uint64_t)(t1.QuadPart / freq.QuadPart);
+    time->ns = (uint64_t)(t1.QuadPart * 1000000000 / freq.QuadPart);
 
     //WIP: debug
-    fprintf(stderr, "%" PRIu64, time->s);
-    fprintf(stderr, "%" PRIu64, time->ns);
+    fprintf(stderr, "%" PRIu64 "\n", time->s);
+    fprintf(stderr, "%" PRIu64 "\n", time->ns);
 }
 
 uint8_t river2D_verifyPath

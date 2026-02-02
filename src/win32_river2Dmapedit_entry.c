@@ -3,7 +3,8 @@
 
 #include <stdio.h>
 
-global bool running = true;
+global bool global_running = true;
+global EngineData *global_engine;
 
 //TODAY: try just declaring signatures, will that work?
 clang_ignore_unused
@@ -93,7 +94,8 @@ LRESULT CALLBACK win32WindowCallback
         }
         case WM_CLOSE:
         {
-            running = false;
+            printf("WM_CLOSE\n");
+            global_running = false;
             break;
         }
         case WM_ACTIVATEAPP:
@@ -103,13 +105,13 @@ LRESULT CALLBACK win32WindowCallback
         }
         case WM_PAINT:
         {
-            // PAINTSTRUCT paintStruct;
-            // HDC context = BeginPaint(window, &paintStruct);
+            PAINTSTRUCT paintStruct;
+            HDC context = BeginPaint(window, &paintStruct);
 
-            //FIXME: how to blt here without using a global backbuffer?
-            // river2D_bltBuffer(&engine);
-            //
-            // EndPaint(window, &paintStruct);
+            // FIXME: how to blt here without using a global backbuffer?
+            river2D_bltBuffer(global_engine);
+
+            EndPaint(window, &paintStruct);
             break;
         }
         case WM_KEYDOWN:
@@ -171,6 +173,7 @@ int CALLBACK WinMain
     // win32LoadXInput();
 
     EngineData    engine = {0};
+    global_engine = &engine;
     River2D_Image planes[RIVER2D_MAX_PLANES] = {0};
 
     loadRenderer_software();
@@ -201,7 +204,7 @@ int CALLBACK WinMain
                                     x, y, width, height,
                                     0, 0, instance, 0);
 
-    while(running)
+    while(global_running)
     {
         MSG message;
 
@@ -209,7 +212,7 @@ int CALLBACK WinMain
         {
             if(message.message == WM_QUIT)
             {
-                running = false;
+                global_running = false;
                 break;
             }
 
