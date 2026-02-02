@@ -1,5 +1,5 @@
 #include "river2D_main.h"
-#include "win32_river2D_platform.h"
+#include "win32_river2Dsoftware_platform.h"
 
 #ifdef DEBUG
 int main()
@@ -18,11 +18,12 @@ int CALLBACK WinMain
 ){
     ShowCursor(false);
 
-    win32LoadXInput();
+    //TODO: fixup when actually loading input
+    // win32LoadXInput();
 
-    global_running = true;
+    bool running = true;
 
-    //get size from project settings
+    //TODAY: get size from project settings
     win32ResizeDIBSection(&global_backbuffer, 1280, 720);
 
     WNDCLASS wc = {0};
@@ -30,11 +31,11 @@ int CALLBACK WinMain
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = win32WindowCallback;
     wc.hInstance = instance;
-    wc.lpszClassName = "CPongClass";
+    wc.lpszClassName = "River2DClass";
 
     if(!RegisterClassA(&wc))
     {
-        printf("unable to register window class.");
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to register window class!\033[0m\n");
         return GetLastError();
     };
 
@@ -43,18 +44,18 @@ int CALLBACK WinMain
     int width  = CW_USEDEFAULT;
     int height = CW_USEDEFAULT;
 
-    HWND window = CreateWindowExA(0, wc.lpszClassName, "CPong",
+    HWND window = CreateWindowExA(0, wc.lpszClassName, "River2D",
                                   WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                                   x, y, width, height,
                                   0, 0, instance, 0);
 
     if(!window)
     {
-        printf("unable to obtain window handle.");
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to obtain window handle!\033[0m\n");
         return GetLastError();
     }
 
-    while(global_running)
+    while(running)
     {
         MSG message;
 
@@ -62,7 +63,7 @@ int CALLBACK WinMain
         {
             if(message.message == WM_QUIT)
             {
-                global_running = false;
+                running = false;
                 break;
             }
 
