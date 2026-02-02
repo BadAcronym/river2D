@@ -19,11 +19,6 @@ extern void river2D_resizeBackbuffer
     uint32_t   height
 );
 
-extern void river2D_updateBackbuffer
-(
-    EngineData *engine
-);
-
 extern void river2D_init
 (
     EngineData *engine

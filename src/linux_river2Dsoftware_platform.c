@@ -2,6 +2,7 @@
 #include "linux_river2Dsoftware_platform.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define __USE_POSIX199309
 #include <time.h>
@@ -15,6 +16,44 @@ void river2D_loadConfig
     config->backgrounds = 4;
     // config->static_canvas_width  = 1280;
     // config->static_canvas_height = 720;
+}
+
+internal Visual* findVisual
+(
+    Display *display
+){
+    Visual *visual = {0};
+
+    XVisualInfo visualInfo = {0};
+    visualInfo.screen = DefaultScreen(display);
+    visualInfo.depth  = RIVER2D_PIXDEPTH;
+
+    int numVisuals;
+    XVisualInfo *foundVisuals = XGetVisualInfo(display, VisualScreenMask | VisualDepthMask, &visualInfo,
+                                               &numVisuals);
+    if(!foundVisuals)
+    {
+        fprintf(stderr, "No valid visuals could be found for the desired depth of %i.\n", visualInfo.depth);
+        return 0;
+    }
+
+    XWindowAttributes rootAttributes = {0};
+    XGetWindowAttributes(display, XDefaultRootWindow(display), &rootAttributes);
+
+    //TODO: add 24-bit fallback visual
+    for(int i = 0; i < numVisuals; ++i)
+    {
+        if(foundVisuals[i].class == rootAttributes.visual->class &&
+           foundVisuals[i].depth == RIVER2D_PIXDEPTH
+        ){
+            visual = foundVisuals[i].visual;
+            break;
+        }
+    }
+
+    XFree(foundVisuals);
+
+    return visual;
 }
 
 void river2D_init
@@ -35,6 +74,12 @@ void river2D_init
 
     engine->width  = WidthOfScreen(engine->screen);
     engine->height = HeightOfScreen(engine->screen);
+
+    engine->visual = findVisual(engine->display);
+    if(!engine->visual)
+    {
+        fprintf(stderr, "No matching visual could be found.\n");
+    }
 
     engine->windowName = "river2D editor";
     engine->window = river2D_openWindow(engine);
@@ -58,6 +103,7 @@ void river2D_init
     }
 }
 
+//TODO: not safely shutting down for some reason... why?
 int32_t river2D_shutdown
 (
     EngineData *engine
@@ -73,42 +119,6 @@ Window river2D_openWindow
 (
     EngineData *engine
 ){
-    Visual *visual = {0};
-
-    XVisualInfo visualInfo = {0};
-    visualInfo.screen = DefaultScreen(engine->display);
-    visualInfo.depth  = RIVER2D_PIXDEPTH;
-
-    int numVisuals;
-    XVisualInfo *foundVisuals = XGetVisualInfo(engine->display, VisualScreenMask | VisualDepthMask,
-                                               &visualInfo, &numVisuals);
-    if(!foundVisuals)
-    {
-        fprintf(stderr, "No valid visuals could be found for the desired depth of %i.\n", visualInfo.depth);
-        return 0;
-    }
-
-    XWindowAttributes rootAttributes = {0};
-    XGetWindowAttributes(engine->display, XDefaultRootWindow(engine->display), &rootAttributes);
-
-    //TODO: add 24-bit fallback visual
-    for(int i = 0; i < numVisuals; ++i)
-    {
-        if(foundVisuals[i].class == rootAttributes.visual->class &&
-           foundVisuals[i].depth == RIVER2D_PIXDEPTH
-        ){
-            visual = foundVisuals[i].visual;
-            break;
-        }
-    }
-
-    XFree(foundVisuals);
-
-    if(!visual)
-    {
-        fprintf(stderr, "No matching visual could be found.\n");
-        return 0;
-    }
 
     unsigned long valuemask = CWBackPixel | CWBorderPixel | CWColormap | CWOverrideRedirect;
 
@@ -116,12 +126,12 @@ Window river2D_openWindow
     attributes.background_pixel  = BlackPixel(engine->display, DefaultScreen(engine->display));
     attributes.border_pixel      = BlackPixel(engine->display, DefaultScreen(engine->display));
     attributes.colormap          = XCreateColormap(engine->display, XDefaultRootWindow(engine->display),
-                                                   visual, AllocNone);
+                                                   engine->visual, AllocNone);
     attributes.override_redirect = false;
 
     Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display),
                                   0, 0, engine->width, engine->height, 0, RIVER2D_PIXDEPTH,
-                                  InputOutput, visual, valuemask, &attributes);
+                                  InputOutput, engine->visual, valuemask, &attributes);
 
     XStoreName(engine->display, window, engine->windowName);
     XSelectInput(engine->display, window, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
@@ -141,45 +151,67 @@ void river2D_drawFrame
     river2D_bltBuffer(engine);
 }
 
+//TODAY: move images & pictures to engineData, so no more allocating/freeing each frame
 void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *img
+    River2D_Image *destImg,
+    River2D_Image *srcImg
 ){
-    if(!img->data)
+    if(!destImg->data)
     {
-        fprintf(stderr, "No image to draw.\n");
+        fprintf(stderr, "No image to composite onto.\n");
+        return;
+    }
+    else if(!srcImg->data)
+    {
+        fprintf(stderr, "No image to composite with.\n");
+        return;
     }
 
-    //TODO: get visual elsewhere? this ain't solid, is it?
-    Visual visual       = {0};
-    visual.visualid     = DirectColor;
-    visual.bits_per_rgb = 8;
-
-    //TODAY: use xrender to composit onto the backbuffer
-    //shenanigans going on here. I need to figure out some order of operations
-    //and conventions.
     XRenderPictFormat *format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
 
-    Picture backbuffer = XRenderCreatePicture(engine->display, engine->backbuffer,  format, 0, 0);
-    Picture composite  = XRenderCreatePicture(engine->display, engine->comp_canvas, format, 0, 0);
-
-    XRenderComposite(engine->display, PictOpOver, composite, 0, backbuffer,
-                     0, 0, 0, 0, 0, 0, img->width, img->height);
-
-    XImage *ximage = XCreateImage(engine->display, &visual, RIVER2D_PIXDEPTH, ZPixmap, 0, (char*)img->data,
-                                  img->width, img->height, RIVER2D_PIXDEPTH, RIVER2D_BPP * img->width);
-    if(!ximage->data)
+    XImage *destXImage = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
+                                      (char*)destImg->data, destImg->width, destImg->height,
+                                      RIVER2D_SCANLINE, 0);
+    if(!destXImage)
     {
-        fprintf(stderr, "Failed to create XImage.\n");
-        //TODO: set the image to purple
+        fprintf(stderr, "Could not create dstXImage to composite onto!\n");
+        return;
     }
 
-    XPutImage(engine->display, engine->backbuffer, engine->context, ximage,
-              0, 0, 0, 0, img->width, img->height);
+    XImage *srcXImage  = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
+                                      (char*)srcImg->data, srcImg->width, srcImg->height,
+                                      RIVER2D_SCANLINE, 0);
+    if(!srcXImage)
+    {
+        fprintf(stderr, "Could not create srcXImage to composite with!\n");
+        XDestroyImage(destXImage);
+        return;
+    }
+
+    XPutImage(engine->display, engine->compDestBuf, engine->context, destXImage, 0, 0, 0, 0,
+              destImg->width, destImg->height);
+
+    XPutImage(engine->display, engine->compSrcBuf, engine->context, srcXImage, 0, 0, 0, 0,
+              srcImg->width, srcImg->height);
+
+    Picture destPict = XRenderCreatePicture(engine->display, engine->compDestBuf, format, 0, 0);
+    Picture srcPict  = XRenderCreatePicture(engine->display, engine->compSrcBuf,  format, 0, 0);
+    Picture compPict = XRenderCreatePicture(engine->display, engine->backbuffer,  format, 0, 0);
+
+    XRenderComposite(engine->display, PictOpOver, destPict, srcPict, compPict,
+                     0, 0, 0, 0, 0, 0, destImg->width, destImg->height);
+
+    XRenderFreePicture(engine->display, destPict);
+    XRenderFreePicture(engine->display, srcPict);
+    XRenderFreePicture(engine->display, compPict);
+
+    //FIXME: we crash here of all places... why?
+    XDestroyImage(destXImage);
+    XDestroyImage(srcXImage);
 }
 
-//NOTE: resize both backbuffer and comp_canvas
 void river2D_resizeBackbuffer
 (
     EngineData *engine,
@@ -195,13 +227,32 @@ void river2D_resizeBackbuffer
     }
     engine->backbuffer = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
                                        RIVER2D_PIXDEPTH);
-
-    if(engine->comp_canvas)
+    if(!engine->backbuffer)
     {
-        XFreePixmap(engine->display, engine->comp_canvas);
+        fprintf(stderr, "Failed to create backbuffer Pixmap!\n");
     }
-    engine->comp_canvas = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
-                                        RIVER2D_PIXDEPTH);
+
+    if(engine->compDestBuf)
+    {
+        XFreePixmap(engine->display, engine->compDestBuf);
+    }
+    engine->compDestBuf = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
+                                       RIVER2D_PIXDEPTH);
+    if(!engine->compDestBuf)
+    {
+        fprintf(stderr, "Failed to create compDestBuf Pixmap!\n");
+    }
+
+    if(engine->compSrcBuf)
+    {
+        XFreePixmap(engine->display, engine->compSrcBuf);
+    }
+    engine->compSrcBuf = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
+                                       RIVER2D_PIXDEPTH);
+    if(!engine->compSrcBuf)
+    {
+        fprintf(stderr, "Failed to create compSrcBuf Pixmap!\n");
+    }
 }
 
 void river2D_bltBuffer

@@ -10,6 +10,7 @@
 #ifdef BUILD_LINUX
     #include "X11/Xlib.h"
     #include "X11/extensions/Xrender.h"
+    #define RIVER2D_SCANLINE  8
 #endif
 
 #ifdef BUILD_WINDOWS
@@ -100,10 +101,12 @@ typedef struct EngineData
 #ifdef BUILD_LINUX
     Display            *display;
     Screen             *screen;
+    Visual             *visual;
     Window             window;
     GC                 context;
     Pixmap             backbuffer;
-    Pixmap             comp_canvas;
+    Pixmap             compDestBuf;
+    Pixmap             compSrcBuf;
 #endif
 
 #ifdef BUILD_WINDOWS
@@ -126,13 +129,14 @@ extern void river2D_updateEditor
 extern void river2D_loadImage
 (
     const char*   path,
-    River2D_Image *img
+    River2D_Image *image
 );
 
 extern void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *img
+    River2D_Image *destImg,
+    River2D_Image *srcImg
 );
 
 extern uint64_t river2D_queryTime

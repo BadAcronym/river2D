@@ -91,8 +91,7 @@ void river2D_processControls
         #if 1
         default:
         {
-            printf("%u", key);
-            printf("%c", '\n');
+            printf("keycode: %u\n", key);
         }
         #endif
     }
@@ -107,29 +106,31 @@ void river2D_updateEditor()
 void river2D_loadImage
 (
     const char*   path,
-    River2D_Image *img
+    River2D_Image *image
 ){
-    // uint32_t pixelcount = width * height;
+    // uint32_t pixelcount = acquired_width * acquired_height;
     uint32_t pixelcount = 2560 * 1440;
 
-    img->data = malloc(pixelcount * RIVER2D_BPP);
+    image->data = malloc(pixelcount * RIVER2D_BPP);
 
-    //TODAY: load from RGBA.png, but load as BGRA
-
-    if(!img->data)
+    if(!image->data)
     {
-        fprintf(stderr, "Failed to load image from file: %s\n", path);
+        fprintf(stderr, "Failed to allocate image from file: %s\n", path);
     }
 
-    //TESTING:
-    for(uint32_t i = 0; i < pixelcount; i += 4)
+    //TODAY: load image from file, from one format (ARGB) to another (BGRA)
+    //I need a function (library) that can replace stb_image
+
+    //TESTING: just write back a plain purple image
+    //move this to fallback function, so if no image could be loaded
+    for(uint32_t i = 0; i < pixelcount * RIVER2D_BPP; i += 4)
     {
-        img->data[i]     = 0xC6;
-        img->data[i + 1] = 0x4F;
-        img->data[i + 2] = 0xAC;
-        img->data[i + 3] = 0xFF;
+        image->data[i]     = 0xC6;
+        image->data[i + 1] = 0x4F;
+        image->data[i + 2] = 0xAC;
+        image->data[i + 3] = 0xFF;
     }
 
-    img->width  = 2560;
-    img->height = 1440;
+    image->width  = 2560;
+    image->height = 1440;
 }
