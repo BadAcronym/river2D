@@ -23,9 +23,9 @@
     #define  RIVER2D_SCANLINE 32
     #define  RIVER2D_CONFIG_PATH "./.river2Dconf"
 
-    #define RIVER2D_MOUSE1 Mouse1
-    #define RIVER2D_MOUSE2 Mouse2
-    #define RIVER2D_MOUSE3 Mouse3
+    #define RIVER2D_MOUSE1 Button1
+    #define RIVER2D_MOUSE2 Button2
+    #define RIVER2D_MOUSE3 Button3
 
 #endif
 
