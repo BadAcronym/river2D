@@ -60,8 +60,8 @@ Window river2D_openWindow
                                   0, RIVER2D_PIXDEPTH, InputOutput, engine->visual, valuemask, &attributes);
 
     XStoreName(engine->display, window, engine->windowName);
-    XSelectInput(engine->display, window, KeyPressMask    | KeyReleaseMask    |
-                                          ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
+    XSelectInput(engine->display, window, KeyPressMask    | KeyReleaseMask    | PointerMotionMask |
+                                          ButtonPressMask | ButtonReleaseMask | ButtonMotionMask  | StructureNotifyMask);
     XMapWindow(engine->display, window);
 
     return window;
