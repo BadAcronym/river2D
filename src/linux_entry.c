@@ -5,7 +5,7 @@
 
 int main()
 {
-    Dimensions dimensions = {0};
+    Dimensions dimensions = {};
     dimensions.width = EDITOR_WIDTH;
     dimensions.height = EDITOR_HEIGHT;
 
@@ -15,7 +15,7 @@ int main()
 
     X11allocateBackbuffer(dimensions);
 
-    River2DControlMap     controls  = {0};
+    River2DControlMap controls = {};
 
     bool running = true;
     while(running)
