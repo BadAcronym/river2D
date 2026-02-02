@@ -6,13 +6,16 @@ that grants access to a couple different rendering backends via `.a/.so/.lib/.dl
 that serves as a map editor.
 
 ## State:
-- Early stages of development. There are only a couple bare-bones functions available.
-- Currently focusing on the Linux (X11) software renderer.
+- WIP: a cross-platform image loading library that supports conversions like RGBA -> BGRA
+for the software renderers.
+- WIP: the Linux (X11) software renderer.
+- Currently in development alongside a simple game, because writing an engine with no goal is pointless.
 - Once the project is in an MVP state, I will port the platform-specific code to windows.
 
 ## Plans:
 
 - level editor
+- sound
 - dialogue system
 - platform porting
 - openGL & vulkan renderers
