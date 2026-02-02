@@ -95,7 +95,7 @@ void river2D_processControls
         #endif
     }
 
-    //TODO: tab and other hotkeys
+    //TODO: tab and other hotkeys to navigate & control the editor
 }
 
 void river2D_updateEditor()

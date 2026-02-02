@@ -24,21 +24,24 @@ int main()
     dimensions.height = HeightOfScreen(screen);
 
     Window window = river2D_openWindow(display, dimensions, "river2D Editor");
-
     if(!window)
     {
         fprintf(stderr, "Failed to create window!\n");
         return -3;
     }
 
-    GC gc = XCreateGC(display, window, 0, 0);
-    if(!gc)
+    GC context = XCreateGC(display, window, 0, 0);
+    if(!context)
     {
         fprintf(stderr, "Failed to create Graphics Context!\n");
         return -4;
     }
 
     Backbuffer buf = {};
+    buf.display    = display;
+    buf.window     = window;
+    buf.dimensions = dimensions;
+    buf.gc         = context;
     river2D_resizeBackbuffer(&buf, dimensions);
 
     River2DControlMap controls = {};
@@ -77,8 +80,8 @@ int main()
             }
         }
         river2D_updateEditor();
-        river2D_drawFrame(display, dimensions, window, gc);
+        river2D_drawFrame(&buf);
     }
 
-    return river2D_shutdown(display, window, gc);
+    return river2D_shutdown(display, window, context);
 }

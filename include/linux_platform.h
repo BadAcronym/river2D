@@ -11,11 +11,14 @@
 #define river2D_queryTime          X11queryTime
 #define river2D_shutdown           X11shutdown
 
-#define Backbuffer         X11Backbuffer
+#define Backbuffer                 X11Backbuffer
 
 typedef struct X11Backbuffer
 {
-    void       *memory;
+    Display    *display;
+    Window     window;
+    GC         gc;
+    Pixmap     pixmap;
     Dimensions dimensions;
 }
 X11Backbuffer;
@@ -29,10 +32,7 @@ extern Window X11openWindow
 
 extern void X11drawFrame
 (
-    Display    *display,
-    Dimensions dimensions,
-    Window     window,
-    GC         gc
+    Backbuffer *buf
 );
 
 extern void X11resizeBackbuffer
@@ -48,12 +48,12 @@ extern void X11updateBackbuffer
 
 extern void X11bltBuffer
 (
-    Backbuffer *buf,
-    void       *window
+    Backbuffer *buf
 );
 
 extern uint64_t X11queryTime
 (
+    bool nano
 );
 
 extern int32_t X11shutdown

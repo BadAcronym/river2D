@@ -1,5 +1,3 @@
-//NOTE: only X11 support for now.
-
 #include "river2D_main.h"
 #include "linux_platform.h"
 
@@ -7,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 Window X11openWindow
 (
@@ -30,17 +29,12 @@ Window X11openWindow
 
 void X11drawFrame
 (
-    Display    *display,
-    Dimensions dimensions,
-    Window     window,
-    GC         gc
+    Backbuffer *buf
 ){
-    //TODAY: load image from stbi or something
-    XSetBackground(display, gc, 0x000000);
+    XSetBackground(buf->display, buf->gc, 0xFFFFFF);
+    XFillRectangle(buf->display, buf->window, buf->gc, 0, 0, buf->dimensions.width, buf->dimensions.height);
 
-    //update backbuffer and
-
-    XFlush(display);
+    XFlush(buf->display);
 }
 
 void X11resizeBackbuffer
@@ -48,34 +42,37 @@ void X11resizeBackbuffer
     Backbuffer  *buf,
     Dimensions  dimensions
 ){
-    if(buf->memory)
+    if(buf->pixmap)
     {
-        free(buf->memory);
+        XFreePixmap(buf->display, buf->pixmap);
     }
 
     buf->dimensions = dimensions;
-    buf->memory = malloc(buf->dimensions.width * buf->dimensions.height * River2D_BPP);
-}
-
-void X11updateBackbuffer
-(
-    Backbuffer *buf
-){
+    buf->pixmap = XCreatePixmap(buf->display, buf->window, dimensions.width, dimensions.height, 24);
 }
 
 void X11bltBuffer
 (
-    Backbuffer *buf,
-    void       *window
+    Backbuffer *buf
 ){
-    //TODO: blt backbuffer to X11 window
+    XCopyArea(buf->display, buf->pixmap, buf->window, buf->gc, 0, 0,
+              buf->dimensions.width, buf->dimensions.height, 0, 0);
 }
 
 uint64_t X11queryTime
 (
+    bool nano
 ){
-    //TODO: equiv of QueryPerformanceCounter
-    return 0;
+    struct timespec spec;
+
+    clock_gettime(CLOCK_REALTIME, &spec);
+
+    if(nano)
+    {
+        return spec.tv_nsec;
+    }
+
+    return spec.tv_sec;
 }
 
 int32_t X11shutdown
