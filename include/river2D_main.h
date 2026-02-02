@@ -293,6 +293,7 @@ extern River2D_Time river2D_deltaTime
 extern void river2D_resolveRenderer
 (
     EngineData *engine,
+    const char *libpath,
     uint8_t    renderer
 );
 

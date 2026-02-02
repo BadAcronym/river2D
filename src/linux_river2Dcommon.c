@@ -6,16 +6,6 @@
 #include <dlfcn.h>
 #include <stdio.h>
 
-#ifdef ASAN
-        #define LIBPATH "./vendor/river2D/bin/asan/"
-#else
-    #ifdef DEBUG
-        #define LIBPATH "./vendor/river2D/bin/debug/"
-    #else
-        #define LIBPATH "./vendor/river2D/bin/release/"
-    #endif
-#endif
-
 internal void resolveFunction
 (
     void       **fptr,
@@ -39,15 +29,20 @@ internal void resolveFunction
 void river2D_resolveRenderer
 (
     EngineData *engine,
+    const char *libpath,
     uint8_t    renderer
 ){
+
     if(renderer == RIVER2D_RENDERER_SOFTWARE)
     {
+        char so[256] = {'\0'};
+        sprintf(so, "%s/libriver2Dsoftware.so", libpath);
+
         char *error = 0;
-        void *software = dlopen(LIBPATH "libriver2Dsoftware.so", RTLD_NOW);
+        void *software = dlopen(so, RTLD_NOW);
         if(!software)
         {
-            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded.\n");
+            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded from path: %s\n", so);
             fputs(dlerror(), stderr);
             fprintf(stderr, "\033[0m\n");
         }
