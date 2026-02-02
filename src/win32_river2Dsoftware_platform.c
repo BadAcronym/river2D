@@ -136,16 +136,15 @@ void river2D_compositeImage
     }
 }
 
+// TODO: figure out some bilinear or lanzcos or something for this, currently it looks awful
 void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    RECT clientRect;
-    GetClientRect(engine->window, &clientRect);
-    int width  = clientRect.right  - clientRect.left;
-    int height = clientRect.bottom - clientRect.top;
+    Dimensions dim = {0};
+    dim = river2D_getWindowSize(engine);
 
-    StretchDIBits(engine->context, 0, 0, width, height, 0, 0,
+    StretchDIBits(engine->context, 0, 0, dim.width, dim.height, 0, 0,
                   (int)engine->backbuffer.width, (int)engine->backbuffer.height,
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
 }
