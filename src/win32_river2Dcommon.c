@@ -130,10 +130,49 @@ Dimensions river2D_getWindowSize
 }
 
 // TODAY: do hCursor shenanigans
+// 1. get cursor changing working
+// 2. save hCursors to engineData, or at least, save everything but the colour and mask bitmaps.
+// 3. from step 2 on, we can do the minimal work needed inside this function.
 void river2D_changeCursor
 (
     EngineData *engine,
     River2D_Image *image
 ){
+    BITMAPV5HEADER header = {0};
+	header.bV5Size        = sizeof(BITMAPV5HEADER);
+	header.bV5Width       = (LONG)image->width;
+	header.bV5Height      = -(LONG)image->height;
+	header.bV5Planes      = 1;
+	header.bV5BitCount    = 32;
+	header.bV5Compression = BI_BITFIELDS;
+	header.bV5RedMask     = 0x0000FF00;
+	header.bV5GreenMask   = 0x00FF0000;
+	header.bV5BlueMask    = 0xFF000000;
+	header.bV5AlphaMask   = 0x000000FF;
 
+	uint32_t *data = 0;
+	HBITMAP colour = CreateDIBSection(engine->context, (BITMAPINFO*)&header, DIB_RGB_COLORS, (void**)&data, 0, 0);
+	HBITMAP mask   = CreateBitmap(image->width, image->height, 1, 1, 0);
+
+	ReleaseDC(0, engine->context);
+
+	for(uint32_t y = 0; y < image->height; ++y)
+	{
+		for(uint32_t x = 0; x < image->width; ++x)
+		{
+			*data++ = image->data[y * image->width + x];
+			// *data++ = 0xFFFFFF00;
+            // TODO: set the corresponding bits inside mask
+		}
+	}
+
+	ICONINFO iconInfo = {0};
+	iconInfo.hbmMask  = mask;
+	iconInfo.hbmColor = colour;
+
+	HCURSOR cursor = CreateIconIndirect(&iconInfo);
+	DeleteObject(colour);
+	DeleteObject(mask);
+
+    SetCursor(cursor);
 }
