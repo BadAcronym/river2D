@@ -13,8 +13,3 @@ extern void river2D_resizeBackbuffer
     uint32_t   width,
     uint32_t   height
 );
-
-extern void river2D_bltBuffer
-(
-    EngineData *engine
-);
