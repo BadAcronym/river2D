@@ -176,6 +176,7 @@ Window river2D_openWindow
     return window;
 }
 
+//TODO: allow for other font colours
 void river2D_loadText
 (
     EngineData    *engine,
@@ -201,10 +202,11 @@ void river2D_loadText
 
     if(!image->data)
     {
-        image->data = malloc(engine->width * engine->height * RIVER2D_BPP);
-        memset(image->data, 0, engine->width * engine->height * RIVER2D_BPP);
-        image->width = engine->width;
-        image->height = engine->height;
+        image->height = charsize;
+        image->width  = image->height * charsize * strlen(text);
+
+        image->data = malloc(image->height * image->width * RIVER2D_BPP);
+        memset(image->data, 0, image->height * image->width * RIVER2D_BPP);
     }
 
     if(offsetY > image->height)
