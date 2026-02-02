@@ -77,13 +77,6 @@ void river2D_compositeImage
     uint32_t      cropWidth,
     uint32_t      cropHeight
 ){
-    //TODO: (river2D #6) deal with alpha and actual compositing instead of just overlaying/copying
-    if(pictop != RIVER2D_PICTOP_OVER)
-    {
-        fprintf(stderr, "\033[33;1;7mSORRY: only RIVER2D_PICTOP_OVER implemented for now. :/\033[0m\n");
-        return;
-    }
-
     if(!image)
     {
         fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
