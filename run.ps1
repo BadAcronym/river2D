@@ -68,11 +68,11 @@ elseIf($IsWindows)
     {
         $content = Get-Content -Path "./compile_commands.json" -Raw
         $content = $content.Replace('-DBUILD_LINUX', '-DBUILD_WINDOWS')
+        $content = $content.Replace('-fsanitize=address,leak,undefined', '')
+        $content = $content.Replace('-static-libasan', '')
         if($build -eq "release")
         {
             $content = $content.Replace('-DDEBUG', '-DNDEBUG')
-            $content = $content.Replace('-fsanitize=address,leak,undefined', '')
-            $content = $content.Replace('-static-libasan', '')
         }
         Set-Content -Path "./compile_commands.json" -Value $content
     }
