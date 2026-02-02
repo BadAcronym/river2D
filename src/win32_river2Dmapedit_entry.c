@@ -111,7 +111,7 @@ int CALLBACK WinMain
 
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = win32WindowCallback;
-    wc.hInstance = engine->instance;
+    wc.hInstance = engine.instance;
     wc.lpszClassName = "River2DClass";
 
     if(!RegisterClassA(&wc))
@@ -124,10 +124,10 @@ int CALLBACK WinMain
     int width  = CW_USEDEFAULT;
     int height = CW_USEDEFAULT;
 
-    engine->window = CreateWindowExA(0, wc.lpszClassName, "River2D",
-                                     WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-                                     x, y, width, height,
-                                     0, 0, instance, 0);
+    engine.window = CreateWindowExA(0, wc.lpszClassName, "River2D",
+                                    WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+                                    x, y, width, height,
+                                    0, 0, instance, 0);
 
     bool running = true;
 
