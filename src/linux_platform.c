@@ -41,6 +41,15 @@ void X11init
 
     river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
     engine->running = true;
+
+    //TODAY: load all the UI images and give their pointers to the array
+
+    River2D_Image baseUI = {};
+    river2D_loadImage("assets/image.png", &baseUI);
+
+    engine->UI = XCreateImage(engine->display, DefaultVisual(engine->display, 0), 24,
+                              ZPixmap, 0, (char*)baseUI.data, baseUI.dimensions.width,
+                              baseUI.dimensions.height, 32, 0);
 }
 
 int32_t X11shutdown
@@ -77,18 +86,13 @@ void X11drawFrame
     EngineData *engine
 ){
     //TODAY: move this to init, load premade UI to draw on top of
+
     //TODAY: figure out how to draw on part of viewport
-    River2D_Image image = {};
-    river2D_loadImage("assets/image.png", &image);
 
-    int screen = 0;              //do we ever need anything else?
+    //TODAY: stretch it correctly (like with stretchDIBits)
 
-    XImage *ximage = XCreateImage(engine->display, DefaultVisual(engine->display, screen), 24,
-                                  ZPixmap, 0, (char*)image.data, image.dimensions.width,
-                                  image.dimensions.height, 32, 0);
-
-    XPutImage(engine->display, engine->pixmap, engine->context, ximage, 0, 0, 0, 0,
-              image.dimensions.width, image.dimensions.height);
+    XPutImage(engine->display, engine->pixmap, engine->context, engine->UI, 0, 0, 0, 0,
+              engine->UI->width, engine->UI->height);
 
     X11bltBuffer(engine);
 }
