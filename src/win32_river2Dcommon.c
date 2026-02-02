@@ -211,22 +211,19 @@ void river2D_changeCursor
 
 	uint32_t *data = 0;
 	engine->cursorBitmap = CreateDIBSection(0, &bmi, DIB_RGB_COLORS, (void**)&data, 0, 0);
-    engine->cursorMask   = CreateBitmap(image->width, image->height, 1, 1, 0);
+
+    bool null_cursor = true;
 
 	for(uint32_t i = 0; i < image->height * image->width; ++i)
 	{
-        uint32_t rgba = image->data[i];
-
-        uint8_t b = (rgba >> 24) & 0xFF;
-        uint8_t g = (rgba >> 16) & 0xFF;
-        uint8_t r = (rgba >> 8)  & 0xFF;
-        uint8_t a =  rgba        & 0xFF;
-
-        // FIXME: cursor data just wrong
-        // data[i] = (a << 24) | (r << 16) | (g << 8) | b;
-        // data[i] = (a << 24) | (b << 16) | (g << 8) | r;
-        data[i] = 0xFFFFFFFF;
+        data[i] = ((uint32_t*)image->data)[i];
+        if(data[i] & 0x000000FF)
+        {
+            null_cursor = false;
+        }
 	}
+
+    engine->cursorMask = CreateBitmap(image->width, image->height, 1, 1, 0);
 
 	ICONINFO iconInfo = {0};
 	iconInfo.hbmColor = engine->cursorBitmap;
@@ -234,6 +231,12 @@ void river2D_changeCursor
 
 	engine->hCursor       = CreateIconIndirect(&iconInfo);
     engine->currentCursor = image;
+
+    if(null_cursor)
+    {
+        SetCursor(0);
+        return;
+    }
 
     SetCursor(engine->hCursor);
 }
