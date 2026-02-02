@@ -8,18 +8,30 @@
 #define __USE_POSIX199309
 #include <time.h>
 
-void river2D_loadConfig
+#include <sys/stat.h>
+
+uint8_t river2D_verifyPath
 (
-    River2D_Config *config
+    const char *path
 ){
-    //TODO: parse & load from engine file
-    //allow for hot reloading via menu if necessary, apply config
-    config->static_canvas_enable = false;
-    //add foregrounds, players, etc in config? idk if necessary
-    config->backgrounds = 4;
-    config->width  = 1280;
-    config->height = 720;
-    config->showFPS = true;
+    struct stat pathInfo;
+
+    if(stat(path, &pathInfo))
+    {
+        return RIVER2D_TYPE_ERROR;
+    }
+
+    if(S_ISDIR(pathInfo.st_mode))
+    {
+        return RIVER2D_TYPE_DIRECTORY;
+    }
+
+    if(S_ISREG(pathInfo.st_mode))
+    {
+        return RIVER2D_TYPE_FILE;
+    }
+
+    return RIVER2D_TYPE_OTHER;
 }
 
 internal Visual* findVisual
@@ -180,6 +192,7 @@ Window river2D_openWindow
 }
 
 //TODO: allow for other font colours?
+//maybe load image as some stencil boolean, then operate on the pixels (with desired colour) based on that stencil
 void river2D_loadText
 (
     EngineData    *engine,

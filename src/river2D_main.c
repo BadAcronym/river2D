@@ -132,3 +132,34 @@ void river2D_loadImage
         writeMissingTexture(image);
     }
 }
+
+//TODO: allow for hot reloading via menu if necessary, apply config
+void river2D_loadConfig
+(
+    River2D_Config *config
+){
+    uint8_t code = river2D_verifyPath(RIVER2D_CONFIG_PATH);
+
+    if(code == RIVER2D_TYPE_FILE)
+    {
+        //TODAY: parse config data and pass to *config
+        return;
+    }
+    else if(code == RIVER2D_TYPE_ERROR)
+    {
+        fprintf(stderr, "Can't find the file '%s', default config loaded.\n", RIVER2D_CONFIG_PATH);
+    }
+    else if(code == RIVER2D_TYPE_DIRECTORY)
+    {
+        fprintf(stderr, "ERROR: '%s' is a Directory! Default config loaded.\n", RIVER2D_CONFIG_PATH);
+    }
+    else if(code == RIVER2D_TYPE_OTHER)
+    {
+        fprintf(stderr, "Unknown filetype for '%s', default config loaded.\n", RIVER2D_CONFIG_PATH);
+    }
+
+    config->static_canvas_enable = false;
+    config->width   = 1280;
+    config->height  = 720;
+    config->showFPS = true;
+}
