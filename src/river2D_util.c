@@ -228,8 +228,7 @@ bool river2D_insideArea
     Coordinates *point,
     Area        *area
 ){
-    // TODO:
-    // in the future, handle non parallel cases.
+    // TODO: in the future, handle non parallel cases.
     // if(area->upperLeft.x == area->lowerLeft.x && area->upperRight.x && ...)
 
     return(point->x > area->upperLeft.x && point->x < area->upperRight.x &&
