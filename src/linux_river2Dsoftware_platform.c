@@ -50,8 +50,9 @@ Window river2D_openWindow
 
     XSetWindowAttributes attributes;
     attributes.background_pixel  = BlackPixel(engine->display, DefaultScreen(engine->display));
+    attributes.background_pixmap = 0;
     attributes.border_pixel      = BlackPixel(engine->display, DefaultScreen(engine->display));
-    attributes.colormap = XCreateColormap(engine->display, XDefaultRootWindow(engine->display),
+    attributes.colormap          = XCreateColormap(engine->display, XDefaultRootWindow(engine->display),
                                           engine->visual, AllocNone);
     attributes.override_redirect = false;
 
