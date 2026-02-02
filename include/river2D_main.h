@@ -201,6 +201,11 @@ extern uint8_t river2D_verifyPath
     const char *path
 );
 
+extern uint8_t river2D_interpretCharAsKey
+(
+    char inp
+);
+
 extern void river2D_loadConfig
 (
     River2D_Config *config

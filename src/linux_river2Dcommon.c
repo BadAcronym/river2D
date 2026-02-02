@@ -39,3 +39,21 @@ uint8_t river2D_verifyPath
 
     return RIVER2D_TYPE_OTHER;
 }
+
+uint8_t river2D_interpretCharAsKey
+(
+    char inp
+){
+    const uint8_t alphabetic_table[26] =
+    {
+        38, 56, 54, 40, 26, 41, 42, 43, 31, 44,
+        45, 46, 58, 57, 32, 33, 24, 27, 39, 28,
+        30, 55, 25, 53, 29, 52,
+    };
+
+    if(inp < 123 && inp > 96)
+    {
+        return alphabetic_table[inp - 97];
+    }
+    return 0;
+}
