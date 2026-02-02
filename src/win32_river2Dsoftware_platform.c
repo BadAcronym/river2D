@@ -63,6 +63,8 @@ int32_t river2D_shutdown
 (
     EngineData *engine
 ){
+    DeleteObject(engine->cursorMask);
+
     DestroyWindow(engine->window);
 
     return 0;

@@ -185,50 +185,55 @@ Dimensions river2D_getWindowSize
     return dim;
 }
 
-// TODAY: do hCursor shenanigans
-// 1. get cursor changing working
-// 2. save hCursors to engineData, or at least, save everything but the colour and mask bitmaps.
-// 3. from step 2 on, we can do the minimal work needed inside this function.
 void river2D_changeCursor
 (
-    EngineData *engine,
+    EngineData    *engine,
     River2D_Image *image
 ){
-    BITMAPV5HEADER header = {0};
-	header.bV5Size        = sizeof(BITMAPV5HEADER);
-	header.bV5Width       = (LONG)image->width;
-	header.bV5Height      = -(LONG)image->height;
-	header.bV5Planes      = 1;
-	header.bV5BitCount    = 32;
-	header.bV5Compression = BI_BITFIELDS;
-	header.bV5RedMask     = 0x0000FF00;
-	header.bV5GreenMask   = 0x00FF0000;
-	header.bV5BlueMask    = 0xFF000000;
-	header.bV5AlphaMask   = 0x000000FF;
+    // TODO: add this early return to linux, too
+    if(engine->currentCursor == image)
+    {
+        return;
+    }
+
+    DestroyCursor(engine->hCursor);
+	DeleteObject(engine->cursorBitmap);
+	DeleteObject(engine->cursorMask);
+
+    BITMAPINFO bmi              = {0};
+    bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth       = image->width;
+    bmi.bmiHeader.biHeight      = -((LONG)image->height);
+    bmi.bmiHeader.biPlanes      = 1;
+    bmi.bmiHeader.biBitCount    = 32;
+    bmi.bmiHeader.biSizeImage   = 0;
+    bmi.bmiHeader.biCompression = BI_RGB;
 
 	uint32_t *data = 0;
-	HBITMAP colour = CreateDIBSection(engine->context, (BITMAPINFO*)&header, DIB_RGB_COLORS, (void**)&data, 0, 0);
-	HBITMAP mask   = CreateBitmap(image->width, image->height, 1, 1, 0);
+	engine->cursorBitmap = CreateDIBSection(0, &bmi, DIB_RGB_COLORS, (void**)&data, 0, 0);
+    engine->cursorMask   = CreateBitmap(image->width, image->height, 1, 1, 0);
 
-	ReleaseDC(0, engine->context);
-
-	for(uint32_t y = 0; y < image->height; ++y)
+	for(uint32_t i = 0; i < image->height * image->width; ++i)
 	{
-		for(uint32_t x = 0; x < image->width; ++x)
-		{
-			*data++ = image->data[y * image->width + x];
-			// *data++ = 0xFFFFFF00;
-            // TODO: set the corresponding bits inside mask
-		}
+        uint32_t rgba = image->data[i];
+
+        uint8_t b = (rgba >> 24) & 0xFF;
+        uint8_t g = (rgba >> 16) & 0xFF;
+        uint8_t r = (rgba >> 8)  & 0xFF;
+        uint8_t a =  rgba        & 0xFF;
+
+        // FIXME: cursor data just wrong
+        // data[i] = (a << 24) | (r << 16) | (g << 8) | b;
+        // data[i] = (a << 24) | (b << 16) | (g << 8) | r;
+        data[i] = 0xFFFFFFFF;
 	}
 
 	ICONINFO iconInfo = {0};
-	iconInfo.hbmMask  = mask;
-	iconInfo.hbmColor = colour;
+	iconInfo.hbmColor = engine->cursorBitmap;
+    iconInfo.hbmMask  = engine->cursorMask;
 
-	HCURSOR cursor = CreateIconIndirect(&iconInfo);
-	DeleteObject(colour);
-	DeleteObject(mask);
+	engine->hCursor       = CreateIconIndirect(&iconInfo);
+    engine->currentCursor = image;
 
-    SetCursor(cursor);
+    SetCursor(engine->hCursor);
 }

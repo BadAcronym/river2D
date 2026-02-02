@@ -215,6 +215,7 @@ typedef struct EngineData
     Coordinates        playerSheetOffset;
     Coordinates        playerPosition;
     bool               running;
+    River2D_Image      *currentCursor;
 
 #ifdef BUILD_LINUX
     Display            *display;
@@ -237,6 +238,9 @@ typedef struct EngineData
     HWND               window;
     HDC                context;
     Win32Backbuffer    backbuffer;
+    HBITMAP            cursorBitmap;
+    HBITMAP            cursorMask;
+    HCURSOR            hCursor;
 #endif
 
     void    (*river2D_init)           (struct EngineData *engine,    River2D_Image *planes);
