@@ -11,12 +11,12 @@
     #include "X11/Xlib.h"
     #include "X11/extensions/Xrender.h"
     #define  RIVER2D_SCANLINE  8
-    #define  RIVER2D_CONFIG_PATH "./.config"
+    #define  RIVER2D_CONFIG_PATH "./.river2Dconf"
 #endif
 
 #ifdef BUILD_WINDOWS
     #include "Windows.h"
-    #define  RIVER2D_CONFIG_PATH "./config.ini"
+    #define  RIVER2D_CONFIG_PATH "./river2D.ini"
 #endif
 
 #define clang_ignore_unused\
