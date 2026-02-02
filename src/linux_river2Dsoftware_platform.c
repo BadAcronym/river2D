@@ -216,8 +216,7 @@ void river2D_compositeImage
         return;
     }
 
-    //TODAY: (river2D #5) verify that both images are actually RGBA
-    //(in other words, that there's enough space)
+    //TODAY: (river2D #5) verify source image channelcount, destination (backbuf) is always RGB w/o A
     //also validate that offset doesn't exceed buffer destination image
 
     uint32_t copyWidth = image->width * RIVER2D_BPP;
@@ -226,7 +225,7 @@ void river2D_compositeImage
            offsetDstX * RIVER2D_BPP;
     uint8_t* src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
 
-    //TODAY: send this data to a queue
+    //TODAY: send this data to a command queue
 }
 
 internal void *blt
