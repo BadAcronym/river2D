@@ -34,13 +34,19 @@ void river2D_loadText
         return;
     }
 
+    uint32_t minTextWidth = charsize * (uint32_t)(strlen(text) + 1);
+
+    if(image->width < minTextWidth || image->height < charsize)
+    {
+        free(image->data);
+        image->data = 0;
+    }
     if(!image->data)
     {
         image->height = charsize;
-        image->width  = (charsize * ((uint32_t)strlen(text) + 2));
+        image->width  = minTextWidth;
 
-        image->data = malloc(image->height * image->width * RIVER2D_BPP);
-        memset(image->data, 0, image->height * image->width * RIVER2D_BPP);
+        image->data = calloc(image->height * image->width * RIVER2D_BPP, 1);
     }
 
     if(offsetY > image->height)
@@ -75,7 +81,6 @@ void river2D_loadText
             uint8_t* charlineLoc = charloc + j * fontImgWidth * RIVER2D_BPP;
             uint8_t* destlineLoc = destloc + j * image->width * RIVER2D_BPP;
 
-            memset(destlineLoc, 0, 2 * charsize * RIVER2D_BPP);
             memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
         }
     }
