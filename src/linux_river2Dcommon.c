@@ -32,7 +32,6 @@ void river2D_resolveRenderer
     const char *libpath,
     uint8_t    renderer
 ){
-
     if(renderer == RIVER2D_RENDERER_SOFTWARE)
     {
         char so[256] = {'\0'};
