@@ -162,19 +162,6 @@ void river2D_destroyImage
         free(image->data);
         image->data = 0;
     }
-
-    // if(image->path)
-    // {
-    //     free(image->path);
-    //     image->path = 0;
-    // }
-
-    // TODO: free pixmap
-
-    if(image->picture)
-    {
-        // XRender destroy picture
-    }
 }
 
 River2D_Time river2D_queryTime
