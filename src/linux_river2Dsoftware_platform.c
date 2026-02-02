@@ -286,6 +286,11 @@ void river2D_compositeImage
     River2D_Time dispatchTime = river2D_deltaTime(&time);
     engine->dispatchTime.s  += dispatchTime.s;
     engine->dispatchTime.ns += dispatchTime.ns;
+    if(engine->dispatchTime.ns > 1000000000)
+    {
+        ++engine->dispatchTime.s;
+        engine->dispatchTime.ns = 0;
+    }
 
     time = river2D_queryTime();
     #endif
@@ -310,6 +315,11 @@ void river2D_compositeImage
     River2D_Time singleTime = river2D_deltaTime(&time);
     engine->singleTime.s  += singleTime.s;
     engine->singleTime.ns += singleTime.ns;
+    if(engine->singleTime.ns > 1000000000)
+    {
+        ++engine->singleTime.s;
+        engine->singleTime.ns = 0;
+    }
 
     time = river2D_queryTime();
     #endif
@@ -327,6 +337,11 @@ void river2D_compositeImage
     River2D_Time idleTime = river2D_deltaTime(&time);
     engine->idleTime.s  += idleTime.s;
     engine->idleTime.ns += idleTime.ns;
+    if(engine->idleTime.ns > 1000000000)
+    {
+        ++engine->idleTime.s;
+        engine->idleTime.ns = 0;
+    }
     #endif
 }
 
@@ -339,24 +354,22 @@ internal void *blt
 
     for(uint32_t y = 0; y < sd->threadHeight; ++y)
     {
-        uint32_t dstIndexY = (((ThreadData*)data)->y + y) * sd->factor * bltWidth;
-        uint32_t srcIndexY = (((ThreadData*)data)->y + y) * sd->ogWidth;
+        uint32_t *dstIndexY = &sd->dest[(((ThreadData*)data)->y + y) * sd->factor * bltWidth];
+        uint32_t *srcIndexY = &sd->src[(((ThreadData*)data)->y + y) * sd->ogWidth];
 
         for(uint32_t x = 0; x < sd->ogWidth; ++x)
         {
-            uint32_t srcIndexX = srcIndexY + x;
-            uint32_t dstIndexX = dstIndexY + (x * sd->factor);
+            uint32_t *srcIndexX = srcIndexY + x;
+            uint32_t *dstIndexX = dstIndexY + (x * sd->factor);
 
             for(uint8_t i = 0; i < sd->factor; ++i)
             {
-                sd->dest[dstIndexX++] = sd->src[srcIndexX];
+                *dstIndexX++ = *srcIndexX;
             }
         }
         for(uint8_t i = 0; i < sd->factor - 1; ++i)
         {
-            memcpy(&sd->dest[dstIndexY + bltWidth * (i + 1)],
-                   &sd->dest[dstIndexY],
-                   bltWidth * RIVER2D_BPP);
+            memcpy((dstIndexY + bltWidth * (i + 1)), dstIndexY, bltWidth * RIVER2D_BPP);
         }
     }
 
@@ -450,10 +463,16 @@ void river2D_bltBuffer
         River2D_Time dispatchTime = river2D_deltaTime(&time);
         engine->dispatchTime.s  += dispatchTime.s;
         engine->dispatchTime.ns += dispatchTime.ns;
+        if(engine->dispatchTime.ns > 1000000000)
+        {
+            ++engine->dispatchTime.s;
+            engine->dispatchTime.ns = 0;
+        }
 
         time = river2D_queryTime();
         #endif
 
+        //FIXME: this would overlap
         for(; y < engine->backbuffer.height; ++y)
         {
             for(uint32_t x = 0; x < scaleData.ogWidth; ++x)
@@ -476,6 +495,11 @@ void river2D_bltBuffer
         River2D_Time singleTime = river2D_deltaTime(&time);
         engine->singleTime.s  += singleTime.s;
         engine->singleTime.ns += singleTime.ns;
+        if(engine->singleTime.ns > 1000000000)
+        {
+            ++engine->singleTime.s;
+            engine->singleTime.ns = 0;
+        }
 
         time = river2D_queryTime();
         #endif
@@ -493,6 +517,11 @@ void river2D_bltBuffer
         River2D_Time idleTime = river2D_deltaTime(&time);
         engine->idleTime.s  += idleTime.s;
         engine->idleTime.ns += idleTime.ns;
+        if(engine->idleTime.ns > 1000000000)
+        {
+            ++engine->idleTime.s;
+            engine->idleTime.ns = 0;
+        }
         #endif
     }
     else
