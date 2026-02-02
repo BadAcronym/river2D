@@ -13,6 +13,11 @@ const char* river2D_contains
     size_t subsize = strlen(smallStr);
     size_t size = strlen(bigStr) - subsize;
 
+    if(size > subsize)
+    {
+        return 0;
+    }
+
     for(size_t i = 0, j = 0; i < size; ++i)
     {
         if(bigStr[i] == smallStr[j])
@@ -76,8 +81,10 @@ void river2D_loadConfig
         fprintf(stderr, "\n\033[31;1;7mERROR: *config is nullptr.\033[0m\n");
         return;
     }
-    bool parsedWidth  = false;
-    bool parsedHeight = false;
+    uint32_t parsedWidth_canvas  = 0;
+    uint32_t parsedHeight_canvas = 0;
+    uint32_t parsedWidth_window  = 0;
+    uint32_t parsedHeight_window = 0;
 
     uint8_t code = river2D_verifyPath(RIVER2D_CONFIG_PATH);
 
@@ -90,11 +97,12 @@ void river2D_loadConfig
             return;
         }
 
+        //NOTE: we are reading the whole file twice. why..?
         char buf[bufsize];
         while(fgets(buf, bufsize, file))
         {
             const char* fpsloc = river2D_contains(buf, "showFPS");
-            if(fpsloc && (fpsloc - buf) < bufsize)
+            if(fpsloc && (fpsloc + 9 - buf) < bufsize)
             {
                 bool foundShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
                 if(!foundShowFps)
@@ -102,9 +110,104 @@ void river2D_loadConfig
                     continue;
                 }
                 config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
+                fprintf(stderr, "parsed result: true\n");
             }
 
-            // TODAY: (river2D #2) parse width, height, depth, etc
+            const char* cwidthloc = river2D_contains(buf, "canvas_width");
+            if(cwidthloc && (cwidthloc + 14 - buf) < bufsize)
+            {
+                for(uint32_t i = 0; i < bufsize; ++i)
+                {
+                    if(cwidthloc + 14 + i - buf > bufsize)
+                    {
+                        break;
+                    }
+
+                    char digit = *(cwidthloc + 14 + i);
+                    if(digit < 0x30 || digit > 0x39)
+                    {
+                        break;
+                    }
+                    parsedWidth_canvas *= 10;
+                    parsedWidth_canvas += (digit - 0x30);
+                }
+
+                fprintf(stderr, "parsed result: %u\n", parsedWidth_canvas);
+
+                config->canvas_width = parsedWidth_canvas;
+            }
+
+            const char* cheightloc = river2D_contains(buf, "canvas_height");
+            if(cheightloc && (cheightloc + 15 - buf) < bufsize)
+            {
+                for(uint32_t i = 0; i < bufsize; ++i)
+                {
+                    if(cheightloc + 15 + i - buf > bufsize)
+                    {
+                        break;
+                    }
+
+                    char digit = *(cheightloc + 15 + i);
+                    if(digit < 0x30 || digit > 0x39)
+                    {
+                        break;
+                    }
+                    parsedHeight_canvas *= 10;
+                    parsedHeight_canvas += (digit - 0x30);
+                }
+
+                fprintf(stderr, "parsed result: %u\n", parsedHeight_canvas);
+
+                config->canvas_height = parsedHeight_canvas;
+            }
+
+            const char* wwidthloc = river2D_contains(buf, "window_width");
+            if(wwidthloc && (wwidthloc + 14 - buf) < bufsize)
+            {
+                for(uint32_t i = 0; i < bufsize; ++i)
+                {
+                    if(wwidthloc + 14 + i - buf > bufsize)
+                    {
+                        break;
+                    }
+
+                    char digit = *(wwidthloc + 14 + i);
+                    if(digit < 0x30 || digit > 0x39)
+                    {
+                        break;
+                    }
+                    parsedWidth_window *= 10;
+                    parsedWidth_window += (digit - 0x30);
+                }
+
+                fprintf(stderr, "parsed result: %u\n", parsedWidth_window);
+
+                config->window_width = parsedWidth_window;
+            }
+
+            const char* wheightloc = river2D_contains(buf, "window_height");
+            if(wheightloc && (wheightloc + 15 - buf) < bufsize)
+            {
+                for(uint32_t i = 0; i < bufsize; ++i)
+                {
+                    if(wheightloc + 15 + i - buf > bufsize)
+                    {
+                        break;
+                    }
+
+                    char digit = *(wheightloc + 15 + i);
+                    if(digit < 0x30 || digit > 0x39)
+                    {
+                        break;
+                    }
+                    parsedHeight_window *= 10;
+                    parsedHeight_window += (digit - 0x30);
+                }
+
+                fprintf(stderr, "parsed result: %u\n", parsedHeight_window);
+
+                config->window_height = parsedHeight_window;
+            }
         }
 
         fclose(file);
@@ -123,15 +226,20 @@ void river2D_loadConfig
         fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
     }
 
-    // expand defaults in the future
-    if(!parsedWidth)
+    if(!parsedWidth_canvas)
     {
-        config->window_width = 2560;
-        config->canvas_width = 1280;
+        config->canvas_width  = 1280;
     }
-    if(!parsedHeight)
+    if(!parsedHeight_canvas)
+    {
+        config->canvas_height = 720;
+    }
+    if(!parsedWidth_window)
+    {
+        config->window_width  = 2560;
+    }
+    if(!parsedHeight_window)
     {
         config->window_height = 1440;
-        config->canvas_height = 720;
     }
 }
