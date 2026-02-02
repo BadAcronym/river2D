@@ -35,9 +35,8 @@ project("river2D binary")
                 "./include/win32_river2D*",
                 "./src/river2D*",
                 "./include/river2D*" })
-        includedirs({ "./include/", "./vendor/imgsurf/include"})
+        includedirs({"./include/", "./vendor/imgsurf/include"})
         libdirs({"./vendor/imgsurf/bin/**"})
-        buildoptions{"/wd4068", "/wd4100"}
         ignoredefaultlibraries({ "MSVCRT" })
 
     filter({"platforms:Windows", "configurations:release"})
@@ -56,7 +55,7 @@ project("river2D binary")
                "./include/linux_river2D*",
                "./src/river2D*",
                "./include/river2D*" })
-        includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
+        includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         libdirs({"./vendor/imgsurf/bin/**"})
         buildoptions({"-Wextra", "-Wall", "-Werror"})
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
@@ -99,8 +98,7 @@ project("river2D software renderer")
                "./include/win32_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
-        includedirs({ "./include/", "./vendor/imgsurf/include/"})
-        buildoptions{"/wd4068", "/wd4100"}
+        includedirs({"./include/", "./vendor/imgsurf/include/"})
         ignoredefaultlibraries({ "MSVCRT" })
 
     filter("platforms:Linux")
@@ -114,7 +112,7 @@ project("river2D software renderer")
                "./include/linux_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
-        includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
+        includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         buildoptions({"-Wextra", "-Wall", "-Werror"})
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
         toolset("clang")
