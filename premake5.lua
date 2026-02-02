@@ -35,9 +35,8 @@ project("river2D binary")
                 "./src/river2Dmapedit*",
                 "./include/river2Dmapedit*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/**",
-            "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/km/x64/"})
-        links({"imgsurf.lib", "ntoskrnl.lib"})
+        libdirs({"./vendor/imgsurf/bin/**"})
+        links({"imgsurf.lib"})
         ignoredefaultlibraries({ "MSVCRT" })
 
     filter({"platforms:Windows", "configurations:release"})
@@ -100,10 +99,9 @@ project("river2D common functions")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/**",
-            "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/km/x64/"})
-        links({"imgsurf.lib", "ntoskrnl.lib"})
-        ignoredefaultlibraries({ "MSVCRT" })
+        libdirs({"./vendor/imgsurf/bin/**"})
+        links({"imgsurf.lib"})
+        ignoredefaultlibraries({"MSVCRT"})
 
     filter("platforms:Linux")
         system("Linux")
