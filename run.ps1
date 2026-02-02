@@ -24,7 +24,7 @@ function Get-CompiledImgloader()
     if(Test-Path ".\vendor\imgsurf\run.ps1")
     {
         pushd ".\vendor\imgsurf\"
-        .\run.ps1 $build --compile-only
+        .\run.ps1 $build -compile_only
         if(0 -ne $LASTEXITCODE)
         {
             exit -1
