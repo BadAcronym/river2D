@@ -299,6 +299,14 @@ uint8_t river2D_interpretCharAsKey
     {
         return 0x09;
     }
+    else if(inp == 0x2D)
+    {
+        return 0x14;
+    }
+    else if(inp == 0x3D)
+    {
+        return 0x15;
+    }
 
     return 0;
 }
