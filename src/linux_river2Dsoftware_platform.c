@@ -216,9 +216,6 @@ void river2D_compositeImage
         return;
     }
 
-    // PERF: could save about 20% a call here if we didn't Create/Destroy these images every call. but what else to do?
-
-    // FIXME: how come image picture could ever be 0 here???
     if(!image->picture)
     {
         fprintf(stderr, "\033[31;1;7mERROR: image was created incorrectly.\033[0m\n");
