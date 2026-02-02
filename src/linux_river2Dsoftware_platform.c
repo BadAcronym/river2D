@@ -134,8 +134,9 @@ void river2D_init
     }
 
     River2D_Time time = river2D_queryTime();
-    engine->lastFrametime = time;
-    engine->lastFPStime = time;
+    engine->lastFrametime  = time;
+    engine->lastFPStime    = time;
+    engine->playerAnimTime = time;
 }
 
 void river2D_destroyImage
