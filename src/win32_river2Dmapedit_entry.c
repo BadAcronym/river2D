@@ -172,8 +172,7 @@ int CALLBACK WinMain
         // }
 
         mapedit_update();
-
-        river2D_bltBuffer();
+        river2D_bltBuffer(&engine);
     }
 
     return river2D_shutdown(&engine);
