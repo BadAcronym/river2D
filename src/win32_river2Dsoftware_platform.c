@@ -107,9 +107,7 @@ int32_t river2D_shutdown
 }
 
 //TODAY: multi-thread.
-//1 pixel at a time for each thread, if possible.
-//this is by far the biggest bottleneck.
-//windows should have a fairly accessible multi-threading API.
+//look at linux code for reference
 void river2D_compositeImage
 (
     EngineData    *engine,
