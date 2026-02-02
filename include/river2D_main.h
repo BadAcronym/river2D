@@ -135,6 +135,17 @@ typedef struct River2D_ControlMap
 }
 River2D_ControlMap;
 
+#ifdef BUILD_WINDOWS
+typedef struct Win32Backbuffer
+{
+    BITMAPINFO info;
+    void       *data;
+    uint32_t   width;
+    uint32_t   height;
+}
+Win32Backbuffer;
+#endif
+
 typedef struct EngineData
 {
     uint32_t           width;
@@ -162,6 +173,7 @@ typedef struct EngineData
     HINSTANCE          instance;
     HWND               window;
     HDC                context;
+    Win32Backbuffer    *backbuffer;
 #endif
 }
 EngineData;
