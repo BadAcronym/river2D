@@ -8,3 +8,4 @@ obj/
 compile_commands*
 *.raddbg
 *.log
+*river2Dconf
