@@ -27,63 +27,48 @@ function Get-CompiledImgloader()
         .\run.ps1 $build -compile_only
         if(0 -ne $LASTEXITCODE)
         {
+            Write-Host "`033[31m`nERROR: failed to compile imgsurf.`033[0m"
+            popd
             exit -1
         }
         popd
     }
     else
     {
-        Write-Host "\033[31m\nERROR: can't find imgsurf run script.\033[0m"
+        Write-Host "`033[31m`nERROR: can't find imgsurf run script.`033[0m"
     }
 }
 
 function Get-Compileprep()
 {
     Write-Host ""
-    Write-Host "\033[36mcompiling imgsurf...\033[0m"
+    Write-Host "`033[36mcompiling imgsurf...`033[0m"
     Write-Host ""
     premake5 ecc
     premake5 vs2022
 }
 
-if($build -eq "debug")
+if($build -eq "asan" -or $build -eq "debug" -or $build -eq "release")
 {
     Get-CompiledImgloader
     Get-Compileprep
     pushd ".\build\"
     &MSBuild river2D.sln -p:Configuration=$build -p:Platform=windows
-    popd
-}
-elseif($build -eq "release")
-{
-    Get-CompiledImgloader
-    Get-Compileprep
-    pushd ".\build\"
-    &MSBuild river2D.sln -p:Configuration=$build -p:Platform=windows
-    popd
-}
-elseif($build -eq "asan")
-{
-    Get-CompiledImgloader
-    Get-Compileprep
-    pushd ".\build\"
-    &MSBuild river2D.sln -p:Configuration=$build -p:Platform=windows
+    if(0 -ne $LASTEXITCODE)
+    {
+        Write-Host "`033[31m`nERROR: failed to compile river2D.`n`033[0m"
+        popd
+        exit -1
+    }
     popd
 }
 else
 {
-    Write-Host "\033[31m\nERROR: invalid make config: $build.\033[0m"
+    Write-Host "`033[31m`nERROR: invalid make config: $build.`033[0m"
     exit -2;
 }
 
-if(0 -ne $LASTEXITCODE)
-{
-    Write-Host "\033[31m\nERROR: failed to compile.\n\033[0m"
-    popd
-    exit -1
-}
-
-Write-Host "\n"
+Write-Host "`n"
 
 if($compile_only)
 {
