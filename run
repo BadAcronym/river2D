@@ -77,6 +77,3 @@ then
 fi
 
 popd > /dev/null
-
-chmod +x ./bin/$1/river2Dmapedit
-./bin/$1/river2Dmapedit
