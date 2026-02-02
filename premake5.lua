@@ -58,6 +58,7 @@ project("river2D binary")
                "./include/river2D*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         libdirs({"./vendor/imgsurf/bin/**"})
+        buildoptions({"-Wextra", "-Wall", "-Werror"})
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
         toolset("clang")
 
@@ -114,6 +115,7 @@ project("river2D software renderer")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
+        buildoptions({"-Wextra", "-Wall", "-Werror"})
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
         toolset("clang")
 
