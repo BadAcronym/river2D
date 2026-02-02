@@ -1,8 +1,6 @@
 #include "river2D_main.h"
 #include "linux_platform.h"
 
-#include <stdio.h>
-
 int main()
 {
     EngineData engine = {};
