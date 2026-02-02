@@ -1,7 +1,7 @@
 param
 (
-    [Parameter(position=0,Mandatory=$false)]
-    $build = "debug"
+    $build = "debug",
+    [switch]$dontrun = $false
 )
 
 Write-Host "Building $build...`n"
@@ -86,7 +86,7 @@ if($isWindows -and 0 -eq $LASTEXITCODE -and $build -eq "debug")
     Invoke-Expression "radbin --rdi $target"
 }
 
-if(0 -eq $LASTEXITCODE)
+if(0 -eq $LASTEXITCODE -and -not $dontrun)
 {
     Write-Host "`nrunning $target..."
     Invoke-Expression $target
