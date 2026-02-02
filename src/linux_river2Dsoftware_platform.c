@@ -2,7 +2,8 @@
 #include "linux_river2Dsoftware_platform.h"
 
 #include <stdio.h>
-#include <stdlib.h>
+
+#define __USE_POSIX199309
 #include <time.h>
 
 void river2D_loadConfig
@@ -135,7 +136,6 @@ uint64_t river2D_queryTime
 ){
     struct timespec spec;
 
-    //FIXME: can't find this.
     clock_gettime(CLOCK_REALTIME, &spec);
 
     if(nano)

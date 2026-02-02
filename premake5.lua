@@ -85,6 +85,7 @@ project("river2D software renderer")
 
     filter("platforms:Windows")
         system("Windows")
+        defines("BUILD_WINDOWS")
         targetdir("bin/Win64_%{cfg.buildcfg}")
         objdir("obj/Win64_%{cfg.buildcfg}")
         files({
@@ -100,6 +101,7 @@ project("river2D software renderer")
 
     filter("platforms:Linux")
         system("Linux")
+        defines("BUILD_LINUX")
         targetdir("bin/Linux_%{cfg.buildcfg}")
         objdir("obj/Linux_")
         files({
