@@ -5,32 +5,6 @@
 #include <memory.h>
 #include <stdlib.h>
 
-#include <sys/stat.h>
-
-uint8_t river2D_verifyPath
-(
-    const char *path
-){
-    struct stat pathInfo;
-
-    if(stat(path, &pathInfo))
-    {
-        return RIVER2D_TYPE_ERROR;
-    }
-
-    if(S_ISDIR(pathInfo.st_mode))
-    {
-        return RIVER2D_TYPE_DIRECTORY;
-    }
-
-    if(S_ISREG(pathInfo.st_mode))
-    {
-        return RIVER2D_TYPE_FILE;
-    }
-
-    return RIVER2D_TYPE_OTHER;
-}
-
 internal Visual* findVisual
 (
     Display *display

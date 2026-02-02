@@ -3,6 +3,8 @@
 #define __USE_POSIX199309
 #include <time.h>
 
+#include <sys/stat.h>
+
 void river2D_queryTime
 (
     River2D_Time *time
@@ -12,4 +14,28 @@ void river2D_queryTime
 
     time->s  = spec.tv_sec;
     time->ns = spec.tv_nsec;
+}
+
+uint8_t river2D_verifyPath
+(
+    const char *path
+){
+    struct stat pathInfo;
+
+    if(stat(path, &pathInfo))
+    {
+        return RIVER2D_TYPE_ERROR;
+    }
+
+    if(S_ISDIR(pathInfo.st_mode))
+    {
+        return RIVER2D_TYPE_DIRECTORY;
+    }
+
+    if(S_ISREG(pathInfo.st_mode))
+    {
+        return RIVER2D_TYPE_FILE;
+    }
+
+    return RIVER2D_TYPE_OTHER;
 }
