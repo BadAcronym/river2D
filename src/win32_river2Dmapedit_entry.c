@@ -198,7 +198,7 @@ int CALLBACK WinMain
     int width  = CW_USEDEFAULT;
     int height = CW_USEDEFAULT;
 
-    engine.window = CreateWindowExA(0, wc.lpszClassName, "River2D",
+    engine.window = CreateWindowExA(0, wc.lpszClassName, engine.windowName,
                                     WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                                     x, y, width, height,
                                     0, 0, instance, 0);
