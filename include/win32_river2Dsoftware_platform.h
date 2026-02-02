@@ -26,7 +26,11 @@ EXPORT void river2D_compositeImage
 (
     EngineData    *engine,
     River2D_Image *image,
-    uint8_t       pictop
+    uint8_t       pictop,
+    uint32_t      offsetX,
+    uint32_t      offsetY,
+    uint32_t      cropX,
+    uint32_t      cropY
 );
 
 EXPORT void river2D_loadText
