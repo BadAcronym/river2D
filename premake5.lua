@@ -60,7 +60,7 @@ project("river2D binary")
         libdirs({"./vendor/imgsurf/bin/**"})
         links("imgsurf:static")
         buildoptions({"-Wextra", "-Wall", "-Werror"})
-        linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
+        linkoptions({"-lX11", "-lXrender", "-limgsurf", "-fuse-ld=mold"})
         toolset("clang")
 
     filter({"platforms:Linux", "configurations:debug"})
@@ -115,7 +115,7 @@ project("river2D common functions")
                "./src/linux_river2Dcommon*",
                "./include/linux_river2Dcommon*",
                "./src/river2Dcommon*",
-               "./include/river2Dcommon*" })
+               "./include/river2Dcommon*"})
         includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         libdirs({"./vendor/imgsurf/bin/**"})
         links("imgsurf:static")
@@ -133,7 +133,7 @@ project("river2D software renderer")
     language("C")
     cdialect("C23")
     warnings("Extra")
-    kind("StaticLib")
+    kind("SharedLib")
     targetname("river2Dsoftware")
 
     filter("configurations:debug")
@@ -155,12 +155,16 @@ project("river2D software renderer")
         objdir("obj/")
         files({"./src/river2D_*",
                "./include/river2D_*",
+               "./src/win32_river2Dcommon*",
+               "./include/win32_river2Dcommon*",
+               "./src/river2Dcommon*",
+               "./include/river2Dcommon*",
                "./src/win32_river2Dsoftware*",
                "./include/win32_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/**"})
+        libdirs({"./vendor/imgsurf/bin/**", "./bin/**"})
         links({"imgsurf.lib", "river2Dcommon.lib"})
         ignoredefaultlibraries({ "MSVCRT" })
 
@@ -171,15 +175,19 @@ project("river2D software renderer")
         objdir("obj/river2Dsoftware/%{cfg.buildcfg}")
         files({"./src/river2D_*",
                "./include/river2D_*",
+               "./src/linux_river2Dcommon*",
+               "./include/linux_river2Dcommon*",
+               "./src/river2Dcommon*",
+               "./include/river2Dcommon*",
                "./src/linux_river2Dsoftware*",
                "./include/linux_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
-        libdirs({"./vendor/imgsurf/bin/**"})
+        libdirs({"./vendor/imgsurf/bin/**", "./bin/**"})
         links({"imgsurf:static", "river2Dcommon:static"})
         buildoptions({"-Wextra", "-Wall", "-Werror"})
-        linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
+        linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold", "-lriver2Dcommon"})
         toolset("clang")
 
     filter({"platforms:Linux", "configurations:debug"})
