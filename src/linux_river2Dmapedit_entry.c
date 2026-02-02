@@ -12,8 +12,10 @@
     #define LIBPATH "./bin/release/"
 #endif
 
-int main()
-{
+int main
+(
+    void
+){
     char *error = 0;
     void *software = dlopen(LIBPATH "libriver2Dsoftware.so", RTLD_NOW);
     if(!software)
@@ -25,7 +27,8 @@ int main()
     }
 
     void (*river2D_init)(EngineData *engine, River2D_Image *planes);
-    river2D_init = dlsym(software, "river2D_init");
+    river2D_init = (void (*)(EngineData *engine, River2D_Image *planes))
+                   dlsym(software, "river2D_init");
     if((error = dlerror()))
     {
         fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_init.\n");
@@ -35,7 +38,8 @@ int main()
     }
 
     int32_t (*river2D_shutdown)(EngineData *engine);
-    river2D_shutdown = dlsym(software, "river2D_shutdown");
+    river2D_shutdown = (int32_t (*)(EngineData *engine))
+                       dlsym(software, "river2D_shutdown");
     if((error = dlerror()))
     {
         fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_shutdown.\n");
@@ -45,7 +49,8 @@ int main()
     }
 
     void (*river2D_bltBuffer)(EngineData *engine);
-    river2D_bltBuffer = dlsym(software, "river2D_bltBuffer");
+    river2D_bltBuffer = (void (*)(EngineData *engine))
+                        dlsym(software, "river2D_bltBuffer");
     if((error = dlerror()))
     {
         fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_bltBuffer.\n");
@@ -55,7 +60,8 @@ int main()
     }
 
     void (*river2D_resizeBackbuffer)(EngineData *engine, uint32_t width, uint32_t height);
-    river2D_resizeBackbuffer = dlsym(software, "river2D_resizeBackbuffer");
+    river2D_resizeBackbuffer = (void (*)(EngineData *engine, uint32_t width, uint32_t height))
+                               dlsym(software, "river2D_resizeBackbuffer");
     if((error = dlerror()))
     {
         fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_resizeBackbuffer.\n");
