@@ -68,9 +68,6 @@ project("river2D common functions")
         linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
 
-    filter({"platforms:Windows", "configurations:debug or asan"})
-        kind("ConsoleApp")
-
     filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
         debugformat("c7")
@@ -135,9 +132,6 @@ project("river2D software renderer")
                       "-static-libasan"})
         linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
-
-    filter({"platforms:Windows", "configurations:debug or asan"})
-        kind("ConsoleApp")
 
     filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
