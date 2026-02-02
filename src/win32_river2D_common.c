@@ -1,3 +1,5 @@
+#include "river2D_main.h"
+
 //TEST: verify if time outputs correctly
 void river2D_queryTime
 (
