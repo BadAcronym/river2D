@@ -93,8 +93,8 @@ project("river2D software renderer")
         defines("BUILD_WINDOWS")
         targetdir("bin/river2D_win64/%{cfg.buildcfg}")
         objdir("obj/river2D/%{cfg.buildcfg}")
-        files({"./src/river2D_main.c",
-               "./include/river2D_main.h",
+        files({"./src/river2D*",
+               "./include/river2D*",
                "./src/win32_river2Dsoftware*",
                "./include/win32_river2Dsoftware*",
                "./src/river2Dsoftware*",
@@ -108,8 +108,8 @@ project("river2D software renderer")
         defines("BUILD_LINUX")
         targetdir("bin/river2D_linux/%{cfg.buildcfg}")
         objdir("obj/river2D/%{cfg.buildcfg}")
-        files({"./src/river2D_main.c",
-               "./include/river2D_main.h",
+        files({"./src/river2D*",
+               "./include/river2D*",
                "./src/linux_river2Dsoftware*",
                "./include/linux_river2Dsoftware*",
                "./src/river2Dsoftware*",
