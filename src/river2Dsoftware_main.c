@@ -9,6 +9,7 @@
 #include <string.h>
 
 // TODO: (river2D #7) allow for other font colours
+// TODO: (river2D #17) allow for linebreaks and other escape codes
 void river2D_loadText
 (
     EngineData    *engine,
@@ -17,8 +18,8 @@ void river2D_loadText
     uint8_t       font,
     uint16_t      charsize,
     uint32_t      spacing,
-    uint32_t      offsetY,
-    uint32_t      offsetX
+    uint32_t      offsetX,
+    uint32_t      offsetY
 ){
     if(!engine->planes[font].data)
     {
