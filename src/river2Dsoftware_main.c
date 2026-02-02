@@ -62,12 +62,12 @@ void river2D_loadText
 
     for(uint32_t i = 0; text[i] != '\0'; ++i)
     {
-        if(text[i] < 33 || text[i] > 127)
+        if(text[i] < 0x21 || text[i] > 0x7F)
         {
             continue;
         }
-        uint32_t  charBigY = (uint32_t)(text[i] - 33) * charsize / fontImgWidth;
-        uint32_t  charBigX = (uint32_t)(text[i] - 33) * charsize % fontImgWidth;
+        uint32_t  charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
+        uint32_t  charBigX = (uint32_t)(text[i] - 0x21) * charsize % fontImgWidth;
 
         uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
         uint64_t trueDestOffset = (offsetY * image->width + offsetX + i * (charsize + spacing)) * RIVER2D_BPP;
