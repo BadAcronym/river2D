@@ -97,3 +97,7 @@ void river2D_processControls
 
     //TODO: tab and other hotkeys
 }
+
+void river2D_updateEditor()
+{
+}

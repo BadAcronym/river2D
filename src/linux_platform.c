@@ -25,6 +25,19 @@ Window X11openWindow
     return window;
 }
 
+void X11drawFrame
+(
+    Display    *display,
+    Dimensions dimensions,
+    Window     window,
+    GC         gc
+){
+    //TODAY: load image from stbi or something
+    XSetForeground(display, gc, 0x000000);
+    XFillRectangle(display, window, gc, 0, 0, dimensions.width, dimensions.height);
+    XFlush(display);
+}
+
 Backbuffer* X11allocateBackbuffer
 (
     Dimensions dimensions

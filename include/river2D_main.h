@@ -31,6 +31,7 @@
 #define River2D_KEY_TAB    23
 #define River2D_KEY_ESCAPE 99
 
+//thought: could we be wasting cache here? is 1 << n somehow more efficient?
 #define River2D_BIT_UP     0b000001
 #define River2D_BIT_DOWN   0b000010
 #define River2D_BIT_LEFT   0b000100
@@ -65,3 +66,5 @@ void river2D_processControls
     int32_t           key,
     River2DControlMap *controls
 );
+
+void river2D_updateEditor();

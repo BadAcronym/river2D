@@ -4,6 +4,7 @@
 #include "X11/Xlib.h"
 
 #define openWindow         X11openWindow
+#define drawFrame          X11drawFrame
 #define allocateBackbuffer X11allocateBackbuffer
 #define updateBackbuffer   X11updateBackbuffer
 #define bltBuffer          X11bltBuffer
@@ -23,6 +24,14 @@ extern Window X11openWindow
     Display     *display,
     Dimensions  dimensions,
     const char* windowName
+);
+
+extern void X11drawFrame
+(
+    Display    *display,
+    Dimensions dimensions,
+    Window     window,
+    GC         gc
 );
 
 //TODO: do we need this? look at CPong

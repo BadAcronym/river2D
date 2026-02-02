@@ -17,9 +17,11 @@ int main()
     dimensions.width = WidthOfScreen(screen);
     dimensions.height = HeightOfScreen(screen);
 
-    Window window = X11openWindow(display, dimensions, "river2D Editor");
+    Window window = openWindow(display, dimensions, "river2D Editor");
 
-    X11allocateBackbuffer(dimensions);
+    GC gc = XCreateGC(display, window, 0, 0);
+
+    allocateBackbuffer(dimensions);
 
     River2DControlMap controls = {};
 
@@ -50,7 +52,8 @@ int main()
             }
         }
 
-        //work
+        river2D_updateEditor();
+        drawFrame(display, dimensions, window, gc);
     }
 
     XDestroyWindow(display, window);
