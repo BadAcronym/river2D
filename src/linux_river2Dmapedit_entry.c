@@ -1,8 +1,6 @@
 #include "river2D_main.h"
 #include "linux_river2Dsoftware_platform.h"
 
-#include "X11/Xlib.h"
-
 //TODO: future renderers
 //river2D_vulkan.dll / libriver2D_vulkan.so
 //river2D_d3d.dll    / libriver2D_d3d.so

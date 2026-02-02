@@ -2,8 +2,6 @@
 
 #include "river2D_main.h"
 
-#include "X11/Xlib.h"
-
 extern Window river2D_openWindow
 (
     EngineData *engine
