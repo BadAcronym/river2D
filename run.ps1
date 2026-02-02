@@ -41,6 +41,13 @@ foreach($platform in $Platforms)
     }
 }
 
+if(Test-Path "./vendor/imgsurf/run.ps1")
+{
+    Push-Location "./vendor/imgsurf/"
+    &./run.ps1 -dontrun
+    Pop-Location
+}
+
 if(-Not(Test-Path "./build/"))
 {
     &mkdir "./build/"

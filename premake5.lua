@@ -12,6 +12,7 @@ project("river2D binary")
     cdialect("C23")
     warnings("Extra")
     targetname("river2Dmapedit")
+    links("imgsurf:static")
 
     filter("configurations:debug")
         defines{"DEBUG"}
@@ -30,12 +31,12 @@ project("river2D binary")
         defines("BUILD_WINDOWS")
         targetdir("bin/Win64_%{cfg.buildcfg}")
         objdir("obj/Win64_%{cfg.buildcfg}")
-        files({
-            "./src/win32_river2D*",
-            "./include/win32_river2D*",
-            "./src/river2D*",
-            "./include/river2D*" })
+        files({ "./src/win32_river2D*",
+                "./include/win32_river2D*",
+                "./src/river2D*",
+                "./include/river2D*" })
         includedirs({ "./include/", "./vendor/imgsurf/include"})
+        libdirs({"./vendor/imgsurf/bin/**"})
         buildoptions{"/wd4068", "/wd4100"}
         ignoredefaultlibraries({ "MSVCRT" })
 
@@ -51,12 +52,12 @@ project("river2D binary")
         kind("ConsoleApp")
         targetdir("bin/Linux_%{cfg.buildcfg}")
         objdir("obj/")
-        files({
-            "./src/linux_river2D*",
-            "./include/linux_river2D*",
-            "./src/river2D*",
-            "./include/river2D*" })
+        files({"./src/linux_river2D*",
+               "./include/linux_river2D*",
+               "./src/river2D*",
+               "./include/river2D*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
+        libdirs({"./vendor/imgsurf/bin/**"})
         linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}
 
 project("river2D software renderer")
@@ -65,6 +66,7 @@ project("river2D software renderer")
     warnings("Extra")
     kind("StaticLib")
     targetname("river2Dsoftware")
+    links("imgsurf:static")
 
     filter("configurations:debug")
         defines{"DEBUG"}
@@ -83,14 +85,13 @@ project("river2D software renderer")
         defines("BUILD_WINDOWS")
         targetdir("bin/Win64_%{cfg.buildcfg}")
         objdir("obj/Win64_%{cfg.buildcfg}")
-        files({
-            "./src/river2D_main.c",
-            "./include/river2D_main.h",
-            "./src/win32_river2Dsoftware*",
-            "./include/win32_river2Dsoftware*",
-            "./src/river2Dsoftware*",
-            "./include/river2Dsoftware*" })
-        includedirs({ "./include/", "./vendor/stb/"})
+        files({"./src/river2D_main.c",
+               "./include/river2D_main.h",
+               "./src/win32_river2Dsoftware*",
+               "./include/win32_river2Dsoftware*",
+               "./src/river2Dsoftware*",
+               "./include/river2Dsoftware*" })
+        includedirs({ "./include/", "./vendor/imgsurf/include/"})
         buildoptions{"/wd4068", "/wd4100"}
         ignoredefaultlibraries({ "MSVCRT" })
 
@@ -99,12 +100,11 @@ project("river2D software renderer")
         defines("BUILD_LINUX")
         targetdir("bin/Linux_%{cfg.buildcfg}")
         objdir("obj/Linux_")
-        files({
-            "./src/river2D_main.c",
-            "./include/river2D_main.h",
-            "./src/linux_river2Dsoftware*",
-            "./include/linux_river2Dsoftware*",
-            "./src/river2Dsoftware*",
-            "./include/river2Dsoftware*" })
-        includedirs({ "./include/", "/usr/include/", "./vendor/stb/"})
+        files({"./src/river2D_main.c",
+               "./include/river2D_main.h",
+               "./src/linux_river2Dsoftware*",
+               "./include/linux_river2Dsoftware*",
+               "./src/river2Dsoftware*",
+               "./include/river2Dsoftware*" })
+        includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}

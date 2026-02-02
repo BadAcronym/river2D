@@ -1,3 +1,10 @@
+if(Test-Path "vendor/imgsurf")
+{
+    Push-Location "vendor/imgsurf"
+    &./clean.ps1
+    Pop-Location
+}
+
 $toDelete =
     "./build/",
     "./bin/",
