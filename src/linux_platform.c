@@ -5,6 +5,9 @@
 
 #include "X11/Xlib.h"
 
+#include <cstdlib>
+#include <stdio.h>
+
 Window X11openWindow
 (
     Display     *display,
@@ -33,15 +36,30 @@ void X11drawFrame
     GC         gc
 ){
     //TODAY: load image from stbi or something
-    XSetForeground(display, gc, 0x000000);
+    XSetBackground(display, gc, 0x000000);
     XFillRectangle(display, window, gc, 0, 0, dimensions.width, dimensions.height);
     XFlush(display);
 }
 
-Backbuffer* X11allocateBackbuffer
+void X11resizeBackbuffer
 (
-    Dimensions dimensions
+    Backbuffer  *buf,
+    Dimensions  dimensions
 ){
+    if(buf->memory)
+    {
+        free(buf->memory);
+    }
+
+    buf->dimensions = dimensions;
+    buf->memory = malloc(buf->dimensions.width * buf->dimensions.height * River2D_BPP);
+
+    //debug
+    printf("%s", "resized Backbuffer to ");
+    printf("%u", buf->dimensions.width);
+    printf("%s", "x");
+    printf("%u", buf->dimensions.height);
+    printf("%s", "\n");
 }
 
 void X11updateBackbuffer

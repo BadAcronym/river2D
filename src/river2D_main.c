@@ -86,7 +86,7 @@ void river2D_processControls
             }
             break;
         }
-        #ifdef DEBUG
+        #if 0
         default:
         {
             printf("%u", key);

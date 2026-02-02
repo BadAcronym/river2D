@@ -21,7 +21,7 @@ int main()
 
     GC gc = XCreateGC(display, window, 0, 0);
 
-    allocateBackbuffer(dimensions);
+    Backbuffer buf = {};
 
     River2DControlMap controls = {};
 
@@ -43,6 +43,12 @@ int main()
                 {
                     river2D_processControls(false, event.xkey.keycode, &controls);
                     break;
+                }
+                case ResizeRequest:
+                {
+                    dimensions.width  = event.xresizerequest.width;
+                    dimensions.height = event.xresizerequest.height;
+                    resizeBackbuffer(&buf, dimensions);
                 }
                 case ClientMessage:
                 {
