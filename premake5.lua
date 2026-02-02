@@ -25,27 +25,6 @@ project("river2D binary")
         symbols("Off")
         optimize("Speed")
 
-    filter("platforms:Windows")
-        system("Windows")
-        defines("BUILD_WINDOWS")
-        targetdir("bin/river2Dmapedit_win64/%{cfg.buildcfg}")
-        objdir("obj/")
-        files({ "./src/win32_river2Dmapedit*",
-                "./include/win32_river2Dmapedit*",
-                "./src/river2Dmapedit*",
-                "./include/river2Dmapedit*" })
-        includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/**"})
-        links({"imgsurf.lib"})
-        buildoptions({"/wd4068"})
-        ignoredefaultlibraries({ "MSVCRT" })
-
-    filter({"platforms:Windows", "configurations:release"})
-        kind("WindowedApp")
-
-    filter({"platforms:Windows", "configurations:debug"})
-        kind("ConsoleApp")
-
     filter("platforms:Linux")
         system("Linux")
         defines("BUILD_LINUX")
@@ -63,11 +42,33 @@ project("river2D binary")
         linkoptions({"-lX11", "-lXrender", "-limgsurf", "-fuse-ld=mold"})
         toolset("clang")
 
+    filter("platforms:Windows")
+        system("Windows")
+        defines("BUILD_WINDOWS")
+        targetdir("bin/river2Dmapedit_win64/%{cfg.buildcfg}")
+        objdir("obj/")
+        files({ "./src/win32_river2Dmapedit*",
+                "./include/win32_river2Dmapedit*",
+                "./src/river2Dmapedit*",
+                "./include/river2Dmapedit*" })
+        includedirs({"./include/", "./vendor/imgsurf/include"})
+        libdirs({"./vendor/imgsurf/bin/**"})
+        links({"imgsurf.lib"})
+        buildoptions({"/wd4068"})
+        ignoredefaultlibraries({ "MSVCRT" })
+
     filter({"platforms:Linux", "configurations:debug"})
         buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
         linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
+
+    filter({"platforms:Windows", "configurations:debug"})
+        kind("ConsoleApp")
+        buildoptions({"/fsanitize=address,leak,undefined"})
+
+    filter({"platforms:Windows", "configurations:release"})
+        kind("WindowedApp")
 
 project("river2D common functions")
     language("C")
@@ -88,23 +89,6 @@ project("river2D common functions")
         symbols("Off")
         optimize("Speed")
 
-    filter("platforms:Windows")
-        system("Windows")
-        defines("BUILD_WINDOWS")
-        targetdir("bin/river2Dcommon_win64/%{cfg.buildcfg}")
-        objdir("obj/")
-        files({"./src/river2D_*",
-               "./include/river2D_*",
-               "./src/win32_river2Dcommon*",
-               "./include/win32_river2Dcommon*",
-               "./src/river2Dcommon*",
-               "./include/river2Dcommon*" })
-        includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/**"})
-        links({"imgsurf.lib"})
-        buildoptions({"/wd4068"})
-        ignoredefaultlibraries({"MSVCRT"})
-
     filter("platforms:Linux")
         system("Linux")
         defines("BUILD_LINUX")
@@ -123,11 +107,31 @@ project("river2D common functions")
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
         toolset("clang")
 
+    filter("platforms:Windows")
+        system("Windows")
+        defines("BUILD_WINDOWS")
+        targetdir("bin/river2Dcommon_win64/%{cfg.buildcfg}")
+        objdir("obj/")
+        files({"./src/river2D_*",
+               "./include/river2D_*",
+               "./src/win32_river2Dcommon*",
+               "./include/win32_river2Dcommon*",
+               "./src/river2Dcommon*",
+               "./include/river2Dcommon*" })
+        includedirs({"./include/", "./vendor/imgsurf/include"})
+        libdirs({"./vendor/imgsurf/bin/**"})
+        links({"imgsurf.lib"})
+        buildoptions({"/wd4068"})
+        ignoredefaultlibraries({"MSVCRT"})
+
     filter({"platforms:Linux", "configurations:debug"})
         buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
         linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
+
+    filter({"platforms:Windows", "configurations:debug"})
+        buildoptions({"/fsanitize=address,leak,undefined"})
 
 project("river2D software renderer")
     language("C")
@@ -147,27 +151,6 @@ project("river2D software renderer")
         runtime("release")
         symbols("Off")
         optimize("Speed")
-
-    filter("platforms:Windows")
-        system("Windows")
-        defines("BUILD_WINDOWS")
-        targetdir("bin/river2Dsoftware_win64/%{cfg.buildcfg}")
-        objdir("obj/")
-        files({"./src/river2D_*",
-               "./include/river2D_*",
-               "./src/win32_river2Dcommon*",
-               "./include/win32_river2Dcommon*",
-               "./src/river2Dcommon*",
-               "./include/river2Dcommon*",
-               "./src/win32_river2Dsoftware*",
-               "./include/win32_river2Dsoftware*",
-               "./src/river2Dsoftware*",
-               "./include/river2Dsoftware*" })
-        includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/**", "./bin/**"})
-        links({"imgsurf.lib", "river2Dcommon.lib"})
-        buildoptions({"/wd4068"})
-        ignoredefaultlibraries({ "MSVCRT" })
 
     filter("platforms:Linux")
         system("Linux")
@@ -191,8 +174,32 @@ project("river2D software renderer")
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold", "-lriver2Dcommon"})
         toolset("clang")
 
+    filter("platforms:Windows")
+        system("Windows")
+        defines("BUILD_WINDOWS")
+        targetdir("bin/river2Dsoftware_win64/%{cfg.buildcfg}")
+        objdir("obj/")
+        files({"./src/river2D_*",
+               "./include/river2D_*",
+               "./src/win32_river2Dcommon*",
+               "./include/win32_river2Dcommon*",
+               "./src/river2Dcommon*",
+               "./include/river2Dcommon*",
+               "./src/win32_river2Dsoftware*",
+               "./include/win32_river2Dsoftware*",
+               "./src/river2Dsoftware*",
+               "./include/river2Dsoftware*" })
+        includedirs({"./include/", "./vendor/imgsurf/include"})
+        libdirs({"./vendor/imgsurf/bin/**", "./bin/**"})
+        links({"imgsurf.lib", "river2Dcommon.lib"})
+        buildoptions({"/wd4068"})
+        ignoredefaultlibraries({ "MSVCRT" })
+
     filter({"platforms:Linux", "configurations:debug"})
         buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
         linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
+
+    filter({"platforms:Windows", "configurations:debug"})
+        buildoptions({"/fsanitize=address,leak,undefined"})
