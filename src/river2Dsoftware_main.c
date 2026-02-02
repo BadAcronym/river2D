@@ -18,10 +18,12 @@ void river2D_compositeImage
     EngineData    *engine,
     River2D_Image *image,
     uint8_t       pictop,
-    uint32_t      offsetX,
-    uint32_t      offsetY,
-    uint32_t      cropX,
-    uint32_t      cropY
+    uint32_t      offsetDstX,
+    uint32_t      offsetDstY,
+    uint32_t      offsetSrcX,
+    uint32_t      offsetSrcY,
+    uint32_t      cropWidth,
+    uint32_t      cropHeight
 ){
     //TODO: deal with alpha and actual compositing instead of just overlaying/copying
     if(pictop != RIVER2D_PICTOP_OVER)
@@ -52,22 +54,27 @@ void river2D_compositeImage
 
     //TODO: validate that offset doesn't exceed buffer destination image
 
-    uint8_t *dest = (uint8_t*)engine->backbuffer.data;
-    uint64_t copyWidth = image->width * RIVER2D_BPP;
-    uint64_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;
+    uint64_t copyWidth  = image->width * RIVER2D_BPP;
+    uint64_t srcCutoffX = cropWidth * RIVER2D_BPP;
+    uint64_t bufWidth   = engine->backbuffer.width * RIVER2D_BPP;
 
-    for(uint32_t y = 0; y < image->height; ++y)
+    uint8_t *dest = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth +
+                    offsetDstX * RIVER2D_BPP;
+
+    uint8_t *src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
+
+    for(uint32_t y = 0; y < cropHeight; ++y)
     {
-        for(uint32_t x = 0; x < copyWidth; x += RIVER2D_BPP)
+        for(uint32_t x = 0; x < srcCutoffX; x += RIVER2D_BPP)
         {
             uint64_t srcIndex = y * copyWidth + x;
             uint64_t dstIndex = y * bufWidth + x;
-            if(image->data[srcIndex + 3])
+            if(src[srcIndex + 3])
             {
-                dest[dstIndex]     = image->data[srcIndex];
-                dest[dstIndex + 1] = image->data[srcIndex + 1];
-                dest[dstIndex + 2] = image->data[srcIndex + 2];
-                dest[dstIndex + 3] = image->data[srcIndex + 3];
+                dest[dstIndex]     = src[srcIndex];
+                dest[dstIndex + 1] = src[srcIndex + 1];
+                dest[dstIndex + 2] = src[srcIndex + 2];
+                dest[dstIndex + 3] = src[srcIndex + 3];
             }
         }
     }
@@ -102,7 +109,7 @@ void river2D_loadText
 
     uint32_t minTextWidth = charsize * (uint32_t)(strlen(text) + 1);
 
-    if(image->width != minTextWidth || image->height != charsize)
+    if(image->width < minTextWidth || image->height < charsize)
     {
         free(image->data);
         image->data = 0;
