@@ -65,7 +65,7 @@ project("river2D binary")
 
     filter({"platforms:Windows", "configurations:debug"})
         kind("ConsoleApp")
-        buildoptions({"/fsanitize=address,leak,undefined"})
+        buildoptions({"/fsanitize=address"})
 
     filter({"platforms:Windows", "configurations:release"})
         kind("WindowedApp")
@@ -131,7 +131,7 @@ project("river2D common functions")
                      "-static-libasan"})
 
     filter({"platforms:Windows", "configurations:debug"})
-        buildoptions({"/fsanitize=address,leak,undefined"})
+        buildoptions({"/fsanitize=address"})
 
 project("river2D software renderer")
     language("C")
@@ -202,4 +202,4 @@ project("river2D software renderer")
                      "-static-libasan"})
 
     filter({"platforms:Windows", "configurations:debug"})
-        buildoptions({"/fsanitize=address,leak,undefined"})
+        buildoptions({"/fsanitize=address"})
