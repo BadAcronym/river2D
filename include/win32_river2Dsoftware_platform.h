@@ -19,8 +19,7 @@ EXPORT int32_t river2D_shutdown
 
 EXPORT void river2D_bltBuffer
 (
-    EngineData *engine,
-    uint8_t    factor
+    EngineData *engine
 );
 
 EXPORT void river2D_compositeImage
