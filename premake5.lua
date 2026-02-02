@@ -13,8 +13,8 @@ workspace("river2D")
     architecture("x86_64")
 
 project("river2D binary")
-    language("C++")
-    cppdialect("C++23")
+    language("C")
+    cdialect("C23")
     warnings("Extra")
     targetname("river2Dmapedit")
 
@@ -65,8 +65,8 @@ project("river2D binary")
         linkoptions{"-lX11", "-fuse-ld=mold"}
 
 project("river2D software renderer")
-    language("C++")
-    cppdialect("C++23")
+    language("C")
+    cdialect("C23")
     warnings("Extra")
     kind("StaticLib")
     targetname("river2Dsoftware")
