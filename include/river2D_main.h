@@ -73,6 +73,7 @@ River2D_Config;
 typedef struct River2D_Image
 {
     uint8_t*    data;
+    //TODO: make format enum or ID
     char*       format;
     uint32_t    width;
     uint32_t    height;
@@ -106,10 +107,11 @@ typedef struct EngineData
     Window             window;
     GC                 context;
     Pixmap             backbuffer;
-    Pixmap             compDestBuf;
     Pixmap             compSrcBuf;
     XImage             *compDestImg;
     XImage             *compSrcImg;
+    Picture            compDestPict;
+    Picture            compSrcPict;
 #endif
 
 #ifdef BUILD_WINDOWS
@@ -138,8 +140,7 @@ extern void river2D_loadImage
 extern void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *destImg,
-    River2D_Image *srcImg
+    River2D_Image *image
 );
 
 extern uint64_t river2D_queryTime

@@ -125,6 +125,18 @@ void river2D_init
     {
         fprintf(stderr, "Failed to create compSrcImg!\n");
     }
+
+    engine->compDestPict = XRenderCreatePicture(engine->display, engine->backbuffer, engine->format, 0, 0);
+    if(!engine->compDestPict)
+    {
+        fprintf(stderr, "Failed to create compDestPict!\n");
+    }
+
+    engine->compSrcPict  = XRenderCreatePicture(engine->display, engine->compSrcBuf, engine->format, 0, 0);
+    if(!engine->compDestPict)
+    {
+        fprintf(stderr, "Failed to create compSrcPict!\n");
+    }
 }
 
 //TODO: not safely shutting down for some reason... why?
@@ -133,8 +145,10 @@ int32_t river2D_shutdown
     EngineData *engine
 ){
     XFreePixmap(engine->display, engine->backbuffer);
-    XFreePixmap(engine->display, engine->compDestBuf);
     XFreePixmap(engine->display, engine->compSrcBuf);
+
+    XRenderFreePicture(engine->display, engine->compDestPict);
+    XRenderFreePicture(engine->display, engine->compSrcPict);
 
     XDestroyImage(engine->compDestImg);
     XDestroyImage(engine->compSrcImg);
@@ -183,54 +197,36 @@ void river2D_drawFrame
 }
 
 //TODO: multi-thread some of this?
-//TODAY: rewrite so that instead of compositing two images and overwriting the backbuffer,
-//it composits the requested image on top of the backbuffer.
+//TODAY: now it technically does what I wanted, but is dog slow and probably has to wait for the backbuffer
+//in some regard.
 void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *destImg,
-    River2D_Image *srcImg
+    River2D_Image *image
 ){
-    if(!destImg->data)
+    if(!engine->backbuffer)
     {
         fprintf(stderr, "No image to composite onto.\n");
         return;
     }
-    else if(!srcImg->data)
+    else if(!image->data)
     {
         fprintf(stderr, "No image to composite with.\n");
         return;
     }
 
-    if(destImg->width != engine->width || destImg->height != engine->height)
+    if(image->width != engine->width || image->height != engine->height)
     {
-        river2D_resizeXImage(engine, engine->compDestImg, destImg->width, destImg->height);
+        river2D_resizeXImage(engine, engine->compSrcImg, image->width, image->height);
     }
-    memcpy(engine->compDestImg->data, (char*)destImg->data, destImg->width * destImg->height * RIVER2D_BPP);
-
-    if(srcImg->width != engine->width || srcImg->height != engine->height)
-    {
-        river2D_resizeXImage(engine, engine->compSrcImg, srcImg->width, srcImg->height);
-    }
-    memcpy(engine->compSrcImg->data, (char*)srcImg->data, srcImg->width * srcImg->height * RIVER2D_BPP);
-
-    XPutImage(engine->display, engine->compDestBuf, engine->context, engine->compDestImg, 0, 0, 0, 0,
-              destImg->width, destImg->height);
+    memcpy(engine->compSrcImg->data, (char*)image->data, image->width * image->height * RIVER2D_BPP);
 
     XPutImage(engine->display, engine->compSrcBuf, engine->context, engine->compSrcImg, 0, 0, 0, 0,
-              srcImg->width, srcImg->height);
+              image->width, image->height);
 
-    Picture destPict = XRenderCreatePicture(engine->display, engine->compDestBuf, engine->format, 0, 0);
-    Picture srcPict  = XRenderCreatePicture(engine->display, engine->compSrcBuf,  engine->format, 0, 0);
-    Picture compPict = XRenderCreatePicture(engine->display, engine->backbuffer,  engine->format, 0, 0);
+    XRenderComposite(engine->display, PictOpOver, engine->compSrcPict, None, engine->compDestPict,
+                     0, 0, 0, 0, 0, 0, engine->width, engine->height);
 
-    XRenderComposite(engine->display, PictOpOver, destPict, srcPict, compPict,
-                     0, 0, 0, 0, 0, 0, destImg->width, destImg->height);
-
-    //TODO: see if you can't preallocate these too, then you don't have to alloc/free every frame
-    XRenderFreePicture(engine->display, destPict);
-    XRenderFreePicture(engine->display, srcPict);
-    XRenderFreePicture(engine->display, compPict);
 }
 
 void river2D_resizeBackbuffer
@@ -253,16 +249,16 @@ void river2D_resizeBackbuffer
         fprintf(stderr, "Failed to resize backbuffer Pixmap!\n");
     }
 
-    if(engine->compDestBuf)
-    {
-        XFreePixmap(engine->display, engine->compDestBuf);
-    }
-    engine->compDestBuf = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
-                                       RIVER2D_PIXDEPTH);
-    if(!engine->compDestBuf)
-    {
-        fprintf(stderr, "Failed to resize compDestBuf Pixmap!\n");
-    }
+    // if(engine->compDestBuf)
+    // {
+    //     XFreePixmap(engine->display, engine->compDestBuf);
+    // }
+    // engine->compDestBuf = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
+    //                                    RIVER2D_PIXDEPTH);
+    // if(!engine->compDestBuf)
+    // {
+    //     fprintf(stderr, "Failed to resize compDestBuf Pixmap!\n");
+    // }
 
     if(engine->compSrcBuf)
     {
