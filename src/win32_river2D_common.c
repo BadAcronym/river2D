@@ -6,19 +6,19 @@ uint8_t river2D_verifyPath
 (
     const char *path
 ){
-    struct stat pathInfo;
+    struct _stat pathInfo;
 
-    if(stat(path, &pathInfo))
+    if(_stat(path, &pathInfo))
     {
         return RIVER2D_TYPE_ERROR;
     }
 
-    if(S_ISDIR(pathInfo.st_mode))
+    if(_S_IFDIR & pathInfo.st_mode)
     {
         return RIVER2D_TYPE_DIRECTORY;
     }
 
-    if(S_ISREG(pathInfo.st_mode))
+    if(_S_IFREG & pathInfo.st_mode)
     {
         return RIVER2D_TYPE_FILE;
     }
