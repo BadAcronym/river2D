@@ -111,6 +111,10 @@ void river2D_init
         //TODO: get from config, worry about scaling
         river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
+
+    River2D_Time time = river2D_queryTime();
+    engine->lastFrametime = time;
+    engine->lastFPStime = time;
 }
 
 void river2D_destroyImage
@@ -174,23 +178,75 @@ Window river2D_openWindow
     return window;
 }
 
-//can't be slow!
+//NOTE: multi-thread if slow
 void river2D_loadText
 (
     EngineData    *engine,
     River2D_Image *image,
     const char    *text,
     uint8_t       font,
-    uint8_t       scale,
+    uint16_t      charsize,
     uint32_t      spacing,
     uint32_t      offsetY,
     uint32_t      offsetX
 ){
-    //TODAY:
-    //foreach char in text:
-    //get appropriate img cutout from pre-loaded font bitmap
-    //if char is available in it (just value check)
-    //append after i*spacing pixels to *image
+    if(!engine->planes[font].data)
+    {
+        fprintf(stderr, "Font not found. Check loaded planes.\n");
+        return;
+    }
+
+    if(!image)
+    {
+        fprintf(stderr, "Destination image is null.\n");
+        return;
+    }
+
+    if(!image->data)
+    {
+        image->data = malloc(engine->width * engine->height * RIVER2D_BPP);
+        image->width = engine->width;
+        image->height = engine->height;
+    }
+
+    if(offsetY > image->height)
+    {
+        fprintf(stderr, "offsetY too large.\n");
+        return;
+    }
+    if(offsetX > image->width)
+    {
+        fprintf(stderr, "offsetX too large.\n");
+        return;
+    }
+
+    for(uint32_t i = 0; text[i] > 32; ++i)
+    {
+        if(text[i] > 127)
+        {
+            continue;
+        }
+        uint8_t fontImgWidth = engine->planes[font].width;
+
+        uint8_t  charBigY = (text[i] - 33) * charsize / fontImgWidth;
+        uint8_t  charBigX = (text[i] - 33) * charsize % fontImgWidth;
+
+        uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
+        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i * (charsize + spacing)) * RIVER2D_BPP;
+
+        uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
+        uint8_t* destloc = image->data + trueDestOffset;
+
+        for(uint32_t j = 0; j < charsize; ++j)
+        {
+            uint8_t* charlineLoc = charloc + j * fontImgWidth * RIVER2D_BPP;
+            uint8_t* destlineLoc = destloc + j * image->width * RIVER2D_BPP;
+
+            memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
+        }
+    }
+
+    //TODAY: memset rest of img to 0?
 }
 
 //TODO: multi-thread some of this?
@@ -323,18 +379,18 @@ void river2D_bltBuffer
     XFillRectangle(engine->display, engine->backbuffer, engine->context, 0, 0, engine->width, engine->height);
 }
 
-uint64_t river2D_queryTime
+River2D_Time river2D_queryTime
 (
-    bool nano
+    void
 ){
     struct timespec spec;
-
     clock_gettime(CLOCK_REALTIME, &spec);
 
-    if(nano)
-    {
-        return spec.tv_nsec;
-    }
+    River2D_Time time;
+    time.s = spec.tv_sec;
+    time.ms = spec.tv_nsec / 1000000;
+    time.us = spec.tv_nsec / 1000;
+    time.ns = spec.tv_nsec;
 
-    return spec.tv_sec;
+    return time;
 }
