@@ -199,6 +199,8 @@ typedef struct EngineData
     GC                 context;
     Buffer             backbuffer;
     Buffer             compBuffer;
+    Picture            compSrcPict;
+    Picture            compDstPict;
     PosixThreadpool    pool;
 #endif
 

@@ -72,6 +72,17 @@ void river2D_resizeBackbuffer
     uint32_t   width,
     uint32_t   height
 ){
+    if(engine->compSrcPict)
+    {
+        XRenderFreePicture(engine->display, engine->compSrcPict);
+        engine->compSrcPict = 0;
+    }
+    if(engine->compDstPict)
+    {
+        XRenderFreePicture(engine->display, engine->compDstPict);
+        engine->compDstPict = 0;
+    }
+
     if(engine->backbuffer.pixmap)
     {
         XFreePixmap(engine->display, engine->backbuffer.pixmap);
@@ -87,6 +98,21 @@ void river2D_resizeBackbuffer
     engine->compBuffer.pixmap = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
     engine->compBuffer.width  = width;
     engine->compBuffer.height = height;
+
+    engine->compSrcPict = XRenderCreatePicture(engine->display, engine->compBuffer.pixmap, engine->format, 0, 0);
+    if(!engine->compSrcPict)
+    {
+        fprintf(stderr, "Failed to create compSrcPict!\n");
+        return;
+    }
+
+    engine->compDstPict = XRenderCreatePicture(engine->display, engine->backbuffer.pixmap, engine->format, 0, 0);
+    if(!engine->compDstPict)
+    {
+        fprintf(stderr, "Failed to create compDestPict!\n");
+        XRenderFreePicture(engine->display, engine->compSrcPict);
+        return;
+    }
 }
 
 void river2D_init
@@ -184,9 +210,6 @@ int32_t river2D_shutdown
         river2D_destroyImage(&engine->planes[i]);
     }
 
-    XFreePixmap(engine->display, engine->backbuffer.pixmap);
-    XFreePixmap(engine->display, engine->compBuffer.pixmap);
-
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
     XCloseDisplay(engine->display);
@@ -234,34 +257,18 @@ void river2D_compositeImage
         return;
     }
 
-    Picture compSrcPict = XRenderCreatePicture(engine->display, engine->compBuffer.pixmap, engine->format, 0, 0);
-    if(!compSrcPict)
-    {
-        fprintf(stderr, "Failed to create compSrcPict!\n");
-        return;
-    }
-
-    Picture compDestPict = XRenderCreatePicture(engine->display, engine->backbuffer.pixmap, engine->format, 0, 0);
-    if(!compDestPict)
-    {
-        fprintf(stderr, "Failed to create compDestPict!\n");
-        XRenderFreePicture(engine->display, compSrcPict);
-        return;
-    }
-
     XPutImage(engine->display, engine->compBuffer.pixmap, engine->context, compSrcImg, 0, 0, 0, 0,
               image->width, image->height);
 
-    XRenderComposite(engine->display, pictop, compSrcPict, None, compDestPict, offsetSrcX, offsetSrcY,
+    XRenderComposite(engine->display, pictop, engine->compSrcPict, None, engine->compDstPict, offsetSrcX, offsetSrcY,
                      0, 0, offsetDstX, offsetDstY, cropWidth, cropHeight);
 
-    XRenderFreePicture(engine->display, compSrcPict);
-    XRenderFreePicture(engine->display, compDestPict);
+    compSrcImg->data = 0;
+    XDestroyImage(compSrcImg);
 
-    XFree(compSrcImg);
     if(compDestImg)
     {
-        XFree(compDestImg);
+        XDestroyImage(compDestImg);
     }
 }
 
@@ -288,6 +295,9 @@ void river2D_bltBuffer
 
         XRenderComposite(engine->display, PictOpSrc, srcPict, 0, dstPict, 0, 0, 0, 0, 0, 0,
                          engine->config.window_width, engine->config.window_height);
+
+        XRenderFreePicture(engine->display, srcPict);
+        XRenderFreePicture(engine->display, dstPict);
 
         XFlush(engine->display);
         return;
