@@ -226,8 +226,10 @@ int CALLBACK WinMain
 }
 
 #ifdef DEBUG
-int main()
-{
+int main
+(
+    void
+){
     return WinMain(GetModuleHandleA(0), 0, GetCommandLineA(), 0);
 }
 #endif
