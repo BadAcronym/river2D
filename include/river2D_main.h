@@ -137,6 +137,13 @@ typedef struct Coordinates
 }
 Coordinates;
 
+typedef struct Dimensions
+{
+    uint32_t width;
+    uint32_t height;
+}
+Dimensions;
+
 typedef struct River2D_ControlMap
 {
     uint64_t    keymap;
@@ -256,4 +263,9 @@ extern const char* river2D_contains
 (
     const char *bigStr,
     const char *smallStr
+);
+
+extern Dimensions river2D_getWindowSize
+(
+    EngineData *engine
 );
