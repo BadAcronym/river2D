@@ -201,6 +201,7 @@ internal void *pictopOver
     return 0;
 }
 
+//TODAY: (river2 #15) improve multi-threading to actually max out the CPU
 void river2D_compositeImage
 (
     EngineData    *engine,
