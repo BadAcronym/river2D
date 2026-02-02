@@ -116,6 +116,13 @@ typedef struct River2D_ControlMap
 }
 River2D_ControlMap;
 
+typedef struct Coordinates
+{
+    uint32_t x;
+    uint32_t y;
+}
+Coordinates;
+
 #ifdef BUILD_LINUX
 typedef struct X11Backbuffer
 {
@@ -144,6 +151,8 @@ typedef struct EngineData
     River2D_Time       lastFrametime;
     River2D_Time       lastFPStime;
     uint16_t           runningFrames;
+    Coordinates        playerSheetOffset;
+    Coordinates        playerPosition;
 
 #ifdef BUILD_LINUX
     Display            *display;
