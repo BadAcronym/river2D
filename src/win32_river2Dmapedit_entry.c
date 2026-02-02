@@ -125,7 +125,7 @@ LRESULT CALLBACK win32WindowCallback
                 break;
             }
 
-            //TODO: lata
+            //TODO: (river2D #10) map editor controls
             // if(wParam == PLAYER1_UP)
             // {
             //     global_keyMap.player1_up = isKeyDown;
@@ -164,9 +164,6 @@ int CALLBACK WinMain
     (void)prevInstance;
 
     ShowCursor(false);
-
-    //TODO: fixup when actually loading input
-    // win32LoadXInput();
 
     EngineData    engine = {0};
     global_engine = &engine;

@@ -4,48 +4,6 @@
 
 #include <stdio.h>
 
-//TODO: move to win32 input
-// clang_ignore_unused
-//
-// #define X_INPUT_GET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_STATE *pState)
-// typedef X_INPUT_GET_STATE(x_input_get_state);
-// X_INPUT_GET_STATE(XInputGetState_Stub)
-// {
-//     return 0;
-// }
-// global x_input_get_state *XInputGetState_ = XInputGetState_Stub;
-// #define XInputGetState XInputGetState_
-//
-// #define X_INPUT_SET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration)
-// typedef X_INPUT_SET_STATE(x_input_set_state);
-// X_INPUT_SET_STATE(XInputSetState_Stub)
-// {
-//     return 0;
-// }
-// global x_input_set_state *XInputSetState_ = XInputSetState_Stub;
-// #define XInputSetState XInputSetState_
-//
-// clang_diagnostic_pop
-//
-// void win32LoadXInput(void)
-// {
-//     HMODULE XInputLibrary = LoadLibraryA("xinput1_4.dll");
-//     if(!XInputLibrary)
-//     {
-//         XInputLibrary = LoadLibraryA("xinput1_3.dll");
-//     }
-//
-//     if(XInputLibrary)
-//     {
-//         clang_ignore_functype_mismatch
-//
-//         XInputGetState = (x_input_get_state*)GetProcAddress(XInputLibrary, "XInputGetState");
-//         XInputSetState = (x_input_set_state*)GetProcAddress(XInputLibrary, "XInputSetState");
-//
-//         clang_diagnostic_pop
-//     }
-// }
-
 void river2D_resizeBackbuffer
 (
     EngineData *engine,
@@ -106,7 +64,7 @@ int32_t river2D_shutdown
     return 0;
 }
 
-//TODAY: multi-thread.
+//TODAY: (river2D #1) multi-thread.
 //look at linux code for reference
 void river2D_compositeImage
 (
@@ -120,7 +78,7 @@ void river2D_compositeImage
     uint32_t      cropWidth,
     uint32_t      cropHeight
 ){
-    //TODO: deal with alpha and actual compositing instead of just overlaying/copying
+    //TODO: (river2D #6) deal with alpha and actual compositing instead of just overlaying/copying
     if(pictop != RIVER2D_PICTOP_OVER)
     {
         fprintf(stderr, "\033[33;1;7mSORRY: only RIVER2D_PICTOP_OVER implemented for now. :/\033[0m\n");
@@ -144,10 +102,9 @@ void river2D_compositeImage
         return;
     }
 
-    //TODO: verify that both images are actually RGBA
+    //TODAY: (river2D #5) verify that both images are actually RGBA
     //(in other words, that there's enough space)
-
-    //TODO: validate that offset doesn't exceed buffer destination image
+    //also validate that offset doesn't exceed buffer destination image
 
     uint64_t copyWidth  = image->width * RIVER2D_BPP;
     uint64_t srcCutoffX = cropWidth * RIVER2D_BPP;

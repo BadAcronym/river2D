@@ -94,6 +94,4 @@ void mapedit_processControls
         }
         #endif
     }
-
-    //TODO: tab and other hotkeys to navigate & control the editor
 }

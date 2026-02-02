@@ -4,7 +4,6 @@
 #include "river2D_main.h"
 #include "imgsurf_load.h"
 #include <stdio.h>
-// #include <stdlib.h>
 
 const char* river2D_contains
 (
@@ -63,8 +62,8 @@ void river2D_loadImage
     }
 }
 
-//TODO: allow for hot reloading via menu if necessary, apply config
-//TODO: fuzz config file, make sure it can't crash the engine
+//TODO: (river2D #8) allow for hot reloading via menu if necessary, apply config
+//fuzz config file, make sure it can't crash the engine
 
 #define bufsize 32
 
@@ -106,7 +105,7 @@ void river2D_loadConfig
                 config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
             }
 
-            //TODAY: parse width, height, etc
+            //TODAY: (river2D #2) parse width, height, etc
         }
 
         if(!parsedWidth)

@@ -140,7 +140,7 @@ typedef struct ThreadData
 }
 ThreadData;
 
-//TODAY: revise in favour of floats 0.0f - 1.0f
+//TODAY: (river2D #3) revise in favour of floats 0.0f - 1.0f
 //I think that's less prone to errors than absolute screen coords...
 typedef struct Coordinates
 {
@@ -158,7 +158,6 @@ typedef struct X11Backbuffer
 }
 X11Backbuffer;
 
-//TODO: think about a better way to structure these, maybe?
 typedef struct PosixThreadpool
 {
     pthread_t  threads[RIVER2D_MAX_THREADS];

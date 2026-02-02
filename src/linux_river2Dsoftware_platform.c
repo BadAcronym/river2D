@@ -156,7 +156,7 @@ void river2D_destroyImage
     }
 }
 
-//TODO: not safely shutting down for some reason... why?
+//TODO: (river2D #9) not safely shutting down for some reason... why?
 int32_t river2D_shutdown
 (
     EngineData *engine
@@ -213,7 +213,7 @@ void river2D_compositeImage
     uint32_t      cropWidth,
     uint32_t      cropHeight
 ){
-    //TODO: deal with alpha and actual compositing instead of just overlaying/copying
+    //TODO: (river2D #6) deal with alpha and actual compositing instead of just overlaying/copying
     if(pictop != RIVER2D_PICTOP_OVER)
     {
         fprintf(stderr, "\033[33;1;7mSORRY: only RIVER2D_PICTOP_OVER implemented for now. :/\033[0m\n");
@@ -237,10 +237,9 @@ void river2D_compositeImage
         return;
     }
 
-    //TODO: verify that both images are actually RGBA
+    //TODAY: (river2D #5) verify that both images are actually RGBA
     //(in other words, that there's enough space)
-
-    //TODO: validate that offset doesn't exceed buffer destination image
+    //also validate that offset doesn't exceed buffer destination image
 
     PictopData pictopData =
     {
@@ -308,7 +307,7 @@ void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    //TODAY: oh boy. now it's time to create a way to stretch this thing.
+    //TODAY: (river2D #4) oh boy. now it's time to create a way to stretch this thing.
     //probably will have to treat each pixel in the backbuffer as a vertex.
     //I can pass the backbuffer through a multi-threaded function which goes through each pixel
     //in the desired buffer size (which will be the bufImg here) and calculates its value, based
