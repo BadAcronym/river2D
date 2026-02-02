@@ -7,9 +7,9 @@
 //TODO: read tile size, tiles and animations, save them to some format which can then be read by the game
 
 #ifdef DEBUG
-    #define LIBPATH_SOFTWARE "./bin/river2Dsoftware_linux/debug/"
+    #define LIBPATH_SOFTWARE "./bin/debug/"
 #else
-    #define LIBPATH_SOFTWARE "./bin/river2Dsoftware_linux/release/"
+    #define LIBPATH_SOFTWARE "./bin/release/"
 #endif
 
 int main()
