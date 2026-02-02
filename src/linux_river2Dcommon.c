@@ -46,6 +46,11 @@ uint8_t river2D_interpretCharAsKey
 (
     char inp
 ){
+    const uint8_t numeric_table[10] =
+    {
+        0x13, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12
+    };
+
     const uint8_t alphabetic_table[26] =
     {
         38, 56, 54, 40, 26, 41, 42, 43, 31, 44,
@@ -53,10 +58,16 @@ uint8_t river2D_interpretCharAsKey
         30, 55, 25, 53, 29, 52,
     };
 
+    if(inp > 0x2F && inp < 0x3A)
+    {
+        return numeric_table[inp - 0x30];
+    }
+
     if(inp < 123 && inp > 96)
     {
         return alphabetic_table[inp - 97];
     }
+
     return 0;
 }
 
