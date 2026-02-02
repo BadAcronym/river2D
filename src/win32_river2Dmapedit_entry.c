@@ -6,7 +6,6 @@
 global bool global_running = true;
 global EngineData *global_engine;
 
-//TODAY: try just declaring signatures, will that work?
 clang_ignore_unused
 
 #define RIVER2D_INIT(name) void name(EngineData *engine, River2D_Image *planes)
@@ -108,7 +107,6 @@ LRESULT CALLBACK win32WindowCallback
             PAINTSTRUCT paintStruct;
             HDC context = BeginPaint(window, &paintStruct);
 
-            // FIXME: how to blt here without using a global backbuffer?
             river2D_bltBuffer(global_engine);
 
             EndPaint(window, &paintStruct);
