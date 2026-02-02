@@ -123,18 +123,13 @@ void river2D_loadConfig
         fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
     }
 
-    config->choices = 0;
-
-    // if(!parsedFPS)
-    // {
-    //     config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
-    // }
+    //expand defaults in the future
     if(!parsedWidth)
     {
-        config->width = 4000;
+        config->width = 1280;
     }
     if(!parsedHeight)
     {
-        config->height = 4000;
+        config->height = 720;
     }
 }
