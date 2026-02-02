@@ -184,6 +184,8 @@ typedef struct EngineData
     River2D_Image      *planes;
     River2D_Time       lastFrametime;
     River2D_Time       lastFPStime;
+    River2D_Time       dispatchTime;
+    River2D_Time       idleTime;
     uint16_t           runningFrames;
     Coordinates        playerSheetOffset;
     Coordinates        playerPosition;

@@ -263,6 +263,10 @@ void river2D_compositeImage
         skipHeight = 1;
     }
 
+    //PERFORMANCE: profiling
+    River2D_Time time = {0};
+    river2D_queryTime(&time);
+
     for(uint8_t i = 0; i < RIVER2D_MAX_THREADS && y < cropHeight; ++i)
     {
         if(y > stopHeight)
@@ -277,6 +281,21 @@ void river2D_compositeImage
 
         y += pictopData.threadHeight;
     }
+
+    River2D_Time dispatchTime = {0};
+    river2D_queryTime(&dispatchTime);
+    engine->dispatchTime.s += dispatchTime.s - time.s;
+
+    int64_t delta = dispatchTime.ns - time.ns;
+    engine->dispatchTime.ns += delta;
+
+    if(engine->dispatchTime.ns > 1000000000)
+    {
+        engine->dispatchTime.ns = 0;
+        ++engine->dispatchTime.s;
+    }
+
+    river2D_queryTime(&time);
 
     for(; y < cropHeight; ++y)
     {
@@ -301,6 +320,19 @@ void river2D_compositeImage
             pthread_join(engine->pool.threads[i], 0);
             engine->pool.threads[i] = 0;
         }
+    }
+
+    River2D_Time idleTime= {0};
+    river2D_queryTime(&idleTime);
+    engine->idleTime.s += idleTime.s - time.s;
+
+    int64_t delta2 = idleTime .ns - time.ns;
+    engine->idleTime.ns += delta2;
+
+    if(engine->idleTime.ns > 1000000000)
+    {
+        engine->idleTime.ns = 0;
+        ++engine->idleTime.s;
     }
 }
 
