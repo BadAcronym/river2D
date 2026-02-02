@@ -114,10 +114,6 @@ typedef struct EngineData
     GC                 context;
     Pixmap             backbuffer;
     Pixmap             compBuffer;
-    XImage             *compDestImg;
-    XImage             *compSrcImg;
-    Picture            compDestPict;
-    Picture            compSrcPict;
 #endif
 
 #ifdef BUILD_WINDOWS
@@ -143,6 +139,11 @@ extern void river2D_loadImage
     River2D_Image *image,
     uint8_t       format,
     uint8_t       depth
+);
+
+extern void river2D_destroyImage
+(
+    River2D_Image *image
 );
 
 extern void river2D_compositeImage
