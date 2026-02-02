@@ -62,7 +62,7 @@ void river2D_loadImage
     }
 }
 
-//TODO: (river2D #8) allow for hot reloading via menu if necessary, apply config
+// TODO: (river2D #8) allow for hot reloading via menu if necessary, apply config
 //fuzz config file, make sure it can't crash the engine
 
 #define bufsize 32
@@ -104,7 +104,7 @@ void river2D_loadConfig
                 config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
             }
 
-            //TODAY: (river2D #2) parse width, height, depth, etc
+            // TODAY: (river2D #2) parse width, height, depth, etc
         }
 
         fclose(file);
@@ -123,7 +123,7 @@ void river2D_loadConfig
         fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
     }
 
-    //expand defaults in the future
+    // expand defaults in the future
     if(!parsedWidth)
     {
         config->window_width = 2560;

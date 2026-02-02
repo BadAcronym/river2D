@@ -4,8 +4,8 @@
 #include <dlfcn.h>
 #include <stdio.h>
 
-//TODO: (river2D #11) read tile size, tiles and animations,
-//save them to some format which can then be read by the game
+// TODO: (river2D #11) read tile size, tiles and animations,
+// save them to some format which can then be read by the game
 
 #ifdef DEBUG
     #define LIBPATH "./bin/debug/"
@@ -116,7 +116,7 @@ int main
                     }
                     break;
                 }
-                //TODO: (river2D #12) handle ColormapNotify?
+                // TODO: (river2D #12) handle ColormapNotify?
             }
         }
         mapedit_update();

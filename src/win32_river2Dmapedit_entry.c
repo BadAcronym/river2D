@@ -125,7 +125,7 @@ LRESULT CALLBACK win32WindowCallback
                 break;
             }
 
-            //TODO: (river2D #10) map editor controls
+            // TODO: (river2D #10) map editor controls
             // if(wParam == PLAYER1_UP)
             // {
             //     global_keyMap.player1_up = isKeyDown;

@@ -42,7 +42,7 @@
 #define RIVER2D_BPP         4
 #define RIVER2D_PIXDEPTH    32
 #define RIVER2D_MAX_PLANES  64
-//TODAY: (river2D #14) move max threads to some sort of detection function that polls the amount of cores
+// TODAY: (river2D #14) move max threads to some sort of detection function that polls the amount of cores
 #define RIVER2D_MAX_THREADS 8
 
 #define RIVER2D_KEY_UP         0

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//TODO: (river2D #7) allow for other font colours
+// TODO: (river2D #7) allow for other font colours
 void river2D_loadText
 (
     EngineData    *engine,

@@ -57,14 +57,14 @@ int32_t river2D_shutdown
 (
     EngineData *engine
 ){
-    //stuff
+    // stuff
     DestroyWindow(engine->window);
 
     return 0;
 }
 
-//TODAY: (river2D #1) multi-thread.
-//look at linux code for reference
+// TODAY: (river2D #1) multi-thread.
+// look at linux code for reference
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -94,9 +94,9 @@ void river2D_compositeImage
         return;
     }
 
-    //TODAY: (river2D #5) verify that both images are actually RGBA
-    //(in other words, that there's enough space)
-    //also validate that offset doesn't exceed buffer destination image
+    // TODAY: (river2D #5) verify that both images are actually RGBA
+    // (in other words, that there's enough space)
+    // also validate that offset doesn't exceed buffer destination image
 
     uint64_t copyWidth  = image->width * RIVER2D_BPP;
     uint64_t srcCutoffX = cropWidth * RIVER2D_BPP;

@@ -43,7 +43,7 @@ uint8_t river2D_verifyPath
     return RIVER2D_TYPE_OTHER;
 }
 
-//TODO: fixup windows control interpreting
+// TODO: fixup windows control interpreting
 uint8_t river2D_interpretCharAsKey
 (
     char inp
