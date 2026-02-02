@@ -229,3 +229,9 @@ extern int32_t river2D_shutdown
 (
     EngineData *engine
 );
+
+extern char* river2D_contains
+(
+    const char *bigStr,
+    const char *smallStr
+);

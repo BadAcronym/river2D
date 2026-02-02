@@ -157,6 +157,15 @@ void river2D_loadConfig
         }
 
         //TODAY: parse config data and pass to *config
+        char buf[128];
+        while(fgets(buf, 128, file))
+        {
+            printf("%s", buf);
+
+            // if()
+            // {
+            // }
+        }
 
         fclose(file);
         return;
