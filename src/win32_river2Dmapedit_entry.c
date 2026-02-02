@@ -37,16 +37,17 @@ global river2D_blt_ *_river2D_blt_ = River2D_blt_Stub;
 
 clang_diagnostic_pop
 
-// #ifdef DEBUG
-//     #define LIBPATH_SOFTWARE "./bin/debug/"
-// #else
-//     #define LIBPATH_SOFTWARE "./bin/release/"
-// #endif
+#ifdef DEBUG
+    #define LIBPATH "./bin/debug/"
+#else
+    #define LIBPATH "./bin/release/"
+#endif
 
 internal void loadRenderer_software
 (
     void
 ){
+    SetDllDirectoryA(LIBPATH);
     HMODULE software = LoadLibraryA("river2Dsoftware.dll");
     if(!software)
     {

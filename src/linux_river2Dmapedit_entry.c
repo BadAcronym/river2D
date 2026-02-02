@@ -7,15 +7,15 @@
 //TODO: read tile size, tiles and animations, save them to some format which can then be read by the game
 
 #ifdef DEBUG
-    #define LIBPATH_SOFTWARE "./bin/debug/"
+    #define LIBPATH "./bin/debug/"
 #else
-    #define LIBPATH_SOFTWARE "./bin/release/"
+    #define LIBPATH "./bin/release/"
 #endif
 
 int main()
 {
     char *error = 0;
-    void *software = dlopen(LIBPATH_SOFTWARE "libriver2Dsoftware.so", RTLD_NOW);
+    void *software = dlopen(LIBPATH "libriver2Dsoftware.so", RTLD_NOW);
     if(!software)
     {
         fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded.\n");
