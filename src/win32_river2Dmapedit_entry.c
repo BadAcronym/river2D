@@ -23,6 +23,24 @@ RIVER2D_INIT(River2D_init_Stub)
 global river2D_init_ *_river2D_init_ = River2D_init_Stub;
 #define river2D_init _river2D_init_
 
+#define RIVER2D_SHUT(name) int32_t name(EngineData *engine)
+typedef RIVER2D_SHUT(river2D_shut_);
+RIVER2D_SHUT(River2D_shut_Stub)
+{
+    return -1;
+}
+global river2D_shut_ *_river2D_shut_ = River2D_shut_Stub;
+#define river2D_shutdown _river2D_shut_
+
+#define RIVER2D_BLT(name) void name(EngineData *engine)
+typedef RIVER2D_BLT(river2D_blt_);
+RIVER2D_BLT(River2D_blt_Stub)
+{
+    return;
+}
+global river2D_blt_ *_river2D_blt_ = River2D_blt_Stub;
+#define river2D_bltBuffer _river2D_blt_
+
 clang_diagnostic_pop
 
 void win32LoadXInput(void)
@@ -30,11 +48,9 @@ void win32LoadXInput(void)
     HMODULE software = LoadLibraryA("river2Dsoftware.dll");
     if(software)
     {
-        // clang_ignore_functype_mismatch
-
-        river2D_init     = (river2D_init_*)GetProcAddress(software, "river2D_init");
-
-        // clang_diagnostic_pop
+        river2D_init      = (river2D_init_*)GetProcAddress(software, "river2D_init");
+        river2D_shutdown  = (river2D_shut_*)GetProcAddress(software, "river2D_shutdown");
+        river2D_bltBuffer =  (river2D_blt_*)GetProcAddress(software, "river2D_bltBuffer");
     }
 }
 
@@ -116,7 +132,6 @@ LRESULT CALLBACK win32WindowCallback
     return 0;
 }
 
-clang_ignore_unused
 int CALLBACK WinMain
 (
     HINSTANCE instance,
@@ -124,6 +139,12 @@ int CALLBACK WinMain
     LPSTR     cmdline,
     int       cmdShow
 ){
+    //silence MSVC, I just plain don't need these params but
+    //HAVE to specify them in order for WinMain to be called
+    (void)cmdShow;
+    (void)cmdline;
+    (void)prevInstance;
+
     ShowCursor(false);
 
     //TODO: fixup when actually loading input
@@ -203,4 +224,3 @@ int CALLBACK WinMain
 
     return river2D_shutdown(&engine);
 }
-clang_diagnostic_pop
