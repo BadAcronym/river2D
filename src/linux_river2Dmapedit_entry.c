@@ -1,5 +1,7 @@
 #include "river2D_main.h"
-#include "linux_river2D_platform.h"
+#include "linux_river2Dsoftware_platform.h"
+
+#include "X11/Xlib.h"
 
 //TODO: future renderers
 //river2D_vulkan.dll / libriver2D_vulkan.so
@@ -13,7 +15,7 @@
 int main()
 {
     EngineData engine = {};
-    initRiver2D(&engine);
+    river2D_init(&engine);
 
     while(engine.running)
     {
@@ -36,9 +38,10 @@ int main()
                 case ConfigureNotify:
                 {
                     //move to config file that's read on init
-                    #if !RIVER2D_STATIC_BACKBUFFER_SIZE_ENABLED
+                    if(!engine.config.static_canvas_enable)
+                    {
                         river2D_resizeBackbuffer(&engine, event.xconfigure.width, event.xconfigure.height);
-                    #endif
+                    }
                     break;
                 }
                 case ClientMessage:
@@ -52,5 +55,5 @@ int main()
         river2D_drawFrame(&engine);
     }
 
-    return shutdownRiver2D(&engine);
+    return river2D_shutdown(&engine);
 }

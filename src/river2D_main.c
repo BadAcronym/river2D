@@ -11,9 +11,9 @@
 
 void river2D_processControls
 (
-    bool              isDown,
-    int32_t           key,
-    River2DControlMap *controls
+    bool               isDown,
+    int32_t            key,
+    River2D_ControlMap *controls
 ){
     switch(key)
     {
@@ -123,6 +123,6 @@ void river2D_loadImage
     }
 
     image->data = pixels;
-    image->dimensions.width  = (uint32_t)width;
-    image->dimensions.height = (uint32_t)height;
+    image->width  = (uint32_t)width;
+    image->height = (uint32_t)height;
 }

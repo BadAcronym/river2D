@@ -1,15 +1,13 @@
 #include "river2D_main.h"
-#include "linux_river2D_platform.h"
-
-#include "X11/Xlib.h"
+#include "linux_river2Dsoftware_platform.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-void X11loadConfig
+void river2D_loadConfig
 (
-    Config *config
+    River2D_Config *config
 ){
     //TODO: parse & load from file
     config->static_canvas_enable = false;
@@ -17,7 +15,7 @@ void X11loadConfig
     // config->static_canvas_height = 720;
 }
 
-void X11init
+void river2D_init
 (
     EngineData *engine
 ){
@@ -33,8 +31,8 @@ void X11init
         fprintf(stderr, "Failed to get default screen!\n");
     }
 
-    engine->dimensions.width  = WidthOfScreen(engine->screen);
-    engine->dimensions.height = HeightOfScreen(engine->screen);
+    engine->width  = WidthOfScreen(engine->screen);
+    engine->height = HeightOfScreen(engine->screen);
 
     engine->windowName = "river2D editor";
     engine->window = river2D_openWindow(engine);
@@ -52,20 +50,20 @@ void X11init
     River2D_Image baseUI = {};
     river2D_loadImage("assets/image.png", &baseUI);
 
-    engine->UI = XCreateImage(engine->display, DefaultVisual(engine->display, 0), 24,
-                              ZPixmap, 0, (char*)baseUI.data, baseUI.dimensions.width,
-                              baseUI.dimensions.height, 32, 0);
+    // engine->UI = XCreateImage(engine->display, DefaultVisual(engine->display, 0), 24,
+    //                           ZPixmap, 0, (char*)baseUI.data, baseUI.dimensions.width,
+    //                           baseUI.dimensions.height, 32, 0);
 
-    X11loadConfig(&engine->config);
+    river2D_loadConfig(&engine->config);
     engine->running = true;
 
-    if(!engine->config.static_canvas_enable)
-    {
-        river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
-    }
+    // if(!engine->config.static_canvas_enable)
+    // {
+    //     river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
+    // }
 }
 
-int32_t X11shutdown
+int32_t river2D_shutdown
 (
     EngineData *engine
 ){
@@ -76,12 +74,12 @@ int32_t X11shutdown
     return 0;
 }
 
-Window X11openWindow
+Window river2D_openWindow
 (
     EngineData *engine
 ){
     Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display), 0, 0,
-                                  engine->dimensions.width, engine->dimensions.height,  0, 0,
+                                  engine->width, engine->height,  0, 0,
                                   InputOutput, CopyFromParent, 0, 0);
 
     XStoreName(engine->display, window, engine->windowName);
@@ -94,15 +92,16 @@ Window X11openWindow
     return window;
 }
 
-extern void X11drawFrame
+extern void river2D_drawFrame
 (
     EngineData *engine
 ){
+    //TEST: draw something...
 
-    X11bltBuffer(engine);
+    river2D_bltBuffer(engine);
 }
 
-void X11resizeBackbuffer
+void river2D_resizeBackbuffer
 (
     EngineData *engine,
     uint32_t   width,
@@ -113,29 +112,30 @@ void X11resizeBackbuffer
         XFreePixmap(engine->display, engine->pixmap);
     }
 
-    engine->dimensions.width  = width;
-    engine->dimensions.height = height;
+    engine->width  = width;
+    engine->height = height;
 
-    engine->pixmap = XCreatePixmap(engine->display, engine->window, engine->dimensions.width,
-                                   engine->dimensions.height, 24);
+    engine->pixmap = XCreatePixmap(engine->display, engine->window, engine->width,
+                                   engine->height, 24);
 }
 
-void X11bltBuffer
+void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    XCopyArea(engine->display, engine->pixmap, engine->window, engine->context, 0, 0,
-              engine->dimensions.width, engine->dimensions.height, 0, 0);
+    XCopyArea(engine->display, engine->pixmap, engine->window,
+              engine->context, 0, 0, engine->width, engine->height, 0, 0);
 
     XFlush(engine->display);
 }
 
-uint64_t X11queryTime
+uint64_t river2D_queryTime
 (
     bool nano
 ){
     struct timespec spec;
 
+    //FIXME: can't find this.
     clock_gettime(CLOCK_REALTIME, &spec);
 
     if(nano)

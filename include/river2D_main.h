@@ -7,6 +7,14 @@
 #define global      static
 #define internal    static
 
+#ifdef BUILD_LINUX
+    #include "X11/Xlib.h"
+#endif
+
+#ifdef BUILD_WINDOWS
+    #include "Windows.h"
+#endif
+
 #define clang_ignore_unused\
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wunused-parameter\"") \
@@ -39,13 +47,6 @@
 #define River2D_BIT_TAB    0b010000
 #define River2D_BIT_ESCAPE 0b100000
 
-typedef struct Dimensions
-{
-    uint32_t width;
-    uint32_t height;
-}
-Dimensions;
-
 typedef struct PerformanceCounter
 {
     uint64_t time;
@@ -53,7 +54,7 @@ typedef struct PerformanceCounter
 }
 PerformanceCounter;
 
-typedef struct Config
+typedef struct River2D_Config
 {
     bool     static_canvas_enable;
     uint32_t static_canvas_width;
@@ -61,28 +62,54 @@ typedef struct Config
 
     //choose renderer here
 }
-Config;
+River2D_Config;
 
-typedef struct Image
+typedef struct River2D_Image
 {
     void*       data;
     char*       format;
-    Dimensions  dimensions;
+    uint32_t    width;
+    uint32_t    height;
 }
 River2D_Image;
 
-typedef struct River2DControlMap
+typedef struct River2D_ControlMap
 {
     uint64_t keymap;
     //others, if more than 64 bits are needed
+    //
+    //later add velocities for gamepads
 }
-River2DControlMap;
+River2D_ControlMap;
+
+typedef struct EngineData
+{
+    bool               running;
+    River2D_ControlMap controls;
+    uint32_t           width;
+    uint32_t           height;
+    const char*        windowName;
+    River2D_Config     config;
+
+#ifdef BUILD_LINUX
+    Display            *display;
+    Screen             *screen;
+    Window             window;
+    GC                 context;
+    Pixmap             pixmap;
+#endif
+
+#ifdef BUILD_WINDOWS
+    ///
+#endif
+}
+EngineData;
 
 void river2D_processControls
 (
     bool              isDown,
     int32_t           key,
-    River2DControlMap *controls
+    River2D_ControlMap *controls
 );
 
 void river2D_updateEditor();
@@ -91,4 +118,9 @@ void river2D_loadImage
 (
     const char*   path,
     River2D_Image *image
+);
+
+extern uint64_t river2D_queryTime
+(
+    bool nano
 );
