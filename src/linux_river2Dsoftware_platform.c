@@ -188,8 +188,15 @@ void river2D_drawFrame
 void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *image
+    River2D_Image *image,
+    uint8_t       pictop
 ){
+    if(pictop > RIVER2D_PICTOP_MAXIMUM)
+    {
+        fprintf(stderr, "Invalid pictop.\n");
+        return;
+    }
+
     if(!engine->backbuffer)
     {
         fprintf(stderr, "No image to composite onto.\n");
@@ -251,8 +258,7 @@ void river2D_compositeImage
     XPutImage(engine->display, engine->compBuffer, engine->context, compSrcImg, 0, 0, 0, 0,
               image->width, image->height);
 
-    //TODO: pass PictOpX as parameter from river2D_composite? only if I need more than add...
-    XRenderComposite(engine->display, PictOpOver, compSrcPict, None, compDestPict,
+    XRenderComposite(engine->display, pictop, compSrcPict, None, compDestPict,
                      0, 0, 0, 0, 0, 0, engine->width, engine->height);
 
     XRenderFreePicture(engine->display, compSrcPict);

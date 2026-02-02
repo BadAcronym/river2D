@@ -57,6 +57,23 @@
 #define RIVER2D_CHANNELS_BGR  3
 #define RIVER2D_CHANNELS_MAX  3
 
+//probably only needed for Xrender
+#define RIVER2D_PICTOP_CLEAR			0
+#define RIVER2D_PICTOP_SRC			    1
+#define RIVER2D_PICTOP_DST			    2
+#define RIVER2D_PICTOP_OVER			    3
+#define RIVER2D_PICTOP_OVERREVERSE		4
+#define RIVER2D_PICTOP_IN			    5
+#define RIVER2D_PICTOP_INREVERSE		6
+#define RIVER2D_PICTOP_OUT			    7
+#define RIVER2D_PICTOP_OUTREVERSE		8
+#define RIVER2D_PICTOP_ATOP			    9
+#define RIVER2D_PICTOP_ATOPREVERSE		10
+#define RIVER2D_PICTOP_XOR			    11
+#define RIVER2D_PICTOP_ADD			    12
+#define RIVER2D_PICTOP_SATURATE			13
+#define RIVER2D_PICTOP_MAXIMUM			13
+
 typedef struct PerformanceCounter
 {
     uint64_t time;
@@ -149,7 +166,8 @@ extern void river2D_destroyImage
 extern void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *image
+    River2D_Image *image,
+    uint8_t       pictop
 );
 
 extern uint64_t river2D_queryTime
