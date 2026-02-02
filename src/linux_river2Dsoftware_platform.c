@@ -209,13 +209,15 @@ void river2D_compositeImage
     }
 
     XImage *compSrcImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
-                                      (char*)image->data, image->width, image->height,
+                                      0, image->width, image->height,
                                       RIVER2D_SCANLINE, 0);
     if(!compSrcImg)
     {
         fprintf(stderr, "Failed to create compSrcImg!\n");
         return;
     }
+    compSrcImg->data = malloc(image->width * image->height * RIVER2D_BPP);
+    memcpy(compSrcImg->data, image->data, image->width * image->height * RIVER2D_BPP);
 
     XImage *compDestImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
                                       0, engine->width, engine->height,
@@ -223,7 +225,6 @@ void river2D_compositeImage
     if(!compDestImg)
     {
         fprintf(stderr, "Failed to create compDestImg!\n");
-        XDestroyImage(compSrcImg);
         return;
     }
 
@@ -247,6 +248,8 @@ void river2D_compositeImage
         river2D_resizeBackbuffer(engine, image->width, image->height);
     }
 
+    //FIXME: heap use after free
+    //but how the fuck. if I create a new ximage every time
     XPutImage(engine->display, engine->compBuffer, engine->context, compSrcImg, 0, 0, 0, 0,
               image->width, image->height);
 
@@ -256,6 +259,12 @@ void river2D_compositeImage
 
     XRenderFreePicture(engine->display, compSrcPict);
     XRenderFreePicture(engine->display, compDestPict);
+
+    XDestroyImage(compSrcImg);
+    if(compDestImg)
+    {
+        XDestroyImage(compDestImg);
+    }
 }
 
 void river2D_resizeBackbuffer
