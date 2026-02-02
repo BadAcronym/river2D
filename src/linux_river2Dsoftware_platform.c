@@ -266,7 +266,7 @@ void river2D_compositeImage
         skipHeight = 1;
     }
 
-    //PERFORMANCE: profiling
+    //PERFORMANCE: profiling, starting time
     River2D_Time time = {0};
     river2D_queryTime(&time);
 
@@ -287,15 +287,15 @@ void river2D_compositeImage
 
     River2D_Time dispatchTime = {0};
     river2D_queryTime(&dispatchTime);
-    engine->dispatchTime.s += dispatchTime.s - time.s;
-
-    int64_t delta = dispatchTime.ns - time.ns;
-    engine->dispatchTime.ns += delta;
-
+    int64_t deltaNSDispatch = dispatchTime.ns - time.ns;
+    if(deltaNSDispatch > 0)
+    {
+        engine->dispatchTime.ns += deltaNSDispatch;
+    }
     if(engine->dispatchTime.ns > 1000000000)
     {
         engine->dispatchTime.ns = 0;
-        ++engine->dispatchTime.s;
+        engine->dispatchTime.s++;
     }
 
     river2D_queryTime(&time);
@@ -316,6 +316,21 @@ void river2D_compositeImage
         }
     }
 
+    River2D_Time singleTime = {0};
+    river2D_queryTime(&singleTime);
+    int64_t deltaNSSingle = singleTime.ns - time.ns;
+    if(deltaNSSingle > 0)
+    {
+        engine->singleTime.ns += deltaNSSingle;
+    }
+    if(engine->singleTime.ns > 1000000000)
+    {
+        engine->singleTime.ns = 0;
+        engine->singleTime.s++;
+    }
+
+    river2D_queryTime(&time);
+
     for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
     {
         if(engine->pool.threads[i])
@@ -325,17 +340,17 @@ void river2D_compositeImage
         }
     }
 
-    River2D_Time idleTime= {0};
+    River2D_Time idleTime = {0};
     river2D_queryTime(&idleTime);
-    engine->idleTime.s += idleTime.s - time.s;
-
-    int64_t delta2 = idleTime .ns - time.ns;
-    engine->idleTime.ns += delta2;
-
+    int64_t deltaNSIdle = idleTime.ns - time.ns;
+    if(deltaNSIdle > 0)
+    {
+        engine->idleTime.ns += deltaNSIdle;
+    }
     if(engine->idleTime.ns > 1000000000)
     {
         engine->idleTime.ns = 0;
-        ++engine->idleTime.s;
+        engine->idleTime.s++;
     }
 }
 
