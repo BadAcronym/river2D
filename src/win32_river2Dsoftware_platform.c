@@ -118,7 +118,8 @@ void river2D_bltBuffer
 (
     EngineData *engine
 ){
+    Win32Backbuffer *buf = engine->backbuffer;
     //FIXME: fixup StretchDIBits call or use something else
-    // StretchDIBits(engine->context, 0, 0, width, height,
-    //               0, 0, buf->width, buf->height, buf->memory, &buf->info, DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(engine->context, 0, 0, (int)engine->width, (int)engine->height,
+                  0, 0, (int)buf->width, (int)buf->height, buf->data, &buf->info, DIB_RGB_COLORS, SRCCOPY);
 }
