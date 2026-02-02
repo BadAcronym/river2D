@@ -60,14 +60,11 @@ int32_t river2D_shutdown
 (
     EngineData *engine
 ){
-    // stuff
     DestroyWindow(engine->window);
 
     return 0;
 }
 
-// TODAY: (river2D #1) multi-thread.
-// look at linux code for reference
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -80,6 +77,12 @@ void river2D_compositeImage
     uint32_t      cropWidth,
     uint32_t      cropHeight
 ){
+    if(pictop != RIVER2D_PICTOP_OVER)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: pictop %u not impletmented on windows.\033[0m\n", pictop);
+        return;
+    }
+
     if(!image)
     {
         fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
@@ -98,30 +101,36 @@ void river2D_compositeImage
     }
 
     // TODAY: (river2D #5) verify that both images are actually RGBA
-    // (in other words, that there's enough space)
-    // also validate that offset doesn't exceed buffer destination image
 
     uint64_t copyWidth  = image->width * RIVER2D_BPP;
-    uint64_t srcCutoffX = cropWidth * RIVER2D_BPP;
     uint64_t bufWidth   = engine->backbuffer.width * RIVER2D_BPP;
 
-    uint8_t *dest = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth +
-                    offsetDstX * RIVER2D_BPP;
+    if(offsetDstX + cropWidth > engine->backbuffer.width)
+    {
+        cropWidth = engine->backbuffer.width - offsetDstX;
+    }
 
-    uint8_t *src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
+    if(offsetDstY + cropHeight > engine->backbuffer.height)
+    {
+        cropHeight = engine->backbuffer.height - offsetDstY;
+    }
 
+    uint8_t *dst = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth + offsetDstX * RIVER2D_BPP;
+    uint8_t *src = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
+
+    cropWidth *= RIVER2D_BPP;
     for(uint32_t y = 0; y < cropHeight; ++y)
     {
-        for(uint32_t x = 0; x < srcCutoffX; x += RIVER2D_BPP)
+        for(uint32_t x = 0; x < cropWidth; x += RIVER2D_BPP)
         {
             uint64_t srcIndex = y * copyWidth + x;
             uint64_t dstIndex = y * bufWidth + x;
             if(src[srcIndex + 3])
             {
-                dest[dstIndex]     = src[srcIndex];
-                dest[dstIndex + 1] = src[srcIndex + 1];
-                dest[dstIndex + 2] = src[srcIndex + 2];
-                dest[dstIndex + 3] = src[srcIndex + 3];
+                dst[dstIndex]     = src[srcIndex];
+                dst[dstIndex + 1] = src[srcIndex + 1];
+                dst[dstIndex + 2] = src[srcIndex + 2];
+                dst[dstIndex + 3] = src[srcIndex + 3];
             }
         }
     }
