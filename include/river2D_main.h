@@ -38,9 +38,10 @@
 #define clang_diagnostic_pop\
     _Pragma("clang diagnostic pop")\
 
-#define RIVER2D_BPP        4
-#define RIVER2D_PIXDEPTH   32
-#define RIVER2D_MAX_PLANES 64
+#define RIVER2D_BPP         4
+#define RIVER2D_PIXDEPTH    32
+#define RIVER2D_MAX_PLANES  64
+#define RIVER2D_MAX_THREADS 16
 
 #define RIVER2D_KEY_UP         0
 #define RIVER2D_KEY_LEFT       1
@@ -121,16 +122,23 @@ typedef struct River2D_ControlMap
 }
 River2D_ControlMap;
 
-typedef struct pictopData
+typedef struct PictopData
 {
-    uint32_t x;
-    uint32_t y;
+    uint32_t threadHeight;
+    uint64_t srcCutoffX;
     uint64_t copyWidth;
     uint64_t bufWidth;
     uint8_t  *src;
     uint8_t  *dest;
 }
-pictopData;
+PictopData;
+
+typedef struct ThreadData
+{
+    PictopData *data;
+    uint32_t   y;
+}
+ThreadData;
 
 //TODAY: revise in favour of floats 0.0f - 1.0f
 //I think that's less prone to errors than absolute screen coords...
@@ -153,20 +161,8 @@ X11Backbuffer;
 //TODO: think about a better way to structure these, maybe?
 typedef struct PosixThreadpool
 {
-    pthread_t thread1;
-    pthread_t thread2;
-    pthread_t thread3;
-    pthread_t thread4;
-    pthread_t thread5;
-    pthread_t thread6;
-    pthread_t thread7;
-    pthread_t thread8;
-    pthread_t thread9;
-    pthread_t thread11;
-    pthread_t thread12;
-    pthread_t thread13;
-    pthread_t thread14;
-    pthread_t thread15;
+    pthread_t  threads[RIVER2D_MAX_THREADS];
+    ThreadData *threadData[RIVER2D_MAX_THREADS];
 }
 PosixThreadpool;
 #elif defined(BUILD_WINDOWS)

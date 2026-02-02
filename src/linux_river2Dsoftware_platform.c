@@ -1,5 +1,6 @@
 #include "river2D_main.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <memory.h>
 #include <stdlib.h>
@@ -127,6 +128,11 @@ void river2D_init
         river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
 
+    for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
+    {
+        engine->pool.threadData[i] = (ThreadData*)malloc(sizeof(ThreadData));
+    }
+
     River2D_Time time;
     river2D_queryTime(&time);
     engine->lastFrametime = time;
@@ -169,30 +175,36 @@ int32_t river2D_shutdown
     return 0;
 }
 
+//FIXME: not using proper portion
 internal void *pictopOver
 (
-    void *voidData
+    void *data
 ){
-    pictopData *data = (pictopData*)voidData;
-
-    uint64_t srcIndex = data->y * data->copyWidth + data->x;
-    uint64_t dstIndex = data->y * data->bufWidth + data->x;
-    if(data->src[srcIndex + 3])
+    for(uint32_t y = 0; y < ((ThreadData*)data)->data->threadHeight; ++y)
     {
-        data->dest[dstIndex]     = data->src[srcIndex];
-        data->dest[dstIndex + 1] = data->src[srcIndex + 1];
-        data->dest[dstIndex + 2] = data->src[srcIndex + 2];
-        data->dest[dstIndex + 3] = data->src[srcIndex + 3];
+        for(uint32_t x = 0; x < ((ThreadData*)data)->data->srcCutoffX; x += RIVER2D_BPP)
+        {
+            uint64_t srcIndex = (((ThreadData*)data)->y + y) *
+                                ((ThreadData*)data)->data->copyWidth + x;
+
+            uint64_t dstIndex = (((ThreadData*)data)->y + y) *
+                                ((ThreadData*)data)->data->bufWidth + x;
+
+            uint8_t  *src  = ((ThreadData*)data)->data->src;
+            uint8_t  *dest = ((ThreadData*)data)->data->dest;
+            if(src[srcIndex + 3])
+            {
+                dest[dstIndex]     = src[srcIndex];
+                dest[dstIndex + 1] = src[srcIndex + 1];
+                dest[dstIndex + 2] = src[srcIndex + 2];
+                dest[dstIndex + 3] = src[srcIndex + 3];
+            }
+        }
     }
 
     return 0;
 }
 
-//TODAY: multi-thread.
-//1 pixel at a time for each thread, if possible.
-//this is by far the biggest bottleneck.
-//pthread_t seems to be real easy to work with.
-//I wonder if windows has a good equivalent...
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -234,42 +246,67 @@ void river2D_compositeImage
 
     //TODO: validate that offset doesn't exceed buffer destination image
 
-    uint32_t srcCutoffX = cropWidth * RIVER2D_BPP;
-    uint64_t copyWidth  = image->width * RIVER2D_BPP;
-    uint64_t bufWidth   = engine->backbuffer.width * RIVER2D_BPP;
-    uint8_t  *dest = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth +
-                    offsetDstX * RIVER2D_BPP;
-    uint8_t  *src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
-
-    //TODAY: try thread for each height?
-    for(uint32_t y = 0; y < cropHeight; ++y)
+    PictopData pictopData =
     {
-        for(uint32_t x = 0; x < srcCutoffX; x += RIVER2D_BPP)
+        .threadHeight = floor(cropHeight / RIVER2D_MAX_THREADS),
+        .srcCutoffX = cropWidth * RIVER2D_BPP,
+        .copyWidth  = image->width * RIVER2D_BPP,
+        .bufWidth   = engine->backbuffer.width * RIVER2D_BPP,
+        .dest = (uint8_t*)engine->backbuffer.data + offsetDstY * pictopData.bufWidth +
+                offsetDstX * RIVER2D_BPP,
+        .src  = image->data + offsetSrcY * pictopData.copyWidth + offsetSrcX * RIVER2D_BPP
+    };
+
+    uint32_t y = 0;
+    uint32_t skipHeight = pictopData.threadHeight * RIVER2D_MAX_THREADS;
+    uint32_t stopHeight = cropHeight - pictopData.threadHeight;
+
+    if(!skipHeight)
+    {
+        pictopData.threadHeight = 1;
+        skipHeight = 1;
+    }
+
+    for(uint8_t i = 0; i < RIVER2D_MAX_THREADS && y < cropHeight; ++i)
+    {
+        if(y > stopHeight)
         {
-        //     uint64_t srcIndex = y * copyWidth + x;
-        //     uint64_t dstIndex = y * bufWidth + x;
-        //     if(src[srcIndex + 3])
-        //     {
-        //         dest[dstIndex]     = src[srcIndex];
-        //         dest[dstIndex + 1] = src[srcIndex + 1];
-        //         dest[dstIndex + 2] = src[srcIndex + 2];
-        //         dest[dstIndex + 3] = src[srcIndex + 3];
-        //     }
-            pictopData data =
+            break;
+        }
+        engine->pool.threadData[i]->y = y;
+        engine->pool.threadData[i]->data = &pictopData;
+
+        pthread_create(&engine->pool.threads[i], 0, pictopOver,
+                       (void*)engine->pool.threadData[i]);
+
+        y += pictopData.threadHeight;
+    }
+
+    for(; y < cropHeight; ++y)
+    {
+        for(uint32_t x = 0; x < pictopData.srcCutoffX; x += RIVER2D_BPP)
+        {
+            uint64_t srcIndex = y * pictopData.copyWidth + x;
+            uint64_t dstIndex = y * pictopData.bufWidth + x;
+            uint8_t  *src  = pictopData.src;
+            uint8_t  *dest = pictopData.dest;
+
+            if(src[srcIndex + 3])
             {
-                .x = x,
-                .y = y,
-                .copyWidth = copyWidth,
-                .bufWidth  = bufWidth,
-                .src  = src,
-                .dest = dest,
-            };
-            pthread_create(&engine->pool.thread1, 0, pictopOver, (void*)&data);
-            //WIP: DEBUG
-            fprintf(stderr, "thread1 created.\n");
-            pthread_join(engine->pool.thread1, 0);
-            //WIP: DEBUG
-            fprintf(stderr, "thread1 joined.\n");
+                dest[dstIndex]     = src[srcIndex];
+                dest[dstIndex + 1] = src[srcIndex + 1];
+                dest[dstIndex + 2] = src[srcIndex + 2];
+                dest[dstIndex + 3] = src[srcIndex + 3];
+            }
+        }
+    }
+
+    for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
+    {
+        if(engine->pool.threads[i])
+        {
+            pthread_join(engine->pool.threads[i], 0);
+            engine->pool.threads[i] = 0;
         }
     }
 }
