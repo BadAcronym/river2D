@@ -35,7 +35,8 @@ project("river2D binary")
                 "./include/win32_river2D*",
                 "./src/river2D*",
                 "./include/river2D*" })
-        includedirs({"./include/", "./vendor/imgsurf/include"})
+        includedirs({"./include/", "./vendor/imgsurf/include",
+            "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/km/"})
         libdirs({"./vendor/imgsurf/bin/**"})
         ignoredefaultlibraries({ "MSVCRT" })
 
@@ -98,7 +99,8 @@ project("river2D software renderer")
                "./include/win32_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
-        includedirs({"./include/", "./vendor/imgsurf/include/"})
+        includedirs({"./include/", "./vendor/imgsurf/include",
+            "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/km/"})
         ignoredefaultlibraries({ "MSVCRT" })
 
     filter("platforms:Linux")
