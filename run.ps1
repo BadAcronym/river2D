@@ -23,28 +23,10 @@ if(-Not(Test-Path "./bin/"))
     &mkdir "./bin/"
 }
 
-foreach($platform in $Platforms)
-{
-    foreach($config in $Configurations)
-    {
-        $objPath = "./obj/$platform" + "_$config"
-        if(-Not(Test-Path $objPath))
-        {
-            &mkdir $objPath
-        }
-
-        $binPath = "./bin/$platform" + "_$config"
-        if(-Not(Test-Path $binPath))
-        {
-            &mkdir $binPath
-        }
-    }
-}
-
 if(Test-Path "./vendor/imgsurf/run.ps1")
 {
     Push-Location "./vendor/imgsurf/"
-    &./run.ps1 -dontrun
+    &./run.ps1 $build -dontrun
     Pop-Location
 }
 
@@ -70,7 +52,7 @@ if($IsLinux)
     &make config=$makecfg
     Pop-Location
 
-    $target = "./bin/Linux" + "_$build/$targetname"
+    $target = "./bin/$targetname" + "_linux/$build/$targetname"
 
     if(Test-Path $target)
     {
