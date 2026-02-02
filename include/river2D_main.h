@@ -25,10 +25,13 @@
 
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
+//find a way to define at runtime and just load a set of keycodes
 #define River2D_KEY_UP    41
 #define River2D_KEY_LEFT  27
 #define River2D_KEY_RIGHT 28
 #define River2D_KEY_DOWN  39
+
+#define River2D_KEY_TAB   23
 
 #define River2D_DIR_UP    0b0001
 #define River2D_DIR_DOWN  0b0010
