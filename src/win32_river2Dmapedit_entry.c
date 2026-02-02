@@ -85,16 +85,13 @@ LRESULT CALLBACK win32WindowCallback
         }
         case WM_PAINT:
         {
-            PAINTSTRUCT paintStruct;
-            HDC context = BeginPaint(window, &paintStruct);
+            // PAINTSTRUCT paintStruct;
+            // HDC context = BeginPaint(window, &paintStruct);
 
-            //FIXME: how to blt here without passing engine?
-            // Win32WindowDimensions dim = win32GetWindowDimensions(window);
-            // win32BltBuf(&global_backbuffer, context, dim.width, dim.height);
-                //
+            //FIXME: how to blt here without using a global backbuffer?
             // river2D_bltBuffer(&engine);
-
-            EndPaint(window, &paintStruct);
+            //
+            // EndPaint(window, &paintStruct);
             break;
         }
         case WM_KEYDOWN:
