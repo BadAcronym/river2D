@@ -10,6 +10,83 @@ int main()
 }
 #endif
 
+LRESULT CALLBACK win32WindowCallback
+(
+    HWND   window,
+    UINT   message,
+    WPARAM wParam,
+    LPARAM lParam
+){
+    switch(message)
+    {
+        case WM_DESTROY:
+        {
+            printf("WM_DESTROY\n");
+            break;
+        }
+        case WM_CLOSE:
+        {
+            running = false;
+            break;
+        }
+        case WM_ACTIVATEAPP:
+        {
+            printf("WM_ACTIVATEAPP\n");
+            break;
+        }
+        case WM_PAINT:
+        {
+            PAINTSTRUCT paintStruct;
+            HDC context = BeginPaint(window, &paintStruct);
+
+            Win32WindowDimensions dim = win32GetWindowDimensions(window);
+
+            //FIXME: how to blt here without passing engine?
+            // win32BltBuf(&global_backbuffer, context, dim.width, dim.height);
+            // river2D_bltBuffer(&engine);
+
+            EndPaint(window, &paintStruct);
+            break;
+        }
+        case WM_KEYDOWN:
+        {
+        }
+        case WM_KEYUP:
+        {
+            bool wasKeyDown = (lParam & (1 << 30)) != 0;
+            bool isKeyDown  = (lParam & (1 << 31)) == 0;
+
+            if(wasKeyDown == isKeyDown)
+            {
+                break;
+            }
+
+            // if(wParam == PLAYER1_UP)
+            // {
+            //     global_keyMap.player1_up = isKeyDown;
+            // }
+            // else if(wParam == PLAYER1_DOWN)
+            // {
+            //     global_keyMap.player1_down = isKeyDown;
+            // }
+            // else if(wParam == PLAYER2_UP)
+            // {
+            //     global_keyMap.player2_up = isKeyDown;
+            // }
+            // else if(wParam == PLAYER2_DOWN)
+            // {
+            //     global_keyMap.player2_down = isKeyDown;
+            // }
+        }
+        default:
+        {
+            return DefWindowProcA(window, message, wParam, lParam);
+        }
+    }
+
+    return 0;
+}
+
 clang_ignore_unused
 int CALLBACK WinMain
 (
@@ -26,17 +103,33 @@ int CALLBACK WinMain
     EngineData    engine = {0};
     River2D_Image planes[RIVER2D_MAX_PLANES] = {0};
 
-    engine->instance = instance;
+    engine.instance = instance;
 
     river2D_init(&engine, planes);
 
-    bool running = true;
+    WNDCLASS wc = {0};
 
-    if(!engine->window)
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = win32WindowCallback;
+    wc.hInstance = engine->instance;
+    wc.lpszClassName = "River2DClass";
+
+    if(!RegisterClassA(&wc))
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to obtain window handle!\033[0m\n");
-        return GetLastError();
-    }
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to register window class!\033[0m\n");
+    };
+
+    int x      = CW_USEDEFAULT;
+    int y      = CW_USEDEFAULT;
+    int width  = CW_USEDEFAULT;
+    int height = CW_USEDEFAULT;
+
+    engine->window = CreateWindowExA(0, wc.lpszClassName, "River2D",
+                                     WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+                                     x, y, width, height,
+                                     0, 0, instance, 0);
+
+    bool running = true;
 
     while(running)
     {
