@@ -137,6 +137,15 @@ typedef struct Coordinates
 }
 Coordinates;
 
+typedef struct Area
+{
+    Coordinates upperLeft;
+    Coordinates upperRight;
+    Coordinates lowerLeft;
+    Coordinates lowerRight;
+}
+Area;
+
 typedef struct Dimensions
 {
     uint32_t width;
@@ -264,4 +273,10 @@ extern const char* river2D_contains
 extern Dimensions river2D_getWindowSize
 (
     EngineData *engine
+);
+
+extern bool river2D_insideArea
+(
+    Coordinates *point,
+    Area        *area
 );

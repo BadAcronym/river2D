@@ -242,3 +242,15 @@ void river2D_loadConfig
         config->window_height = 1440;
     }
 }
+
+bool river2D_insideArea
+(
+    Coordinates *point,
+    Area        *area
+){
+    // in the future, handle non parallel cases..?
+    // if(area->upperLeft.x == area->lowerLeft.x && area->upperRight.x && ...)
+
+    return(point->x > area->upperLeft.x && point->x < area->upperRight.x &&
+           point->y > area->upperLeft.y && point->y < area->lowerRight.y);
+}
