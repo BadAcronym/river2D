@@ -58,7 +58,7 @@ project("river2D_software")
     language("C++")
     cppdialect("C++23")
     warnings("Extra")
-    kind("SharedLib")
+    kind("StaticLib")
     targetname("river2Dsoftware")
 
     filter("configurations:debug")
