@@ -74,7 +74,7 @@ project("river2D common functions")
     warnings("Extra")
     kind("StaticLib")
     targetname("river2Dcommon")
-    links({"imgsurf:static"})
+    links("imgsurf:static")
 
     filter("configurations:debug")
         defines{"DEBUG"}
@@ -103,7 +103,7 @@ project("river2D common functions")
         libdirs({"./vendor/imgsurf/bin/**",
             "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/km/x64/"})
         ignoredefaultlibraries({ "MSVCRT" })
-        links({"ntoskrnl.lib"})
+        links("ntoskrnl:static")
 
     filter("platforms:Linux")
         system("Linux")
