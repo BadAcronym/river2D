@@ -1,4 +1,4 @@
-#include "river2Dsoftware_main.h"
+#include "river2D_main.h"
 
 #include <stdio.h>
 #include <stdlib.h>
