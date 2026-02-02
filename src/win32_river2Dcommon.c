@@ -61,3 +61,12 @@ uint8_t river2D_interpretCharAsKey
     }
     return 0;
 }
+
+Dimensions river2D_getWindowSize
+(
+    EngineData *engine
+){
+    //TODO: query win32 for window size
+    Dimensions dim = {0};
+    return dim;
+}
