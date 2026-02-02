@@ -56,8 +56,9 @@ Window river2D_openWindow
     attributes.override_redirect = false;
 
     Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display),
-                                  0, 0, engine->width, engine->height, 0, RIVER2D_PIXDEPTH,
-                                  InputOutput, engine->visual, valuemask, &attributes);
+                                  0, 0, engine->config.width, engine->config.height,
+                                  0, RIVER2D_PIXDEPTH, InputOutput, engine->visual,
+                                  valuemask, &attributes);
 
     XStoreName(engine->display, window, engine->windowName);
     XSelectInput(engine->display, window, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
@@ -66,7 +67,6 @@ Window river2D_openWindow
     return window;
 }
 
-//TODAY: rework to simple free/alloc like win32 equiv
 void river2D_resizeBackbuffer
 (
     EngineData *engine,
@@ -78,9 +78,8 @@ void river2D_resizeBackbuffer
         free(engine->backbuffer.data);
     }
     engine->backbuffer.data = calloc(width * height * RIVER2D_BPP, 1);
-
-    engine->width  = width;
-    engine->height = height;
+    engine->backbuffer.width  = width;
+    engine->backbuffer.height = height;
 }
 
 void river2D_init
@@ -89,9 +88,6 @@ void river2D_init
     River2D_Image      *planes
 ){
     river2D_loadConfig(&engine->config);
-
-    engine->width  = engine->config.width;
-    engine->height = engine->config.height;
 
     engine->planes = planes;
 
@@ -125,11 +121,6 @@ void river2D_init
     {
         fprintf(stderr, "Failed to create Graphics Context!\n");
     }
-
-    //TESTING: pixmap from backbuffer?
-    // engine->backbuffer.pixmap = XCreatePixmap(engine->display, engine->window,
-    //                                           engine->config.width, engine->config.height,
-    //                                           RIVER2D_PIXDEPTH);
 
     if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
     {
@@ -178,7 +169,6 @@ int32_t river2D_shutdown
     return 0;
 }
 
-//FIXME: nothing fails, but nothing displays, either.
 void river2D_bltBuffer
 (
     EngineData *engine
@@ -187,21 +177,26 @@ void river2D_bltBuffer
                                   0, (char*)engine->backbuffer.data, engine->config.width,
                                   engine->config.height, RIVER2D_SCANLINE, 0);
 
-    Pixmap pixmap = XCreatePixmap(engine->display, engine->window,
-                                  engine->config.width, engine->config.height,
-                                  RIVER2D_PIXDEPTH);
+    // Pixmap pixmap = XCreatePixmap(engine->display, engine->window,
+    //                               engine->config.width, engine->config.height,
+    //                               RIVER2D_PIXDEPTH);
+
+    Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window,
+                                                (char*)engine->backbuffer.data,
+                                                engine->backbuffer.width, engine->backbuffer.height,
+                                                0x00000000, 0x00000000, RIVER2D_PIXDEPTH);
 
     XPutImage(engine->display, pixmap, engine->context, bufImg, 0, 0, 0, 0,
               engine->backbuffer.width, engine->backbuffer.height);
 
     XCopyArea(engine->display, pixmap, engine->window, engine->context, 0, 0,
-              engine->config.width, engine->config.height, 0, 0);
+              engine->backbuffer.width, engine->backbuffer.height, 0, 0);
 
     XFlush(engine->display);
 
     XSetForeground(engine->display, engine->context, 0x00000000);
     XFillRectangle(engine->display, pixmap, engine->context, 0, 0,
-                   engine->width, engine->height);
+                   engine->backbuffer.width, engine->backbuffer.height);
 
     XFree(bufImg);
     XFreePixmap(engine->display, pixmap);
