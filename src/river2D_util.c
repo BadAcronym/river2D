@@ -248,25 +248,19 @@ bool river2D_insideArea
     Coordinates *point,
     Area        *area
 ){
-    // in the future, handle non parallel cases..?
+    // TODO:
+    // in the future, handle non parallel cases.
     // if(area->upperLeft.x == area->lowerLeft.x && area->upperRight.x && ...)
 
     return(point->x > area->upperLeft.x && point->x < area->upperRight.x &&
            point->y > area->upperLeft.y && point->y < area->lowerRight.y);
 }
 
-void river2D_completeRect
+bool river2D_insideRect
 (
-    Area        *area,
-    Coordinates *upperLeft,
-    Coordinates *lowerRight
+    Coordinates *point,
+    Rect        *rect
 ){
-    area->upperLeft  = *upperLeft;
-    area->lowerRight = *lowerRight;
-
-    area->upperRight.x = lowerRight->x;
-    area->upperRight.y = upperLeft->y;
-
-    area->lowerLeft.x  = upperLeft->x;
-    area->lowerLeft.y  = lowerRight->y;
+    return(point->x > rect->upperLeft.x && point->x < rect->lowerRight.x &&
+           point->y > rect->upperLeft.y && point->y < rect->lowerRight.y);
 }

@@ -13,6 +13,7 @@
 #ifdef BUILD_LINUX
     #include "X11/Xlib.h"
     #include "X11/Xutil.h"
+    #include "X11/Xcursor/Xcursor.h"
     #include "X11/extensions/Xrender.h"
 
     #define __USE_POSIX199309
@@ -146,6 +147,13 @@ typedef struct Area
 }
 Area;
 
+typedef struct Rect
+{
+    Coordinates upperLeft;
+    Coordinates lowerRight;
+}
+Rect;
+
 typedef struct Dimensions
 {
     uint32_t width;
@@ -275,10 +283,22 @@ extern Dimensions river2D_getWindowSize
     EngineData *engine
 );
 
+extern void river2D_changeCursor
+(
+    EngineData    *engine,
+    River2D_Image *image
+);
+
 extern bool river2D_insideArea
 (
     Coordinates *point,
     Area        *area
+);
+
+extern bool river2D_insideRect
+(
+    Coordinates *point,
+    Rect        *rect
 );
 
 extern void river2D_completeRect

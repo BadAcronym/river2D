@@ -71,3 +71,18 @@ Dimensions river2D_getWindowSize
 
     return dim;
 }
+
+void river2D_changeCursor
+(
+    EngineData    *engine,
+    River2D_Image *image
+){
+    XcursorImage ximg = {0};
+    ximg.pixels = (uint32_t*)image->data;
+    ximg.width  = image->width;
+    ximg.height = image->height;
+
+    Cursor cursor = XcursorImageLoadCursor(engine->display, &ximg);
+
+    XDefineCursor(engine->display, engine->window, cursor);
+}
