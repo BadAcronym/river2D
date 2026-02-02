@@ -40,7 +40,10 @@ void river2D_init
     engine->running = true;
     engine->planes  = planes;
 
-    engine->windowName = "unnamed river2D application";
+    if(!engine->windowName)
+    {
+        engine->windowName = "unnamed river2D application";
+    }
 
     if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
     {
