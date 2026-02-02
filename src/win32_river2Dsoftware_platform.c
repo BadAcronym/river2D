@@ -1,47 +1,48 @@
 #include "river2D_main.h"
 
-#include "win32_river2D_platform.h"
+#include "win32_river2Dsoftware_platform.h"
 
-clang_ignore_unused
-
-#define X_INPUT_GET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_STATE *pState)
-typedef X_INPUT_GET_STATE(x_input_get_state);
-X_INPUT_GET_STATE(XInputGetState_Stub)
-{
-    return 0;
-}
-global x_input_get_state *XInputGetState_ = XInputGetState_Stub;
-#define XInputGetState XInputGetState_
-
-#define X_INPUT_SET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration)
-typedef X_INPUT_SET_STATE(x_input_set_state);
-X_INPUT_SET_STATE(XInputSetState_Stub)
-{
-    return 0;
-}
-global x_input_set_state *XInputSetState_ = XInputSetState_Stub;
-#define XInputSetState XInputSetState_
-
-clang_diagnostic_pop
-
-void win32LoadXInput(void)
-{
-    HMODULE XInputLibrary = LoadLibraryA("xinput1_4.dll");
-    if(!XInputLibrary)
-    {
-        XInputLibrary = LoadLibraryA("xinput1_3.dll");
-    }
-
-    if(XInputLibrary)
-    {
-        clang_ignore_functype_mismatch
-
-        XInputGetState = (x_input_get_state*)GetProcAddress(XInputLibrary, "XInputGetState");
-        XInputSetState = (x_input_set_state*)GetProcAddress(XInputLibrary, "XInputSetState");
-
-        clang_diagnostic_pop
-    }
-}
+//TODO: move to win32 input
+// clang_ignore_unused
+//
+// #define X_INPUT_GET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_STATE *pState)
+// typedef X_INPUT_GET_STATE(x_input_get_state);
+// X_INPUT_GET_STATE(XInputGetState_Stub)
+// {
+//     return 0;
+// }
+// global x_input_get_state *XInputGetState_ = XInputGetState_Stub;
+// #define XInputGetState XInputGetState_
+//
+// #define X_INPUT_SET_STATE(name) DWORD WINAPI name(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration)
+// typedef X_INPUT_SET_STATE(x_input_set_state);
+// X_INPUT_SET_STATE(XInputSetState_Stub)
+// {
+//     return 0;
+// }
+// global x_input_set_state *XInputSetState_ = XInputSetState_Stub;
+// #define XInputSetState XInputSetState_
+//
+// clang_diagnostic_pop
+//
+// void win32LoadXInput(void)
+// {
+//     HMODULE XInputLibrary = LoadLibraryA("xinput1_4.dll");
+//     if(!XInputLibrary)
+//     {
+//         XInputLibrary = LoadLibraryA("xinput1_3.dll");
+//     }
+//
+//     if(XInputLibrary)
+//     {
+//         clang_ignore_functype_mismatch
+//
+//         XInputGetState = (x_input_get_state*)GetProcAddress(XInputLibrary, "XInputGetState");
+//         XInputSetState = (x_input_set_state*)GetProcAddress(XInputLibrary, "XInputSetState");
+//
+//         clang_diagnostic_pop
+//     }
+// }
 
 void win32ResizeDIBSection
 (
@@ -83,16 +84,15 @@ void win32BltBuf
                   DIB_RGB_COLORS, SRCCOPY);
 }
 
-Time win32QueryTime(void)
-{
-    LARGE_INTEGER timestamp;
-    LARGE_INTEGER frequency;
-    Time t1;
+//TEST: verify if time outputs correctly
+void river2D_queryTime
+(
+    River2D_Time *time
+){
+    LARGE_INTEGER time;
 
-    QueryPerformanceCounter(&timestamp);
-    QueryPerformanceFrequency(&frequency);
-    t1.time = timestamp.QuadPart;
-    t1.freq = frequency.QuadPart;
+    KeQuerySystemTimePrecise(&time);
 
-    return t1;
+    time->s = time.QuadPart / 10000000;
+    time->ns = time.QuadPart * 100;
 }
