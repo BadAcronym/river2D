@@ -124,34 +124,6 @@ typedef struct River2D_ControlMap
 }
 River2D_ControlMap;
 
-typedef struct PictopData
-{
-    uint32_t threadHeight;
-    uint64_t srcCutoffX;
-    uint64_t copyWidth;
-    uint64_t bufWidth;
-    uint8_t  *src;
-    uint8_t  *dst;
-}
-PictopData;
-
-typedef struct ScaleData
-{
-    uint32_t threadHeight;
-    uint32_t ogWidth;
-    uint8_t  factor;
-    uint32_t *src;
-    uint32_t *dst;
-}
-ScaleData;
-
-// typedef struct ThreadData
-// {
-//     void           *data;
-//     uint32_t       y;
-// }
-// ThreadData;
-
 typedef struct Coordinates
 {
     double x;
@@ -171,9 +143,6 @@ X11Backbuffer;
 typedef struct PosixThreadpool
 {
     pthread_t  threads[RIVER2D_MAX_THREADS];
-    // ThreadData *threadData[RIVER2D_MAX_THREADS];
-    ScaleData  *scaleData[RIVER2D_MAX_THREADS];
-    PictopData *pictopData[RIVER2D_MAX_THREADS];
 }
 PosixThreadpool;
 #elif defined(BUILD_WINDOWS)

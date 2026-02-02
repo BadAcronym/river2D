@@ -1,6 +1,5 @@
 #include "river2D_main.h"
 
-#include <math.h>
 #include <stdio.h>
 #include <memory.h>
 #include <stdlib.h>
@@ -127,12 +126,6 @@ void river2D_init
         river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
 
-    for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
-    {
-        engine->pool.scaleData[i] = (ScaleData*)malloc(sizeof(ScaleData));
-        engine->pool.pictopData[i] = (PictopData*)malloc(sizeof(PictopData));
-    }
-
     River2D_Time time = river2D_queryTime();
     engine->lastFrametime  = time;
     engine->lastFPStime    = time;
@@ -179,7 +172,6 @@ int32_t river2D_shutdown
     return 0;
 }
 
-//TODAY: (river2 #15) improve multi-threading to actually max out the CPU
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -219,39 +211,28 @@ void river2D_compositeImage
     //TODAY: (river2D #5) verify source image channelcount, destination (backbuf) is always RGB w/o A
     //also validate that offset doesn't exceed buffer destination image
 
-    uint32_t copyWidth = image->width * RIVER2D_BPP;
-    uint32_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;
-    uint8_t* dst = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth +
-           offsetDstX * RIVER2D_BPP;
-    uint8_t* src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
+    uint8_t  bpp = engine->config.depth / 8;
+    uint32_t copyWidth = image->width * bpp;
+    uint32_t bufWidth  = engine->backbuffer.width * bpp;
 
-    //TODAY: send this data to a command queue
-}
+    uint8_t *dest = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth + offsetDstX * bpp;
 
-internal void *blt
-(
-    void *data
-){
-    ScaleData *sd = (ScaleData*)data;
-    uint32_t bltWidth = sd->ogWidth * sd->factor;
+    uint8_t *src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
 
-    for(uint32_t y = 0; y < sd->threadHeight; ++y)
+    for(uint32_t y = 0; y < cropHeight; ++y)
     {
-        for(uint32_t x = 0; x < sd->ogWidth; ++x)
+        for(uint32_t x = 0; x < cropWidth; x += RIVER2D_BPP)
         {
-            for(uint8_t i = 0; i < sd->factor; ++i)
+            uint64_t srcIndex = y * copyWidth + x;
+            uint64_t dstIndex = y * bufWidth  + x;
+            if(src[srcIndex + 3])
             {
-                *sd->dst++ = *sd->src;
+                dest[dstIndex]     = src[srcIndex];
+                dest[dstIndex + 1] = src[srcIndex + 1];
+                dest[dstIndex + 2] = src[srcIndex + 2];
             }
-            ++sd->src;
-        }
-        for(uint8_t i = 0; i < sd->factor - 1; ++i)
-        {
-            memcpy(sd->dst, sd->dst - bltWidth, bltWidth * RIVER2D_BPP);
         }
     }
-
-    pthread_exit(0);
 }
 
 void river2D_bltBuffer
@@ -259,189 +240,70 @@ void river2D_bltBuffer
     EngineData *engine,
     uint8_t    factor
 ){
-    //TODAY: (river2D #4) oh boy. now it's time to create a way to stretch this thing.
-    //probably will have to treat each pixel in the backbuffer as a vertex.
-    //I can pass the backbuffer through a multi-threaded function which goes through each pixel
-    //in the desired buffer size (which will be the bufImg here) and calculates its value, based
-    //on some filtering of the source pixel and possibly its neighbours. I only want to scale up
-    //here, not down. If the desired buffer size is bigger than the window, I don't care. Or that
-    //is to say, that should probably be handled by some other downscaling function. for now,
-    //let's upscale.
-
     if(factor == 0)
     {
         fprintf(stderr, "\033[33;3;1m0 is an invalid scaling factor.\033[0m\n");
+        return;
     }
 
-    XImage *bufImg = 0;
-    int bltWidth   = 0;
-    int bltHeight  = 0;
+    XImage   *bufImg   = 0;
+    uint64_t bltWidth  = engine->backbuffer.width  * factor;
+    uint64_t bltHeight = engine->backbuffer.height * factor;
+    uint8_t  bpp       = engine->config.depth / 8;
 
-    //TODAY: (river2D #4): we are now multi-threaded but again just slower than our single-
-    //threaded counterpart. is this some sort of aliasing problem?
-    //try calculating the starting y index for both dest and src before spawning the thread,
-    //maybe that helps.
-    //don't pass the original src[] at all, possibly that is waited upon
-
-    if(factor != 1)
+    if(factor == 1)
     {
-        bltWidth  = engine->backbuffer.width  * factor;
-        bltHeight = engine->backbuffer.height * factor;
-
-        bufImg = XCreateImage(engine->display, engine->visual, engine->config.depth,
-                              ZPixmap, 0, 0, bltWidth, bltHeight,
-                              RIVER2D_SCANLINE, 0);
-
-        bufImg->data = malloc(bltWidth * bltHeight * engine->config.depth / 8);
-
-        uint32_t y = 0;
-        uint32_t stopHeight = engine->backbuffer.height - RIVER2D_MAX_THREADS;
-        uint32_t threadHeight = floor(engine->backbuffer.height / RIVER2D_MAX_THREADS);
-
-        struct sched_param threadParam =
+        //LEAK: from calloc <- XCreateImage
+        bufImg = XCreateImage(engine->display, engine->visual, engine->config.depth, ZPixmap, 0,
+                              (char*)engine->backbuffer.data, bltWidth, bltHeight, RIVER2D_SCANLINE, 0);
+        if(!bufImg)
         {
-            .sched_priority = 90
-        };
-
-        // pthread_attr_t threadAttr;
-        //
-        // if(pthread_attr_init(&threadAttr))
-        // {
-        //     fprintf(stderr, "pthread_attr_init failed.\n");
-        // }
-        // if(pthread_attr_setschedpolicy(&threadAttr, SCHED_FIFO))
-        // {
-        //     fprintf(stderr, "pthread_attr_setschedpolicy failed.\n");
-        // }
-        // if(pthread_attr_setschedparam(&threadAttr, &threadParam))
-        // {
-        //     fprintf(stderr, "pthread_attr_setschedparam failed.\n");
-        // }
-        // if(pthread_attr_setinheritsched(&threadAttr, PTHREAD_EXPLICIT_SCHED))
-        // {
-        //     fprintf(stderr, "pthread_attr_setinheritsched failed.\n");
-        // }
-
-        if(!threadHeight)
-        {
-            threadHeight = 1;
+            fprintf(stderr, "\033[30;3;1mERROR: could not create bufImg.\033[0m\n");
+            return;
         }
-
-        //WIP: debug
-        // fprintf(stderr, "sd.threadHeight: %u\n", scaleData.threadHeight);
-        // fprintf(stderr, "sd.ogWidth: %u\n", scaleData.ogWidth);
-        // fprintf(stderr, "bltWidth: %u\n", bltWidth);
-        // fprintf(stderr, "factor: %u\n", scaleData.factor);
-        // fprintf(stderr, "stopHeight: %u\n\n", stopHeight);
-
-        #ifdef RIVER2D_PROFILING_BLT
-        River2D_Time time = river2D_queryTime();
-        #endif
-
-        for(uint8_t i = 0; i < RIVER2D_MAX_THREADS && y < engine->backbuffer.height; ++i)
-        {
-            if(y > stopHeight)
-            {
-                break;
-            }
-
-            //TODAY: calc src and dst
-            engine->pool.scaleData[i]->src = (uint32_t*)&engine->backbuffer.data[y * engine->backbuffer.width];
-            engine->pool.scaleData[i]->dst = (uint32_t*)&bufImg->data[y * bufImg->width];
-            engine->pool.scaleData[i]->factor = factor;
-            engine->pool.scaleData[i]->ogWidth = engine->backbuffer.width;
-            engine->pool.scaleData[i]->threadHeight = threadHeight;
-
-            if(pthread_create(&engine->pool.threads[i], 0, blt,
-                              (void*)engine->pool.scaleData[i]))
-            {
-                fprintf(stderr, "pthread_create failed.\n");
-            }
-
-            //WIP: debug:
-            // int policy;
-            // struct sched_param param;
-            // pthread_getschedparam(engine->pool.threads[i], &policy, &param);
-            // fprintf(stderr, "blt thread created with policy %i and prio %i\n", policy, param.sched_priority);
-            //
-
-            y += threadHeight;
-        }
-
-        #ifdef RIVER2D_PROFILING_BLT
-        River2D_Time dispatchTime = river2D_deltaTime(&time);
-        engine->dispatchTime.s  += dispatchTime.s;
-        engine->dispatchTime.ns += dispatchTime.ns;
-        if(engine->dispatchTime.ns > 1000000000)
-        {
-            ++engine->dispatchTime.s;
-            engine->dispatchTime.ns = 0;
-        }
-
-        time = river2D_queryTime();
-        #endif
-
-        //FIXME: this would overlap
-        // for(; y < engine->backbuffer.height; ++y)
-        // {
-        //     for(uint32_t x = 0; x < engine->backbuffer.width; ++x)
-        //     {
-        //         for(uint8_t i = 0; i < factor; ++i)
-        //         {
-        //             *dst++ = *src;
-        //         }
-        //         ++src;
-        //     }
-        //     for(uint8_t i = 0; i < factor - 1; ++i)
-        //     {
-        //         memcpy(&dst[bltWidth * i], &dst[bltWidth * i - 1], bltWidth * RIVER2D_BPP);
-        //     }
-        // }
-
-        #ifdef RIVER2D_PROFILING_BLT
-        River2D_Time singleTime = river2D_deltaTime(&time);
-        engine->singleTime.s  += singleTime.s;
-        engine->singleTime.ns += singleTime.ns;
-        if(engine->singleTime.ns > 1000000000)
-        {
-            ++engine->singleTime.s;
-            engine->singleTime.ns = 0;
-        }
-
-        time = river2D_queryTime();
-        #endif
-
-        for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
-        {
-            if(engine->pool.threads[i])
-            {
-                pthread_join(engine->pool.threads[i], 0);
-                engine->pool.threads[i] = 0;
-            }
-        }
-        // pthread_attr_destroy(&threadAttr);
-
-        #ifdef RIVER2D_PROFILING_BLT
-        River2D_Time idleTime = river2D_deltaTime(&time);
-        engine->idleTime.s  += idleTime.s;
-        engine->idleTime.ns += idleTime.ns;
-        if(engine->idleTime.ns > 1000000000)
-        {
-            ++engine->idleTime.s;
-            engine->idleTime.ns = 0;
-        }
-        #endif
     }
     else
     {
-        bltWidth  = engine->backbuffer.width;
-        bltHeight = engine->backbuffer.height;
         bufImg = XCreateImage(engine->display, engine->visual, engine->config.depth, ZPixmap, 0,
-                              (char*)engine->backbuffer.data, bltWidth, bltHeight, RIVER2D_SCANLINE, 0);
+                              0, bltWidth, bltHeight, RIVER2D_SCANLINE, 0);
+        if(!bufImg)
+        {
+            fprintf(stderr, "\033[30;3;1mERROR: could not create bufImg.\033[0m\n");
+            return;
+        }
+
+        bufImg->data = (char*)malloc(bltWidth * bltHeight * bpp);
+
+        for(uint32_t y = 0; y < engine->backbuffer.height; y += factor)
+        {
+            for(uint32_t x = 0; x < engine->backbuffer.width * bpp; x += bpp)
+            {
+                uint8_t og = engine->backbuffer.data[y * engine->backbuffer.width + x];
+
+                bufImg->data[y * bltWidth * bpp + x]     = og;
+                bufImg->data[y * bltWidth * bpp + x + 1] = og;
+                bufImg->data[y * bltWidth * bpp + x + 2] = og;
+                if(bpp == 4)
+                {
+                    bufImg->data[y * bltWidth * bpp + x + 3] = og;
+                }
+            }
+            for(uint8_t i = 0; i < factor; ++i)
+            {
+                memcpy((char*)bufImg->data + (y + i + 1) * bltWidth * bpp, (char*)bufImg->data + y * bltWidth * bpp, bltWidth * bpp);
+            }
+        }
+
     }
 
-    Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window, (char*)engine->backbuffer.data,
-                                                bltWidth, bltHeight, 0x000000, 0x000000, engine->config.depth);
+    Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window, bufImg->data,
+                                                bltWidth, bltHeight, 0, 0, engine->config.depth);
+
+    if(!pixmap)
+    {
+        fprintf(stderr, "\033[30;3;1mERROR: could not create pixmap.\033[0m\n");
+        return;
+    }
 
     XPutImage(engine->display, pixmap, engine->context, bufImg, 0, 0, 0, 0, bltWidth, bltHeight);
 
@@ -449,10 +311,7 @@ void river2D_bltBuffer
 
     XFlush(engine->display);
 
-    if(factor > 1)
-    {
-        free(bufImg->data);
-    }
     XFree(bufImg);
-    XFreePixmap(engine->display, pixmap);
+    // XDestroyImage(bufImg);
+    // XFreePixmap(engine->display, pixmap);
 }
