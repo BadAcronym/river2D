@@ -100,10 +100,6 @@ void river2D_processControls
     //TODO: tab and other hotkeys to navigate & control the editor
 }
 
-void river2D_updateEditor()
-{
-}
-
 internal void writeMissingTexture
 (
     River2D_Image *image

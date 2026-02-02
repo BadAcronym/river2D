@@ -113,7 +113,7 @@ int32_t river2D_shutdown
 //
 //     buf->memory = VirtualAlloc(0, bitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
 // }
-//
+
 void river2D_bltBuffer
 (
     EngineData *engine

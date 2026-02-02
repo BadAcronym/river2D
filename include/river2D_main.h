@@ -170,10 +170,6 @@ extern void river2D_processControls
     River2D_ControlMap *controls
 );
 
-extern void river2D_updateEditor
-(
-);
-
 extern void river2D_loadImage
 (
     const char    *path,

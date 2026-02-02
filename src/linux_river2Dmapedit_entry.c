@@ -1,4 +1,5 @@
 #include "river2D_main.h"
+#include "river2Dmapedit_main.h"
 #include "linux_river2Dsoftware_platform.h"
 
 //TODO: future renderers
@@ -53,8 +54,8 @@ int main()
                 //TODO: handle ColormapNotify?
             }
         }
-        // mapedit_update();
-        // mapedit_drawFrame();
+        mapedit_update();
+        river2D_bltBuffer(&engine);
     }
 
     return river2D_shutdown(&engine);
