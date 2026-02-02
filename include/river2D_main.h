@@ -72,6 +72,7 @@
 #define RIVER2D_TYPE_MAX       3
 
 //probably only needed for Xrender
+//should greatly reduce options here.
 #define RIVER2D_PICTOP_CLEAR		0
 #define RIVER2D_PICTOP_SRC			1
 #define RIVER2D_PICTOP_DST			2

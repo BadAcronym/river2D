@@ -22,6 +22,13 @@ EXPORT void river2D_bltBuffer
     EngineData *engine
 );
 
+EXPORT void river2D_compositeImage
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    uint8_t       pictop
+);
+
 EXPORT void river2D_loadText
 (
     EngineData    *engine,

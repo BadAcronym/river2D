@@ -125,3 +125,12 @@ void river2D_bltBuffer
 
     river2D_queryTime(&engine->lastFrametime);
 }
+
+//TODAY: composite on win32
+void river2D_compositeImage
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    uint8_t       pictop
+){
+}
