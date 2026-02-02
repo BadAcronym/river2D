@@ -177,10 +177,6 @@ void river2D_bltBuffer
                                   0, (char*)engine->backbuffer.data, engine->config.width,
                                   engine->config.height, RIVER2D_SCANLINE, 0);
 
-    // Pixmap pixmap = XCreatePixmap(engine->display, engine->window,
-    //                               engine->config.width, engine->config.height,
-    //                               RIVER2D_PIXDEPTH);
-
     Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window,
                                                 (char*)engine->backbuffer.data,
                                                 engine->backbuffer.width, engine->backbuffer.height,
@@ -193,10 +189,6 @@ void river2D_bltBuffer
               engine->backbuffer.width, engine->backbuffer.height, 0, 0);
 
     XFlush(engine->display);
-
-    XSetForeground(engine->display, engine->context, 0x00000000);
-    XFillRectangle(engine->display, pixmap, engine->context, 0, 0,
-                   engine->backbuffer.width, engine->backbuffer.height);
 
     XFree(bufImg);
     XFreePixmap(engine->display, pixmap);
