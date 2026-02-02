@@ -9,9 +9,6 @@
 #include <string.h>
 
 //TODO: allow for other font colours?
-//maybe load image as some stencil boolean, then operate on the pixels (with desired colour)
-//based on that stencil
-//this could also be its own river2D_compositeText function
 void river2D_loadText
 (
     EngineData    *engine,
