@@ -67,6 +67,7 @@ Window river2D_openWindow
     return window;
 }
 
+//TODAY: add graceful handling of buffer being too small
 void river2D_resizeBackbuffer
 (
     EngineData *engine,
@@ -262,11 +263,6 @@ void river2D_compositeImage
         fprintf(stderr, "Failed to create compDestPict!\n");
         XRenderFreePicture(engine->display, compSrcPict);
         return;
-    }
-
-    if(image->width > engine->width && image->height > engine->height)
-    {
-        river2D_resizeBackbuffer(engine, image->width, image->height);
     }
 
     XPutImage(engine->display, engine->compBuffer, engine->context, compSrcImg, 0, 0, 0, 0,
