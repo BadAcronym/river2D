@@ -165,9 +165,6 @@ void river2D_init
     engine->blitDstPict = XRenderCreatePicture(engine->display, engine->window, engine->format, 0, 0);
 
     River2D_Time time = river2D_queryTime();
-    engine->lastFrametime  = time;
-    engine->lastFPStime    = time;
-    engine->playerAnimTime = time;
 }
 
 int32_t river2D_shutdown

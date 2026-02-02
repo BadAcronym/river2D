@@ -212,17 +212,8 @@ typedef struct EngineData
     River2D_ControlMap controls;
     River2D_Config     config;
     River2D_Image      *planes;
-    // JANKY: move the FPS code to river2D,
-    // the player* code to islescape.
-    River2D_Time       lastFrametime;
-    River2D_Time       lastFPStime;
-    River2D_Time       playerAnimTime;
-    uint16_t           playerAnimIndex;
-    uint16_t           runningFrames;
-    Coordinates        playerSheetOffset;
-    Coordinates        playerPosition;
-    bool               running;
     River2D_Image      *currentCursor;
+    bool               running;
 
 #ifdef BUILD_LINUX
     Display            *display;
