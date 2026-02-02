@@ -21,16 +21,15 @@ compile_imgsurf()
     then
         pushd ./vendor/imgsurf/ > /dev/null
         ./run $1 --compile-only
+        if [[ $? != 0 ]]
+        then
+            exit -1
+        fi
         popd > /dev/null
     else
         echo -e "\033[31mERROR: can't find imgsurf's run script.\033[0m"
     fi
 }
-
-if [[ $? != 0 ]]
-then
-    exit -1
-fi
 
 compileprep()
 {
@@ -64,13 +63,13 @@ else
     exit -2;
 fi
 
-echo -e "\n"
-
 if [[ $? != 0 ]]
 then
     echo -e "\033[31m\nERROR: failed to compile.\n\033[0m"
     exit -1
 fi
+
+echo -e "\n"
 
 if [[ $2 = "--compile-only" ]]
 then
