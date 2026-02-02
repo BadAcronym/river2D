@@ -29,14 +29,14 @@ project("river2D binary")
         system("Linux")
         defines("BUILD_LINUX")
         kind("ConsoleApp")
-        targetdir("bin/river2Dmapedit_linux/%{cfg.buildcfg}")
-        objdir("obj/river2Dmapedit/%{cfg.buildcfg}")
+        targetdir("bin/%{cfg.buildcfg}")
+        objdir("obj/river2Dmapedit/")
         files({"./src/linux_river2Dmapedit*",
                "./include/linux_river2Dmapedit*",
                "./src/river2Dmapedit*",
                "./include/river2Dmapedit*" })
         includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
-        libdirs({"./vendor/imgsurf/bin/imgsurf_linux/%{cfg.buildcfg}/"})
+        libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/"})
         links("imgsurf:static")
         buildoptions({"-Wextra", "-Wall", "-Werror", "-Wconversion", "-Wsign-conversion"})
         linkoptions({"-lX11", "-lXrender", "-limgsurf", "-fuse-ld=mold"})
@@ -45,7 +45,7 @@ project("river2D binary")
     filter("platforms:Windows")
         system("Windows")
         defines("BUILD_WINDOWS")
-        targetdir("bin/river2Dmapedit_win64/%{cfg.buildcfg}")
+        targetdir("bin/%{cfg.buildcfg}")
         objdir("obj/")
         files({ "./src/win32_river2Dmapedit*",
                 "./include/win32_river2Dmapedit*",
@@ -92,8 +92,8 @@ project("river2D common functions")
     filter("platforms:Linux")
         system("Linux")
         defines("BUILD_LINUX")
-        targetdir("bin/river2Dcommon_linux/%{cfg.buildcfg}")
-        objdir("obj/river2Dcommon/%{cfg.buildcfg}")
+        targetdir("bin/%{cfg.buildcfg}")
+        objdir("obj/river2Dcommon/")
         files({"./src/river2D_*",
                "./include/river2D_*",
                "./src/linux_river2Dcommon*",
@@ -101,7 +101,7 @@ project("river2D common functions")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*"})
         includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
-        libdirs({"./vendor/imgsurf/bin/imgsurf_linux/%{cfg.buildcfg}/"})
+        libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/"})
         links("imgsurf:static")
         buildoptions({"-Wextra", "-Wall", "-Werror", "-Wconversion", "-Wsign-conversion"})
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
@@ -110,7 +110,7 @@ project("river2D common functions")
     filter("platforms:Windows")
         system("Windows")
         defines("BUILD_WINDOWS")
-        targetdir("bin/river2Dcommon_win64/%{cfg.buildcfg}")
+        targetdir("bin/%{cfg.buildcfg}")
         objdir("obj/")
         files({"./src/river2D_*",
                "./include/river2D_*",
@@ -119,7 +119,7 @@ project("river2D common functions")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/imgsurf_win64/%{cfg.buildcfg}/"})
+        libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/"})
         links({"imgsurf.lib"})
         buildoptions({"/wd4068"})
 
@@ -157,8 +157,8 @@ project("river2D software renderer")
     filter("platforms:Linux")
         system("Linux")
         defines("BUILD_LINUX")
-        targetdir("bin/river2Dsoftware_linux/%{cfg.buildcfg}")
-        objdir("obj/river2Dsoftware/%{cfg.buildcfg}")
+        targetdir("bin/%{cfg.buildcfg}")
+        objdir("obj/river2Dsoftware/")
         files({"./src/river2D_*",
                "./include/river2D_*",
                "./src/linux_river2Dcommon*",
@@ -170,7 +170,7 @@ project("river2D software renderer")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
-        libdirs({"./vendor/imgsurf/bin/imgsurf_linux/%{cfg.buildcfg}/", "./bin/river2Dcommon_linux/%{cfg.buildcfg/"})
+        libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/", "./bin/%{cfg.buildcfg}/"})
         links({"imgsurf:static", "river2Dcommon:static"})
         buildoptions({"-Wextra", "-Wall", "-Werror", "-Wconversion", "-Wsign-conversion"})
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold", "-lriver2Dcommon"})
@@ -179,7 +179,7 @@ project("river2D software renderer")
     filter("platforms:Windows")
         system("Windows")
         defines("BUILD_WINDOWS")
-        targetdir("bin/river2Dsoftware_win64/%{cfg.buildcfg}")
+        targetdir("bin/%{cfg.buildcfg}")
         objdir("obj/")
         files({"./src/river2D_*",
                "./include/river2D_*",
@@ -192,7 +192,7 @@ project("river2D software renderer")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/imgsurf_win64/%{cfg.buildcfg}/", "./bin/river2Dcommon_win64/%{cfg.buildcfg}/"})
+        libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/", "./bin/%{cfg.buildcfg}/"})
         links({"imgsurf.lib", "river2Dcommon.lib"})
         buildoptions({"/wd4068"})
 

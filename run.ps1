@@ -49,7 +49,7 @@ if($IsLinux)
     &make config=$makecfg
     Pop-Location
 
-    $target = "./bin/$targetname" + "_linux/$build/$targetname"
+    $target = "./bin/$build/$targetname"
 
     if(Test-Path $target)
     {
@@ -62,7 +62,7 @@ elseIf($IsWindows)
 
     &MSBuild ./build/$solution.sln -p:platform=windows -p:Configuration=$build
 
-    $target = "./bin/$targetname" + "_win64/$build/$targetname.exe"
+    $target = "./bin/$build/$targetname.exe"
 
     if(Test-Path "./compile_commands.json")
     {
