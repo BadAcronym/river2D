@@ -52,6 +52,7 @@ if($build -eq "debug")
     Get-Compileprep
     pushd ".\build\"
     &MSBuild river2D.sln -p:Configuration=$build -p:Platform=windows
+    popd
 }
 elseif($build -eq "release")
 {
@@ -59,6 +60,7 @@ elseif($build -eq "release")
     Get-Compileprep
     pushd ".\build\"
     &MSBuild river2D.sln -p:Configuration=$build -p:Platform=windows
+    popd
 }
 elseif($build -eq "asan")
 {
@@ -66,6 +68,7 @@ elseif($build -eq "asan")
     Get-Compileprep
     pushd ".\build\"
     &MSBuild river2D.sln -p:Configuration=$build -p:Platform=windows
+    popd
 }
 else
 {
