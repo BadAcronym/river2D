@@ -42,7 +42,7 @@ void river2D_resolveRenderer
         void *software = dlopen(so, RTLD_NOW);
         if(!software)
         {
-            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded from path: %s\n", so);
+            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded from specified folder: %s\n", libpath);
             fputs(dlerror(), stderr);
             fprintf(stderr, "\033[0m\n");
         }
