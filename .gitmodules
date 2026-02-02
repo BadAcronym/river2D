@@ -4,3 +4,6 @@
 [submodule "vendor/premake-ecc"]
 	path = vendor/premake-ecc
 	url = git@github.com:MattBystrin/premake-ecc
+[submodule "vendor/imgsurf"]
+	path = vendor/imgsurf
+	url = git@github.com:FlyMandi/imgsurf

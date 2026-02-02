@@ -35,7 +35,7 @@ project("river2D binary")
             "./include/win32_river2D*",
             "./src/river2D*",
             "./include/river2D*" })
-        includedirs({ "./include/", "./vendor/stb/"})
+        includedirs({ "./include/", "./vendor/imgsurf/include"})
         buildoptions{"/wd4068", "/wd4100"}
         ignoredefaultlibraries({ "MSVCRT" })
 
@@ -56,7 +56,7 @@ project("river2D binary")
             "./include/linux_river2D*",
             "./src/river2D*",
             "./include/river2D*" })
-        includedirs({ "./include/", "/usr/include/", "./vendor/stb/"})
+        includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}
 
 project("river2D software renderer")
