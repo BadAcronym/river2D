@@ -5,8 +5,8 @@
 
 #include "X11/Xlib.h"
 
-#include <cstdlib>
 #include <stdio.h>
+#include <stdlib.h>
 
 Window X11openWindow
 (
@@ -20,8 +20,8 @@ Window X11openWindow
 
     XStoreName(display, window, windowName);
 
-    XSelectInput(display, window, KeyPressMask | KeyReleaseMask
-                                  | StructureNotifyMask);
+    XSelectInput(display, window, KeyPressMask | KeyReleaseMask |
+                                  StructureNotifyMask);
 
     XMapWindow(display, window);
 
@@ -37,7 +37,9 @@ void X11drawFrame
 ){
     //TODAY: load image from stbi or something
     XSetBackground(display, gc, 0x000000);
-    XFillRectangle(display, window, gc, 0, 0, dimensions.width, dimensions.height);
+
+    //update backbuffer and
+
     XFlush(display);
 }
 
@@ -53,13 +55,6 @@ void X11resizeBackbuffer
 
     buf->dimensions = dimensions;
     buf->memory = malloc(buf->dimensions.width * buf->dimensions.height * River2D_BPP);
-
-    //debug
-    printf("%s", "resized Backbuffer to ");
-    printf("%u", buf->dimensions.width);
-    printf("%s", "x");
-    printf("%u", buf->dimensions.height);
-    printf("%s", "\n");
 }
 
 void X11updateBackbuffer
@@ -80,5 +75,18 @@ uint64_t X11queryTime
 (
 ){
     //TODO: equiv of QueryPerformanceCounter
+    return 0;
+}
+
+int32_t X11shutdown
+(
+    Display *display,
+    Window  window,
+    GC      gc
+){
+    XFreeGC(display, gc);
+    XDestroyWindow(display, window);
+    XCloseDisplay(display);
+
     return 0;
 }
