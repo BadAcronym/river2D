@@ -18,17 +18,17 @@ void river2D_resizeBackbuffer
     engine->backbuffer.width  = width;
     engine->backbuffer.height = height;
 
-    engine->backbuffer.info.bmiHeader.biSize   = sizeof(engine->backbuffer.info.bmiHeader);
-    engine->backbuffer.info.bmiHeader.biWidth  = (long)engine->backbuffer.width;
-    engine->backbuffer.info.bmiHeader.biHeight = -(long)engine->backbuffer.height;
-    engine->backbuffer.info.bmiHeader.biPlanes = 1;
-    engine->backbuffer.info.bmiHeader.biBitCount = 32;
+    engine->backbuffer.info.bmiHeader.biSize        = sizeof(engine->backbuffer.info.bmiHeader);
+    engine->backbuffer.info.bmiHeader.biWidth       =  (long)engine->backbuffer.width;
+    engine->backbuffer.info.bmiHeader.biHeight      = -(long)engine->backbuffer.height;
+    engine->backbuffer.info.bmiHeader.biPlanes      = 1;
+    engine->backbuffer.info.bmiHeader.biBitCount    = 32;
     engine->backbuffer.info.bmiHeader.biCompression = BI_RGB;
 
     engine->backbuffer.data = VirtualAlloc(0, width * height * RIVER2D_BPP, MEM_COMMIT, PAGE_READWRITE);
     if(!engine->backbuffer.data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer\033[0m");
+        fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer.\033[0m");
     }
 }
 
