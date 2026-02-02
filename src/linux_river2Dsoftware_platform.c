@@ -197,6 +197,8 @@ int32_t river2D_shutdown
 }
 
 //TODO: multi-thread as much as you can
+//rewrite and drop the Xrender dependency
+//would probably speed things up tbh
 void river2D_compositeImage
 (
     EngineData    *engine,
