@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [[ -f ./vendor/imgsurf/clean ]]
+then
+    echo -e "\033[33mcleaning up imgsurf builds...\033[0m"
+    ./vendor/imgsurf/clean
+fi
+
+if [[ -d ./build/ ]]
+then
+    rm ./build/ -rf
+fi
+
+if [[ -d ./bin/ ]]
+then
+    rm ./bin/ -rf
+fi
+
+if [[ -d ./build/ ]]
+then
+    rm ./build/ -rf
+fi
+
+echo -e "\033[32mcleaned river2D!\033[0m"
