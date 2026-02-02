@@ -52,7 +52,6 @@ void river2D_resolveRenderer
         resolveFunction((void**)&engine->river2D_loadText,       software, "river2D_loadText",       &error);
         resolveFunction((void**)&engine->river2D_bltBuffer,      software, "river2D_bltBuffer",      &error);
         resolveFunction((void**)&engine->river2D_compositeImage, software, "river2D_compositeImage", &error);
-
     }
     else if(renderer == RIVER2D_RENDERER_OPENGL)
     {
