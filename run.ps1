@@ -74,7 +74,7 @@ elseIf($IsWindows)
 {
     &premake5 vs2022
 
-    &MSBuild ./build/River.sln -p:Configuration=$build
+    &MSBuild ./build/$targetname.sln -p:Configuration=$build
 
     $target = "./bin/Win64" + "_$build/$targetname.exe"
 }
