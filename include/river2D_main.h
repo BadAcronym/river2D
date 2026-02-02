@@ -51,6 +51,10 @@
 #define RIVER2D_BIT_TAB    0b010000
 #define RIVER2D_BIT_ESCAPE 0b100000
 
+#define RIVER2D_CHANNELS_RGBA 0
+#define RIVER2D_CHANNELS_RGB  1
+#define RIVER2D_CHANNELS_MAX  1
+
 typedef struct PerformanceCounter
 {
     uint64_t time;
@@ -134,7 +138,9 @@ extern void river2D_updateEditor
 extern void river2D_loadImage
 (
     const char*   path,
-    River2D_Image *image
+    River2D_Image *image,
+    uint8_t       format,
+    uint8_t       depth
 );
 
 extern void river2D_compositeImage
