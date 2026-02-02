@@ -231,7 +231,6 @@ void river2D_compositeImage
     }
 }
 
-// FIXME: factor 2 segfault
 void river2D_bltBuffer
 (
     EngineData *engine,
