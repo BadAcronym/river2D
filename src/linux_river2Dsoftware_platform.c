@@ -156,11 +156,14 @@ void river2D_destroyImage
     }
 }
 
-//TODO: (river2D #9) not safely shutting down for some reason... why?
 int32_t river2D_shutdown
 (
     EngineData *engine
 ){
+    for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
+    {
+        free(engine->pool.threadData[i]);
+    }
     for(uint8_t i = 0; i < RIVER2D_MAX_PLANES; ++i)
     {
         river2D_destroyImage(&engine->planes[i]);
