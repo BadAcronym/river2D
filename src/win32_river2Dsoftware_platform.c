@@ -72,9 +72,6 @@ void river2D_resizeBackbuffer
     {
         fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer\033[0m");
     }
-
-    engine->width  = width;
-    engine->height = height;
 }
 
 void river2D_init
@@ -83,9 +80,6 @@ void river2D_init
     River2D_Image      *planes
 ){
     river2D_loadConfig(&engine->config);
-
-    engine->width  = engine->config.width;
-    engine->height = engine->config.height;
 
     engine->planes = planes;
 
@@ -121,7 +115,8 @@ void river2D_bltBuffer
     int width  = clientRect.right  - clientRect.left;
     int height = clientRect.bottom - clientRect.top;
 
-    StretchDIBits(engine->context, 0, 0, width, height, 0, 0, (int)engine->width, (int)engine->height,
+    StretchDIBits(engine->context, 0, 0, width, height, 0, 0,
+                  (int)engine->backbuffer.width, (int)engine->backbuffer.height,
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
 
     river2D_queryTime(&engine->lastFrametime);
