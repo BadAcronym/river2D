@@ -41,7 +41,7 @@
 #define RIVER2D_BPP         4
 #define RIVER2D_PIXDEPTH    32
 #define RIVER2D_MAX_PLANES  64
-#define RIVER2D_MAX_THREADS 16
+#define RIVER2D_MAX_THREADS 8
 
 #define RIVER2D_KEY_UP         0
 #define RIVER2D_KEY_LEFT       1
