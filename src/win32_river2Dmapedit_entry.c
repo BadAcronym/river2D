@@ -14,7 +14,7 @@ int main()
 
 clang_ignore_unused
 
-#define RIVER2D_INIT(name) void name(EngineData *engine)
+#define RIVER2D_INIT(name) void name(EngineData *engine, River2D_Image *planes)
 typedef RIVER2D_INIT(river2D_init_);
 RIVER2D_INIT(River2D_init_Stub)
 {
