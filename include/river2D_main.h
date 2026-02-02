@@ -18,7 +18,7 @@
     #include <time.h>
 
     #include "pthread.h"
-    #define  RIVER2D_SCANLINE  8
+    #define  RIVER2D_SCANLINE 32
     #define  RIVER2D_CONFIG_PATH "./.river2Dconf"
 #endif
 
