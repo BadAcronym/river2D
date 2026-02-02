@@ -105,16 +105,18 @@ typedef struct EngineData
 }
 EngineData;
 
-void river2D_processControls
+extern void river2D_processControls
 (
     bool              isDown,
     int32_t           key,
     River2D_ControlMap *controls
 );
 
-void river2D_updateEditor();
+extern void river2D_updateEditor
+(
+);
 
-void river2D_loadImage
+extern void river2D_loadImage
 (
     const char*   path,
     River2D_Image *image

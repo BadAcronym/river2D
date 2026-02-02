@@ -12,14 +12,14 @@
 
 int main()
 {
-    EngineData engine = {};
+    EngineData engine = {0};
     river2D_init(&engine);
 
     while(engine.running)
     {
         while(XPending(engine.display) > 0)
         {
-            XEvent event = {};
+            XEvent event = {0};
             XNextEvent(engine.display, &event);
             switch(event.type)
             {
