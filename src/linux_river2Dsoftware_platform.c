@@ -74,11 +74,15 @@ internal Visual* findVisual
 
 void river2D_init
 (
-    EngineData *engine
+    EngineData         *engine,
+    River2D_Image      *planes
 ){
     river2D_loadConfig(&engine->config);
+
     engine->width  = engine->config.width;
     engine->height = engine->config.height;
+
+    engine->planes   = planes;
 
     engine->display = XOpenDisplay(0);
     if(!engine->display)
@@ -118,14 +122,14 @@ void river2D_init
         fprintf(stderr, "Failed to create Graphics Context!\n");
     }
 
-    engine->running = true;
-    if(!engine->config.static_canvas_enable)
+    if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
     {
         //TODO: get from config, worry about scaling
         river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
 
-    River2D_Time time = river2D_queryTime();
+    River2D_Time time;
+    river2D_queryTime(&time);
     engine->lastFrametime = time;
     engine->lastFPStime = time;
 }
@@ -393,18 +397,13 @@ void river2D_bltBuffer
     XFillRectangle(engine->display, engine->backbuffer, engine->context, 0, 0, engine->width, engine->height);
 }
 
-River2D_Time river2D_queryTime
+void river2D_queryTime
 (
-    void
+    River2D_Time *time
 ){
     struct timespec spec;
     clock_gettime(CLOCK_REALTIME, &spec);
 
-    River2D_Time time;
-    time.s  = spec.tv_sec;
-    time.ms = spec.tv_nsec / 1000000;
-    time.us = spec.tv_nsec / 1000;
-    time.ns = spec.tv_nsec;
-
-    return time;
+    time->s  = spec.tv_sec;
+    time->ns = spec.tv_nsec;
 }

@@ -69,21 +69,21 @@
 #define RIVER2D_TYPE_MAX       3
 
 //probably only needed for Xrender
-#define RIVER2D_PICTOP_CLEAR			0
-#define RIVER2D_PICTOP_SRC			    1
-#define RIVER2D_PICTOP_DST			    2
-#define RIVER2D_PICTOP_OVER			    3
-#define RIVER2D_PICTOP_OVERREVERSE		4
-#define RIVER2D_PICTOP_IN			    5
-#define RIVER2D_PICTOP_INREVERSE		6
-#define RIVER2D_PICTOP_OUT			    7
-#define RIVER2D_PICTOP_OUTREVERSE		8
-#define RIVER2D_PICTOP_ATOP			    9
-#define RIVER2D_PICTOP_ATOPREVERSE		10
-#define RIVER2D_PICTOP_XOR			    11
-#define RIVER2D_PICTOP_ADD			    12
-#define RIVER2D_PICTOP_SATURATE			13
-#define RIVER2D_PICTOP_MAXIMUM			13
+#define RIVER2D_PICTOP_CLEAR		0
+#define RIVER2D_PICTOP_SRC			1
+#define RIVER2D_PICTOP_DST			2
+#define RIVER2D_PICTOP_OVER			3
+#define RIVER2D_PICTOP_OVERREVERSE	4
+#define RIVER2D_PICTOP_IN			5
+#define RIVER2D_PICTOP_INREVERSE	6
+#define RIVER2D_PICTOP_OUT			7
+#define RIVER2D_PICTOP_OUTREVERSE	8
+#define RIVER2D_PICTOP_ATOP			9
+#define RIVER2D_PICTOP_ATOPREVERSE	10
+#define RIVER2D_PICTOP_XOR			11
+#define RIVER2D_PICTOP_ADD			12
+#define RIVER2D_PICTOP_SATURATE		13
+#define RIVER2D_PICTOP_MAXIMUM		13
 
 typedef struct PerformanceCounter
 {
@@ -92,22 +92,24 @@ typedef struct PerformanceCounter
 }
 PerformanceCounter;
 
+#define RIVER2D_CHOICE_SHOW_FPS_BIT      0b00000000000000000000000000000001
+#define RIVER2D_CHOICE_STATIC_CANVAS_BIT 0b00000000000000000000000000000010
+#define RIVER2D_CHOICE_BACKGROUNDS_BYTE  0b11111111000000000000000000000000
+
 typedef struct River2D_Config
 {
+    uint32_t choices;
+    uint8_t  renderer;
+    uint8_t  backgrounds;
     uint32_t width;
     uint32_t height;
-    uint8_t  renderer;
-    bool     static_canvas_enable;
-    bool     showFPS;
-    //TODO: rework planes options, what you can specify and what's the minimum (3 prob)
-    uint8_t  backgrounds;
 }
 River2D_Config;
 
 //TODO: give images some sort of parallax option
 typedef struct River2D_Image
 {
-    uint8_t*    data;
+    uint8_t     *data;
     uint8_t     channels;
     uint32_t    width;
     uint32_t    height;
@@ -117,8 +119,6 @@ River2D_Image;
 typedef struct River2D_Time
 {
     uint64_t s;
-    uint64_t ms;
-    uint64_t us;
     uint64_t ns;
 }
 River2D_Time;
@@ -134,16 +134,15 @@ River2D_ControlMap;
 
 typedef struct EngineData
 {
-    bool               running;
-    River2D_ControlMap controls;
     uint32_t           width;
     uint32_t           height;
-    const char*        windowName;
+    const char         *windowName;
+    River2D_ControlMap controls;
     River2D_Config     config;
-    River2D_Image      planes[RIVER2D_MAX_PLANES];
+    River2D_Image      *planes;
     River2D_Time       lastFrametime;
     River2D_Time       lastFPStime;
-    uint32_t           runningFrames;
+    uint16_t           runningFrames;
 
 #ifdef BUILD_LINUX
     Display            *display;
@@ -164,8 +163,8 @@ EngineData;
 
 extern void river2D_processControls
 (
-    bool              isDown,
-    int32_t           key,
+    bool               isDown,
+    int32_t            key,
     River2D_ControlMap *controls
 );
 
@@ -175,7 +174,7 @@ extern void river2D_updateEditor
 
 extern void river2D_loadImage
 (
-    const char*   path,
+    const char    *path,
     River2D_Image *image,
     uint8_t       format,
     uint8_t       depth
@@ -205,9 +204,9 @@ extern void river2D_loadText
     uint32_t      offsetX
 );
 
-extern River2D_Time river2D_queryTime
+extern void river2D_queryTime
 (
-    void
+    River2D_Time *time
 );
 
 extern uint8_t river2D_verifyPath
@@ -222,7 +221,8 @@ extern void river2D_loadConfig
 
 extern void river2D_init
 (
-    EngineData *engine
+    EngineData         *engine,
+    River2D_Image      *planes
 );
 
 extern int32_t river2D_shutdown

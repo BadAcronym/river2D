@@ -119,7 +119,7 @@ internal void writeMissingTexture
 
 void river2D_loadImage
 (
-    const char*   path,
+    const char    *path,
     River2D_Image *image,
     uint8_t       format,
     uint8_t       bitdepth
@@ -139,6 +139,12 @@ void river2D_loadConfig
 (
     River2D_Config *config
 ){
+    if(!config)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: *config is nullptr.\033[0m\n");
+        return;
+    }
+
     uint8_t code = river2D_verifyPath(RIVER2D_CONFIG_PATH);
 
     if(code == RIVER2D_TYPE_FILE)
@@ -169,8 +175,8 @@ void river2D_loadConfig
         fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
     }
 
-    config->static_canvas_enable = false;
+    config->choices = 0;
+    config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
     config->width   = 1280;
     config->height  = 720;
-    config->showFPS = true;
 }

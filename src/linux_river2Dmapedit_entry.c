@@ -12,10 +12,14 @@
 
 int main()
 {
-    EngineData engine = {0};
-    river2D_init(&engine);
+    EngineData    engine = {0};
+    River2D_Image planes[RIVER2D_MAX_PLANES] = {0};
 
-    while(engine.running)
+    river2D_init(&engine, planes);
+
+    bool running = true;
+
+    while(running)
     {
         while(XPending(engine.display) > 0)
         {
@@ -35,8 +39,7 @@ int main()
                 }
                 case ConfigureNotify:
                 {
-                    //move to config file that's read on init
-                    if(!engine.config.static_canvas_enable)
+                    if(!(engine.config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
                     {
                         river2D_resizeBackbuffer(&engine, event.xconfigure.width, event.xconfigure.height);
                     }
@@ -44,7 +47,7 @@ int main()
                 }
                 case ClientMessage:
                 {
-                    engine.running = false;
+                    running = false;
                     break;
                 }
                 //TODO: handle ColormapNotify?
