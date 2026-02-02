@@ -134,10 +134,18 @@ typedef struct PictopData
 }
 PictopData;
 
+typedef struct ScaleData
+{
+    uint32_t width;
+    uint32_t *src;
+    uint32_t *dest;
+}
+ScaleData;
+
 typedef struct ThreadData
 {
-    PictopData *data;
-    uint32_t   y;
+    void     *data;
+    uint32_t y;
 }
 ThreadData;
 

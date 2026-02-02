@@ -182,18 +182,17 @@ internal void *pictopOver
 (
     void *data
 ){
-    for(uint32_t y = 0; y < ((ThreadData*)data)->data->threadHeight; ++y)
+    PictopData *pd = ((ThreadData*)data)->data;
+
+    for(uint32_t y = 0; y < pd->threadHeight; ++y)
     {
-        for(uint32_t x = 0; x < ((ThreadData*)data)->data->srcCutoffX; x += RIVER2D_BPP)
+        for(uint32_t x = 0; x < pd->srcCutoffX; x += RIVER2D_BPP)
         {
-            uint64_t srcIndex = (((ThreadData*)data)->y + y) *
-                                ((ThreadData*)data)->data->copyWidth + x;
+            uint64_t srcIndex = (((ThreadData*)data)->y + y) * pd->copyWidth + x;
+            uint64_t dstIndex = (((ThreadData*)data)->y + y) * pd->bufWidth + x;
 
-            uint64_t dstIndex = (((ThreadData*)data)->y + y) *
-                                ((ThreadData*)data)->data->bufWidth + x;
-
-            uint8_t  *src  = ((ThreadData*)data)->data->src;
-            uint8_t  *dest = ((ThreadData*)data)->data->dest;
+            uint8_t  *src  = pd->src;
+            uint8_t  *dest = pd->dest;
             if(src[srcIndex + 3])
             {
                 memcpy(&dest[dstIndex], &src[srcIndex], RIVER2D_BPP);
@@ -286,19 +285,11 @@ void river2D_compositeImage
     }
 
     #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
-    River2D_Time dispatchTime = river2D_queryTime();
-    int64_t deltaNSDispatch = dispatchTime.ns - time.ns;
-    if(deltaNSDispatch > 0)
-    {
-        engine->dispatchTime.ns += deltaNSDispatch;
-    }
-    if(engine->dispatchTime.ns > 1000000000)
-    {
-        engine->dispatchTime.ns = 0;
-        engine->dispatchTime.s++;
-    }
+    River2D_Time dispatchTime = river2D_deltaTime(&time);
+    engine->dispatchTime.s  += dispatchTime.s;
+    engine->dispatchTime.ns += dispatchTime.ns;
 
-    river2D_queryTime(&time);
+    time = river2D_queryTime();
     #endif
 
     for(; y < cropHeight; ++y)
@@ -318,19 +309,11 @@ void river2D_compositeImage
     }
 
     #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
-    River2D_Time singleTime = river2D_queryTime();
-    int64_t deltaNSSingle = singleTime.ns - time.ns;
-    if(deltaNSSingle > 0)
-    {
-        engine->singleTime.ns += deltaNSSingle;
-    }
-    if(engine->singleTime.ns > 1000000000)
-    {
-        engine->singleTime.ns = 0;
-        engine->singleTime.s++;
-    }
+    River2D_Time singleTime = river2D_deltaTime(&time);
+    engine->singleTime.s  += singleTime.s;
+    engine->singleTime.ns += singleTime.ns;
 
-    river2D_queryTime(&time);
+    time = river2D_queryTime();
     #endif
 
     for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
@@ -343,18 +326,16 @@ void river2D_compositeImage
     }
 
     #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
-    River2D_Time idleTime = river2D_queryTime();
-    int64_t deltaNSIdle = idleTime.ns - time.ns;
-    if(deltaNSIdle > 0)
-    {
-        engine->idleTime.ns += deltaNSIdle;
-    }
-    if(engine->idleTime.ns > 1000000000)
-    {
-        engine->idleTime.ns = 0;
-        engine->idleTime.s++;
-    }
+    River2D_Time idleTime = river2D_deltaTime(&time);
+    engine->idleTime.s  += idleTime.s;
+    engine->idleTime.ns += idleTime.ns;
     #endif
+}
+
+internal void *blt
+(
+    void *data
+){
 }
 
 void river2D_bltBuffer
@@ -377,8 +358,8 @@ void river2D_bltBuffer
     }
 
     XImage *bufImg = 0;
-    int bltWidth  = 0;
-    int bltHeight = 0;
+    int bltWidth   = 0;
+    int bltHeight  = 0;
 
     //TODAY: (river2D #4): multi-thread this monstrosity.
     //Same principle as the composite function.
