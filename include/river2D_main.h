@@ -20,9 +20,6 @@
 
 #define RIVER_BPP 4
 
-#define EDITOR_WIDTH  1920
-#define EDITOR_HEIGHT 1080
-
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
 //find a way to define at runtime and just load a set of keycodes

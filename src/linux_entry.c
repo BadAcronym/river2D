@@ -5,11 +5,17 @@
 
 int main()
 {
-    Dimensions dimensions = {};
-    dimensions.width = EDITOR_WIDTH;
-    dimensions.height = EDITOR_HEIGHT;
+    Display *display = XOpenDisplay(0);
+    if(!display)
+    {
+        printf("%s", "Failed to open default Display!");
+    }
 
-    Display *display = XOpenDisplay(NULL);
+    Screen *screen = DefaultScreenOfDisplay(display);
+
+    Dimensions dimensions = {};
+    dimensions.width = WidthOfScreen(screen);
+    dimensions.height = HeightOfScreen(screen);
 
     Window window = X11openWindow(display, dimensions, "river2D Editor");
 
