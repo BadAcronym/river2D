@@ -2,7 +2,7 @@
 require"vendor/premake-ecc/ecc"
 
 workspace("river2D")
-    configurations({ "debug", "release" })
+    configurations({"debug", "asan", "release"})
     platforms({"linux", "windows"})
     location("build")
     architecture("x86_64")
@@ -13,7 +13,7 @@ project("river2D binary")
     warnings("Extra")
     targetname("river2Dmapedit")
 
-    filter("configurations:debug")
+    filter("configurations:debug or asan")
         defines{"DEBUG"}
         runtime("debug")
         symbols("On")
@@ -56,14 +56,20 @@ project("river2D binary")
         links({"imgsurf.lib"})
         buildoptions({"/wd4068"})
 
-    filter({"platforms:Linux", "configurations:debug"})
-        buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+    filter({"platforms:Linux", "configurations:debug or asan"})
+        buildoptions({"-gfull", "-O0"})
+        linkoptions({"-gfull", "-O0"})
+
+    filter({"platforms:Linux", "configurations:asan"})
+        buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
-        linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+        linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
 
-    filter({"platforms:Windows", "configurations:debug"})
+    filter({"platforms:Windows", "configurations:debug or asan"})
         kind("ConsoleApp")
+
+    filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
         debugformat("c7")
         buildoptions({"/fsanitize=address"})
@@ -79,7 +85,7 @@ project("river2D common functions")
     kind("StaticLib")
     targetname("river2Dcommon")
 
-    filter("configurations:debug")
+    filter("configurations:debug or asan")
         defines{"DEBUG"}
         runtime("debug")
         symbols("On")
@@ -125,13 +131,20 @@ project("river2D common functions")
         links({"imgsurf.lib"})
         buildoptions({"/wd4068"})
 
-    filter({"platforms:Linux", "configurations:debug"})
-        buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+    filter({"platforms:Linux", "configurations:debug or asan"})
+        buildoptions({"-gfull", "-O0"})
+        linkoptions({"-gfull", "-O0"})
+
+    filter({"platforms:Linux", "configurations:asan"})
+        buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
-        linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+        linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
 
-    filter({"platforms:Windows", "configurations:debug"})
+    filter({"platforms:Windows", "configurations:debug or asan"})
+        kind("ConsoleApp")
+
+    filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
         debugformat("c7")
         buildoptions({"/fsanitize=address"})
@@ -146,7 +159,7 @@ project("river2D software renderer")
     kind("SharedLib")
     targetname("river2Dsoftware")
 
-    filter("configurations:debug")
+    filter("configurations:debug or asan")
         defines{"DEBUG"}
         runtime("debug")
         symbols("On")
@@ -171,7 +184,7 @@ project("river2D software renderer")
         libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/", "./bin/%{cfg.buildcfg}/"})
         links({"imgsurf:static", "river2Dcommon:static"})
         buildoptions({"-Wextra", "-Wall", "-Wpedantic"})
-        linkoptions({"-lX11", "-lriver2Dcommon", "-fuse-ld=mold"})
+        linkoptions({"-lX11", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
         toolset("clang")
 
     filter("platforms:Windows")
@@ -188,13 +201,20 @@ project("river2D software renderer")
         links({"imgsurf.lib", "river2Dcommon.lib"})
         buildoptions({"/wd4068"})
 
-    filter({"platforms:Linux", "configurations:debug"})
-        buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+    filter({"platforms:Linux", "configurations:debug or asan"})
+        buildoptions({"-gfull", "-O0"})
+        linkoptions({"-gfull", "-O0"})
+
+    filter({"platforms:Linux", "configurations:asan"})
+        buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
-        linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+        linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
 
-    filter({"platforms:Windows", "configurations:debug"})
+    filter({"platforms:Windows", "configurations:debug or asan"})
+        kind("ConsoleApp")
+
+    filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
         debugformat("c7")
         buildoptions({"/fsanitize=address"})
