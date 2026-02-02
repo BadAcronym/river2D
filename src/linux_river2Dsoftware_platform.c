@@ -119,6 +119,7 @@ void river2D_destroyImage
 ){
     if(!image)
     {
+        fprintf(stderr, "No image to be freed.\n");
         return;
     }
 
@@ -173,6 +174,7 @@ Window river2D_openWindow
     return window;
 }
 
+//can't be slow!
 void river2D_loadText
 (
     EngineData    *engine,
@@ -186,7 +188,8 @@ void river2D_loadText
 ){
     //TODAY:
     //foreach char in text:
-    //get appropriate img cutout from pre-loaded font bitmap if char is available in it (just value check)
+    //get appropriate img cutout from pre-loaded font bitmap
+    //if char is available in it (just value check)
     //append after i*spacing pixels to *image
 }
 
