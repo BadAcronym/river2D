@@ -1,11 +1,6 @@
 ---@diagnostic disable: undefined-global, undefined-field
 require"vendor/premake-ecc/ecc"
 
--- TODAY: create separate compile targets for the renderer .dll/.so files
--- and the actual tile editor:
--- river2D_editor.exe   / river2D_editor
--- river2D_software.dll / libriver2D_software.so
-
 workspace("river2D")
     configurations({ "debug", "release" })
     platforms({"linux", "windows"})
