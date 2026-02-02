@@ -380,6 +380,9 @@ void river2D_bltBuffer
     int bltWidth  = 0;
     int bltHeight = 0;
 
+    //TODAY: (river2D #4): multi-thread this monstrosity.
+    //Same principle as the composite function.
+
     if(factor != 1)
     {
         bltWidth  = engine->backbuffer.width  * factor;
