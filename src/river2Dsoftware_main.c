@@ -5,6 +5,7 @@
 
 // TODO: (river2D #7) allow for other font colours
 // TODO: (river2D #17) allow for linebreaks and other escape codes
+// FIXME: move to compositeText, that way we have no need for xShms and no issues with clearing the image.
 void river2D_loadText
 (
     EngineData    *engine,
