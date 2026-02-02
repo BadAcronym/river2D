@@ -1,6 +1,8 @@
 #include "river2D_main.h"
 #include "win32_river2Dsoftware_platform.h"
 
+#include <stdio.h>
+
 #ifdef DEBUG
 int main()
 {
