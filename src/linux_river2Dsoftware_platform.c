@@ -5,9 +5,6 @@
 #include <memory.h>
 #include <stdlib.h>
 
-#define __USE_POSIX199309
-#include <time.h>
-
 #include <sys/stat.h>
 
 uint8_t river2D_verifyPath
@@ -396,15 +393,4 @@ void river2D_bltBuffer
 
     XSetForeground(engine->display, engine->context, 0x00000000);
     XFillRectangle(engine->display, engine->backbuffer, engine->context, 0, 0, engine->width, engine->height);
-}
-
-void river2D_queryTime
-(
-    River2D_Time *time
-){
-    struct timespec spec;
-    clock_gettime(CLOCK_REALTIME, &spec);
-
-    time->s  = spec.tv_sec;
-    time->ns = spec.tv_nsec;
 }
