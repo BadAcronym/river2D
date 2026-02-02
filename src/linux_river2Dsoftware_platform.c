@@ -197,8 +197,6 @@ void river2D_drawFrame
 }
 
 //TODO: multi-thread some of this?
-//TODAY: now it technically does what I wanted, but is dog slow and probably has to wait for the backbuffer
-//in some regard.
 void river2D_compositeImage
 (
     EngineData    *engine,
