@@ -1,60 +1,66 @@
 #include "river2D_main.h"
 #include "river2Dmapedit_main.h"
-#include "linux_river2Dsoftware_platform.h"
 
 #include <dlfcn.h>
 #include <stdio.h>
 
 //TODO: read tile size, tiles and animations, save them to some format which can then be read by the game
 
-//TODAY: define stubs for loading renderer dlls later
-
-clang_ignore_unused
-
-#define RIVER2D_INIT(name) void name(EngineData *engine, River2D_Image *planes)
-typedef RIVER2D_INIT(river2D_initialize);
-RIVER2D_INIT(River2D_Init_Stub)
-{
-    return;
-}
-global river2D_initialize *river2D_init_ = River2D_Init_Stub;
-#define river2D_init river2D_init_
-
-#define RIVER2D_SHUT(name) int32_t name(EngineData *engine)
-typedef RIVER2D_SHUT(river2D_shut);
-RIVER2D_SHUT(River2D_Shutdown_Stub)
-{
-    return -1;
-}
-global river2D_shut *river2D_shut_ = River2D_Shutdown_Stub;
-#define river2D_shutdown river2D_shut_
-
-#define RIVER2D_BLT(name) void name(EngineData *engine)
-typedef RIVER2D_BLT(river2D_blt);
-RIVER2D_BLT(River2D_bltBuffer_Stub)
-{
-    return;
-}
-global river2D_blt *river2D_blt_ = River2D_bltBuffer_Stub;
-#define river2D_bltBuffer river2D_blt_
-
-#define RIVER2D_RESIZE(name) void name(EngineData *engine, uint32_t width, uint32_t height)
-typedef RIVER2D_RESIZE(river2D_resize);
-RIVER2D_RESIZE(River2D_Resize_Stub)
-{
-    return;
-}
-global river2D_resize *river2D_resize_ = River2D_Resize_Stub;
-#define river2D_resizeBackbuffer river2D_resize_
-
-clang_diagnostic_pop
+#ifdef DEBUG
+    #define LIBPATH "./bin/river2Dsoftware_linux/debug/"
+#else
+    #define LIBPATH "./bin/river2Dsoftware_linux/release/"
+#endif
 
 int main()
 {
-    void *software = dlopen("libriver2Dsoftware.so", RTLD_NOW);
+    char *error = 0;
+    void *software = dlopen(LIBPATH "libriver2Dsoftware.so", RTLD_NOW);
     if(!software)
     {
-        fprintf(stderr, "\x1b[1;31mERROR: Software renderer could be found.\033[0m\n");
+        fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded.\n");
+        fputs(dlerror(), stderr);
+        fprintf(stderr, "\033[0m\n");
+        return -1;
+    }
+
+    void (*river2D_init)(EngineData *engine, River2D_Image *planes);
+    river2D_init = dlsym(software, "river2D_init");
+    if((error = dlerror()))
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_init.\n");
+        fputs(error, stderr);
+        fprintf(stderr, "\033[0m\n");
+        return -1;
+    }
+
+    int32_t (*river2D_shutdown)(EngineData *engine);
+    river2D_shutdown = dlsym(software, "river2D_shutdown");
+    if((error = dlerror()))
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_shutdown.\n");
+        fputs(error, stderr);
+        fprintf(stderr, "\033[0m\n");
+        return -1;
+    }
+
+    void (*river2D_bltBuffer)(EngineData *engine);
+    river2D_bltBuffer = dlsym(software, "river2D_bltBuffer");
+    if((error = dlerror()))
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_bltBuffer.\n");
+        fputs(error, stderr);
+        fprintf(stderr, "\033[0m\n");
+        return -1;
+    }
+
+    void (*river2D_resizeBackbuffer)(EngineData *engine, uint32_t width, uint32_t height);
+    river2D_resizeBackbuffer = dlsym(software, "river2D_resizeBackbuffer");
+    if((error = dlerror()))
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_resizeBackbuffer.\n");
+        fputs(error, stderr);
+        fprintf(stderr, "\033[0m\n");
         return -1;
     }
 
@@ -103,5 +109,6 @@ int main()
         river2D_bltBuffer(&engine);
     }
 
+    dlclose(software);
     return river2D_shutdown(&engine);
 }
