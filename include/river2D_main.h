@@ -17,6 +17,7 @@
 #ifdef BUILD_WINDOWS
     #include "Windows.h"
     #define  RIVER2D_CONFIG_PATH "./river2D.ini"
+    typedef int bool;
 #endif
 
 #define clang_ignore_unused\
