@@ -15,6 +15,8 @@ int main()
 
     X11allocateBackbuffer(dimensions);
 
+    River2DControlMap     controls  = {0};
+
     bool running = true;
     while(running)
     {
@@ -24,13 +26,11 @@ int main()
             XNextEvent(display, &event);
             if(event.type == KeyPress)
             {
-                //TODO: process keymap
-                printf("%s", "KeyPress\n");
+                river2D_processControls(true, event.xkey.keycode, &controls);
             }
             else if(event.type == KeyRelease)
             {
-                //TODO: process keymap
-                printf("%s", "KeyRelease\n");
+                river2D_processControls(false, event.xkey.keycode, &controls);
             }
             else if(event.type == ClientMessage)
             {
@@ -39,7 +39,7 @@ int main()
             }
         }
 
-        //TODO: update & editor work
+        //work
     }
 
     XDestroyWindow(display, window);

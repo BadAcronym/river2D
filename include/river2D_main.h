@@ -23,6 +23,18 @@
 #define EDITOR_WIDTH  1920
 #define EDITOR_HEIGHT 1080
 
+//X keycodes
+//TODO: read from config file and translate to X, Win32 or whatever
+#define River2D_UP    41
+#define River2D_LEFT  27
+#define River2D_RIGHT 28
+#define River2D_DOWN  39
+
+#define River2D_DIR_UP    0x0001
+#define River2D_DIR_DOWN  0x0010
+#define River2D_DIR_LEFT  0x0100
+#define River2D_DIR_RIGHT 0x1000
+
 typedef struct Dimensions
 {
     uint32_t width;
@@ -34,4 +46,23 @@ typedef struct PerformanceCounter
 {
     uint64_t time;
     uint64_t freq;
-}PerformanceCounter;
+}
+PerformanceCounter;
+
+//the reason we're even using a uint8_t is so that we can have diagonal
+//movement in the editor even though you might not want it in the game.
+typedef struct River2DControlMap
+{
+    bool    mouseClick_left;
+    bool    mouseClick_right;
+    uint8_t direction;
+    bool    tab;
+}
+River2DControlMap;
+
+void river2D_processControls
+(
+    bool              isDown,
+    int32_t           key,
+    River2DControlMap *controls
+);
