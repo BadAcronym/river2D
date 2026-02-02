@@ -1,6 +1,5 @@
 #include "river2D_main.h"
 
-#include <stdio.h>
 #include <sys/stat.h>
 
 River2D_Time river2D_queryTime
@@ -24,26 +23,16 @@ River2D_Time river2D_deltaTime
     const River2D_Time *time
 ){
     River2D_Time current = river2D_queryTime();
-
-    River2D_Time delta =
-    {
-        .s  = current.s - time->s,
-    };
+    River2D_Time delta = {0};
 
     if(current.ns < time->ns)
     {
+        delta.s = current.s - time->s - 1;
         delta.ns = (1000000000 + current.ns) - time->ns;
-        if(delta.s - 1 < 0)
-        {
-            fprintf(stderr, "\033[33;3;1mERROR: Time delta impossible.\033[0m\n");
-        }
-        else
-        {
-            --delta.s;
-        }
     }
     else
     {
+        delta.s  = current.s  - time->s;
         delta.ns = current.ns - time->ns;
     }
 

@@ -48,8 +48,7 @@ void river2D_init
         river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
 
-    River2D_Time time;
-    river2D_queryTime(&time);
+    River2D_Time time = river2D_queryTime();
     engine->lastFrametime = time;
     engine->lastFPStime = time;
 }
