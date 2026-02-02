@@ -144,6 +144,4 @@ void river2D_bltBuffer
     StretchDIBits(engine->context, 0, 0, width, height, 0, 0,
                   (int)engine->backbuffer.width, (int)engine->backbuffer.height,
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
-
-    river2D_queryTime(&engine->lastFrametime);
 }

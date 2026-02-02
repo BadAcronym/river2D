@@ -1,16 +1,53 @@
 #include "river2D_main.h"
 
+#include <stdio.h>
 #include <sys/stat.h>
 
-void river2D_queryTime
+River2D_Time river2D_queryTime
 (
-    River2D_Time *time
+    void
 ){
     struct timespec spec;
     clock_gettime(CLOCK_REALTIME, &spec);
 
-    time->s  = (uint64_t)spec.tv_sec;
-    time->ns = (uint64_t)spec.tv_nsec;
+    River2D_Time time =
+    {
+        .s  = (uint64_t)spec.tv_sec,
+        .ns = (uint64_t)spec.tv_nsec
+    };
+
+    return time;
+}
+
+River2D_Time river2D_deltaTime
+(
+    const River2D_Time *time
+){
+    River2D_Time current = river2D_queryTime();
+
+    River2D_Time delta =
+    {
+        .s  = current.s - time->s,
+    };
+
+    if(current.ns < time->ns)
+    {
+        delta.ns = (1000000000 + current.ns) - time->ns;
+        if(delta.s - 1 < 0)
+        {
+            fprintf(stderr, "\033[33;3;1mERROR: Time delta impossible.\033[0m\n");
+        }
+        else
+        {
+            --delta.s;
+        }
+    }
+    else
+    {
+        delta.ns = current.ns - time->ns;
+    }
+
+    return delta;
 }
 
 uint8_t river2D_verifyPath

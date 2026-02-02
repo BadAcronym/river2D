@@ -221,9 +221,14 @@ extern void river2D_destroyImage
     River2D_Image *image
 );
 
-extern void river2D_queryTime
+extern River2D_Time river2D_queryTime
 (
-    River2D_Time *time
+    void
+);
+
+extern River2D_Time river2D_deltaTime
+(
+    const River2D_Time *time
 );
 
 extern uint8_t river2D_verifyPath
