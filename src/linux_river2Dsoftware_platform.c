@@ -178,7 +178,6 @@ Window river2D_openWindow
     return window;
 }
 
-//NOTE: multi-thread if slow
 void river2D_loadText
 (
     EngineData    *engine,
@@ -205,6 +204,7 @@ void river2D_loadText
     if(!image->data)
     {
         image->data = malloc(engine->width * engine->height * RIVER2D_BPP);
+        memset(image->data, 0, engine->width * engine->height * RIVER2D_BPP);
         image->width = engine->width;
         image->height = engine->height;
     }
@@ -220,9 +220,9 @@ void river2D_loadText
         return;
     }
 
-    for(uint32_t i = 0; text[i] > 32; ++i)
+    for(uint32_t i = 0; text[i] != '\0'; ++i)
     {
-        if(text[i] > 127)
+        if(text[i] < 33 || text[i] > 127)
         {
             continue;
         }
@@ -245,8 +245,6 @@ void river2D_loadText
             memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
         }
     }
-
-    //TODAY: memset rest of img to 0?
 }
 
 //TODO: multi-thread some of this?
