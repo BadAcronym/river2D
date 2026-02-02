@@ -158,6 +158,7 @@ typedef struct EngineData
 #ifdef BUILD_WINDOWS
     HINSTANCE          instance;
     HWND               window;
+    HDC                context,
 #endif
 }
 EngineData;

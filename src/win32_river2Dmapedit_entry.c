@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+global bool running = true;
+
 #ifdef DEBUG
 int main()
 {
@@ -39,10 +41,10 @@ LRESULT CALLBACK win32WindowCallback
             PAINTSTRUCT paintStruct;
             HDC context = BeginPaint(window, &paintStruct);
 
-            Win32WindowDimensions dim = win32GetWindowDimensions(window);
-
             //FIXME: how to blt here without passing engine?
+            // Win32WindowDimensions dim = win32GetWindowDimensions(window);
             // win32BltBuf(&global_backbuffer, context, dim.width, dim.height);
+                //
             // river2D_bltBuffer(&engine);
 
             EndPaint(window, &paintStruct);
@@ -61,6 +63,7 @@ LRESULT CALLBACK win32WindowCallback
                 break;
             }
 
+            //TODO: lata
             // if(wParam == PLAYER1_UP)
             // {
             //     global_keyMap.player1_up = isKeyDown;
@@ -128,8 +131,6 @@ int CALLBACK WinMain
                                     WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                                     x, y, width, height,
                                     0, 0, instance, 0);
-
-    bool running = true;
 
     while(running)
     {
