@@ -273,6 +273,11 @@ extern uint8_t river2D_verifyPath
     const char *path
 );
 
+extern const char* river2D_listFiles
+(
+    const char *path
+);
+
 extern uint8_t river2D_interpretCharAsKey
 (
     char inp

@@ -1,6 +1,8 @@
 #include "river2D_main.h"
 
+#include <stdlib.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 River2D_Time river2D_queryTime
 (
@@ -38,8 +40,55 @@ uint8_t river2D_verifyPath
     {
         return RIVER2D_TYPE_FILE;
     }
-
     return RIVER2D_TYPE_OTHER;
+}
+
+const char* river2D_listFiles
+(
+    const char *path
+){
+    DIR           *dir;
+    struct dirent *ent;
+    uint32_t      listSize = 0;
+
+    if((dir = opendir(path)))
+    {
+        while((ent = readdir(dir)))
+        {
+            uint8_t length = 0;
+            for(; length < 255 && ent->d_name[length] != '\0'; ++length)
+            {
+            }
+            listSize += length + 1;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: failed to open cwd.\033[0m\n");
+        return 0;
+    }
+
+    char     *list  = (char*)malloc(listSize + 1);
+    uint32_t offset = 0;
+
+    free(dir);
+    dir = opendir(path);
+
+    while((ent = readdir(dir)))
+    {
+        uint8_t length = 0;
+        for(; length < 255 && ent->d_name[length] != '\0'; ++length)
+        {
+            list[offset + length] = ent->d_name[length];
+        }
+        list[offset + length] = ';';
+        offset += length + 1;
+    }
+
+    list[offset] = '\0';
+
+    free(dir);
+    return list;
 }
 
 uint8_t river2D_interpretCharAsKey
