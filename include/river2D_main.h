@@ -52,7 +52,7 @@
 #define RIVER2D_BPP         4
 #define RIVER2D_PIXDEPTH    32
 #define RIVER2D_MAX_PLANES  64
-// TODAY: (river2D #14) move max threads to some sort of detection function that polls the amount of cores
+// BACKLOG: (river2D #14) move max threads to some sort of detection function that polls the amount of cores
 #define RIVER2D_MAX_THREADS 8
 
 #define RIVER2D_KEY_UP         0
@@ -312,9 +312,17 @@ extern bool river2D_insideRect
     Rect        *rect
 );
 
-extern void river2D_completeRect
+extern void river2D_createButton
 (
-    Area        *area,
-    Coordinates *upperLeft,
-    Coordinates *lowerRight
+    EngineData    *engine,
+    River2D_Image *img,
+    const char    *text,
+    uint8_t       font,
+    uint16_t      charsize,
+    uint32_t      spacing,
+    Coordinates   point,
+    Rect          *rect,
+    void (*river2D_loadText)(EngineData *engine, River2D_Image *image, const char *text,
+                             uint8_t font, uint16_t charsize, uint32_t spacing,
+                             uint32_t offsetX, uint32_t offsetY)
 );

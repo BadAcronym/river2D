@@ -264,3 +264,38 @@ bool river2D_insideRect
     return(point->x > rect->upperLeft.x && point->x < rect->lowerRight.x &&
            point->y > rect->upperLeft.y && point->y < rect->lowerRight.y);
 }
+
+void river2D_createButton
+(
+    EngineData    *engine,
+    River2D_Image *img,
+    const char    *text,
+    uint8_t       font,
+    uint16_t      charsize,
+    uint32_t      spacing,
+    Coordinates   point,
+    Rect          *rect,
+    void (*river2D_loadText)(EngineData *engine, River2D_Image *image, const char *text,
+                             uint8_t font, uint16_t charsize, uint32_t spacing,
+                             uint32_t offsetX, uint32_t offsetY)
+){
+    uint32_t length = 0;
+
+    for(uint32_t i = 0; text[i] != '\0'; ++i)
+    {
+        ++length;
+    }
+
+    double floatWidth  = (double)length * (charsize + spacing) / (double)engine->backbuffer.width;
+    double floatHeight = (double)charsize / (double)engine->backbuffer.height;
+
+    uint32_t offsetX   = (point.x - floatWidth  / 2.0f) * engine->backbuffer.width;
+    uint32_t offsetY   = (point.y - floatHeight / 2.0f) * engine->backbuffer.height;
+
+    rect->upperLeft.x  = (double)offsetX / (double)engine->backbuffer.width;
+    rect->upperLeft.y  = (double)offsetY / (double)engine->backbuffer.height;
+    rect->lowerRight.x = rect->upperLeft.x + floatWidth;
+    rect->lowerRight.y = rect->upperLeft.y + floatHeight;
+
+    river2D_loadText(engine, img, text, font, charsize, spacing, offsetX, offsetY);
+}
