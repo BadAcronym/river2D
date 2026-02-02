@@ -196,7 +196,8 @@ Window river2D_openWindow
 }
 
 //TODO: allow for other font colours?
-//maybe load image as some stencil boolean, then operate on the pixels (with desired colour) based on that stencil
+//maybe load image as some stencil boolean, then operate on the pixels (with desired colour)
+//based on that stencil
 void river2D_loadText
 (
     EngineData    *engine,
@@ -267,7 +268,7 @@ void river2D_loadText
     }
 }
 
-//TODO: multi-thread some of this?
+//TODO: multi-thread as much as you can
 void river2D_compositeImage
 (
     EngineData    *engine,
