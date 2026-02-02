@@ -210,9 +210,9 @@ void river2D_changeCursor
     River2D_Image *image
 ){
     XcursorImage ximg = {0};
-    ximg.pixels = (uint32_t*)image->data;
-    ximg.width  = image->width;
-    ximg.height = image->height;
+    ximg.pixels       = (uint32_t*)image->data;
+    ximg.width        = image->width;
+    ximg.height       = image->height;
 
     Cursor cursor = XcursorImageLoadCursor(engine->display, &ximg);
 
