@@ -10,6 +10,16 @@ $Platforms = "Win64", "Linux"
 $Configurations = "Debug", "Release"
 $target = ""
 
+if(-Not(Test-Path "./obj/"))
+{
+    &mkdir "./obj/"
+}
+
+if(-Not(Test-Path "./bin/"))
+{
+    &mkdir "./bin/"
+}
+
 foreach($platform in $Platforms)
 {
     foreach($config in $Configurations)
@@ -45,7 +55,11 @@ if($IsLinux)
 {
     &premake5 gmake
 
-    #TODO: make the makey file
+    Push-Location "./build/"
+    &make
+    Pop-Location
+
+    #TODO: move bin to target
 
     $target = "./bin/Linux" + "_$build/river2D"
 }
