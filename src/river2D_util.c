@@ -89,7 +89,7 @@ void river2D_loadConfig
             return;
         }
 
-        bool parsedWidth = false;
+        bool parsedWidth  = false;
         bool parsedHeight = false;
 
         char buf[bufsize];
