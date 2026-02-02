@@ -48,13 +48,6 @@ void river2D_init
         fprintf(stderr, "Failed to create Graphics Context!\n");
     }
 
-    River2D_Image baseUI = {0};
-    river2D_loadImage("assets/image.png", &baseUI);
-
-    // engine->UI = XCreateImage(engine->display, DefaultVisual(engine->display, 0), 24,
-    //                           ZPixmap, 0, (char*)baseUI.data, baseUI.dimensions.width,
-    //                           baseUI.dimensions.height, 32, 0);
-
     river2D_loadConfig(&engine->config);
     engine->running = true;
 

@@ -26,26 +26,27 @@
 #define clang_diagnostic_pop\
     _Pragma("clang diagnostic pop")\
 
-#define River2D_BPP 4
+#define RIVER2D_BPP               4
+#define RIVER2D_BACKGROUND_DEPTHS 16
 
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
+//
 //find a way to define at runtime and just load a set of keycodes
-//the bit macros stay, though
-#define River2D_KEY_UP     41
-#define River2D_KEY_LEFT   27
-#define River2D_KEY_RIGHT  28
-#define River2D_KEY_DOWN   39
-#define River2D_KEY_TAB    23
-#define River2D_KEY_ESCAPE 99
+#define RIVER2D_KEY_UP     25
+#define RIVER2D_KEY_LEFT   27
+#define RIVER2D_KEY_RIGHT  28
+#define RIVER2D_KEY_DOWN   39
+#define RIVER2D_KEY_TAB    23
+#define RIVER2D_KEY_ESCAPE 99
 
 //thought: could we be wasting cache here? is 1 << n somehow more efficient?
-#define River2D_BIT_UP     0b000001
-#define River2D_BIT_DOWN   0b000010
-#define River2D_BIT_LEFT   0b000100
-#define River2D_BIT_RIGHT  0b001000
-#define River2D_BIT_TAB    0b010000
-#define River2D_BIT_ESCAPE 0b100000
+#define RIVER2D_BIT_UP     0b000001
+#define RIVER2D_BIT_DOWN   0b000010
+#define RIVER2D_BIT_LEFT   0b000100
+#define RIVER2D_BIT_RIGHT  0b001000
+#define RIVER2D_BIT_TAB    0b010000
+#define RIVER2D_BIT_ESCAPE 0b100000
 
 typedef struct PerformanceCounter
 {
@@ -90,6 +91,7 @@ typedef struct EngineData
     uint32_t           height;
     const char*        windowName;
     River2D_Config     config;
+    River2D_Image*     backgrounds[RIVER2D_BACKGROUND_DEPTHS];
 
 #ifdef BUILD_LINUX
     Display            *display;

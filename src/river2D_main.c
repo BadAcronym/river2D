@@ -19,75 +19,75 @@ void river2D_processControls
 ){
     switch(key)
     {
-        case River2D_KEY_UP:
+        case RIVER2D_KEY_UP:
         {
             if(isDown)
             {
-                controls->keymap |= River2D_BIT_UP;
+                controls->keymap |= RIVER2D_BIT_UP;
             }
             else
             {
-                controls->keymap &= ~River2D_BIT_UP;
+                controls->keymap &= ~RIVER2D_BIT_UP;
             }
             break;
         }
-        case River2D_KEY_DOWN:
+        case RIVER2D_KEY_DOWN:
         {
             if(isDown)
             {
-                controls->keymap |= River2D_BIT_DOWN;
+                controls->keymap |= RIVER2D_BIT_DOWN;
             }
             else
             {
-                controls->keymap &= ~River2D_BIT_DOWN;
+                controls->keymap &= ~RIVER2D_BIT_DOWN;
             }
             break;
         }
-        case River2D_KEY_LEFT:
+        case RIVER2D_KEY_LEFT:
         {
             if(isDown)
             {
-                controls->keymap |= River2D_BIT_LEFT;
+                controls->keymap |= RIVER2D_BIT_LEFT;
             }
             else
             {
-                controls->keymap &= ~River2D_BIT_LEFT;
+                controls->keymap &= ~RIVER2D_BIT_LEFT;
             }
             break;
         }
-        case River2D_KEY_RIGHT:
+        case RIVER2D_KEY_RIGHT:
         {
             if(isDown)
             {
-                controls->keymap |= River2D_BIT_RIGHT;
+                controls->keymap |= RIVER2D_BIT_RIGHT;
             }
             else
             {
-                controls->keymap &= ~River2D_BIT_RIGHT;
+                controls->keymap &= ~RIVER2D_BIT_RIGHT;
             }
             break;
         }
-        case River2D_KEY_TAB:
+        case RIVER2D_KEY_TAB:
         {
             if(isDown)
             {
-                controls->keymap |= River2D_BIT_TAB;
+                controls->keymap |= RIVER2D_BIT_TAB;
             }
             else
             {
-                controls->keymap &= ~River2D_BIT_TAB;
+                controls->keymap &= ~RIVER2D_BIT_TAB;
             }
             break;
         }
-        case River2D_KEY_ESCAPE:
+        case RIVER2D_KEY_ESCAPE:
         {
             if(isDown)
             {
-                controls->keymap |= River2D_BIT_ESCAPE;
+                controls->keymap |= RIVER2D_BIT_ESCAPE;
             }
             else
             {
-                controls->keymap &= ~River2D_BIT_ESCAPE;
+                controls->keymap &= ~RIVER2D_BIT_ESCAPE;
             }
             break;
         }
