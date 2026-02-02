@@ -6,6 +6,9 @@
 #include "river2D_main.h"
 #include <stdio.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 void river2D_processControls
 (
     bool              isDown,
@@ -100,4 +103,25 @@ void river2D_processControls
 
 void river2D_updateEditor()
 {
+}
+
+void river2D_loadImage
+(
+    const char*   path,
+    River2D_Image *image
+){
+    int32_t width;
+    int32_t height;
+    int32_t channels;
+
+    uint8_t *pixels = stbi_load(path, &width, &height,
+                                &channels, STBI_rgb_alpha);
+    if(!pixels)
+    {
+        fprintf(stderr, "Failed to load image from file: %s\n", path);
+    }
+
+    image->data = pixels;
+    image->dimensions.width  = (uint32_t)width;
+    image->dimensions.height = (uint32_t)height;
 }

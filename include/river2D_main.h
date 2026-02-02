@@ -53,6 +53,14 @@ typedef struct PerformanceCounter
 }
 PerformanceCounter;
 
+typedef struct Image
+{
+    void*       data;
+    char*       format;
+    Dimensions  dimensions;
+}
+River2D_Image;
+
 typedef struct River2DControlMap
 {
     uint64_t keymap;
@@ -68,3 +76,9 @@ void river2D_processControls
 );
 
 void river2D_updateEditor();
+
+void river2D_loadImage
+(
+    const char*   path,
+    River2D_Image *image
+);

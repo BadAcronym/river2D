@@ -7,56 +7,118 @@
 #include <stdlib.h>
 #include <time.h>
 
+void X11init
+(
+    EngineData *engine
+){
+    engine->display = XOpenDisplay(0);
+    if(!engine->display)
+    {
+        fprintf(stderr, "Failed to open default Display!\n");
+    }
+
+    engine->screen = DefaultScreenOfDisplay(engine->display);
+    if(!engine->screen)
+    {
+        fprintf(stderr, "Failed to get default screen!\n");
+    }
+
+    engine->dimensions.width = WidthOfScreen(engine->screen);
+    engine->dimensions.height = HeightOfScreen(engine->screen);
+
+    engine->windowName = "river2D editor";
+    engine->window = river2D_openWindow(engine);
+    if(!engine->window)
+    {
+        fprintf(stderr, "Failed to create window!\n");
+    }
+
+    engine->context = XCreateGC(engine->display, engine->window, 0, 0);
+    if(!engine->context)
+    {
+        fprintf(stderr, "Failed to create Graphics Context!\n");
+    }
+
+    river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
+    engine->running = true;
+}
+
+int32_t X11shutdown
+(
+    EngineData *engine
+){
+    XFreeGC(engine->display, engine->context);
+    XDestroyWindow(engine->display, engine->window);
+    XCloseDisplay(engine->display);
+
+    return 0;
+}
+
 Window X11openWindow
 (
-    Display     *display,
-    Dimensions  dimensions,
-    const char* windowName
+    EngineData *engine
 ){
-    Window window = XCreateWindow(display, XDefaultRootWindow(display), 0, 0,
-                                  dimensions.width, dimensions.height,  0, 0,
+    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display), 0, 0,
+                                  engine->dimensions.width, engine->dimensions.height,  0, 0,
                                   InputOutput, CopyFromParent, 0, 0);
 
-    XStoreName(display, window, windowName);
+    XStoreName(engine->display, window, engine->windowName);
 
-    XSelectInput(display, window, KeyPressMask | KeyReleaseMask |
+    XSelectInput(engine->display, window, KeyPressMask | KeyReleaseMask |
                                   StructureNotifyMask);
 
-    XMapWindow(display, window);
+    XMapWindow(engine->display, window);
 
     return window;
 }
 
 void X11drawFrame
 (
-    Backbuffer *buf
+    EngineData *engine
 ){
-    XSetBackground(buf->display, buf->gc, 0xFFFFFF);
-    XFillRectangle(buf->display, buf->window, buf->gc, 0, 0, buf->dimensions.width, buf->dimensions.height);
+    //TODAY: move this to init, load premade UI to draw on top of
+    //TODAY: figure out how to draw on part of viewport
+    River2D_Image image = {};
+    river2D_loadImage("assets/image.png", &image);
 
-    XFlush(buf->display);
+    int screen = 0;              //do we ever need anything else?
+
+    XImage *ximage = XCreateImage(engine->display, DefaultVisual(engine->display, screen), 24,
+                                  ZPixmap, 0, (char*)image.data, image.dimensions.width,
+                                  image.dimensions.height, 32, 0);
+
+    XPutImage(engine->display, engine->pixmap, engine->context, ximage, 0, 0, 0, 0,
+              image.dimensions.width, image.dimensions.height);
+
+    X11bltBuffer(engine);
 }
 
 void X11resizeBackbuffer
 (
-    Backbuffer  *buf,
-    Dimensions  dimensions
+    EngineData *engine,
+    uint32_t   width,
+    uint32_t   height
 ){
-    if(buf->pixmap)
+    if(engine->pixmap)
     {
-        XFreePixmap(buf->display, buf->pixmap);
+        XFreePixmap(engine->display, engine->pixmap);
     }
 
-    buf->dimensions = dimensions;
-    buf->pixmap = XCreatePixmap(buf->display, buf->window, dimensions.width, dimensions.height, 24);
+    engine->dimensions.width  = width;
+    engine->dimensions.height = height;
+
+    engine->pixmap = XCreatePixmap(engine->display, engine->window, engine->dimensions.width,
+                                   engine->dimensions.height, 24);
 }
 
 void X11bltBuffer
 (
-    Backbuffer *buf
+    EngineData *engine
 ){
-    XCopyArea(buf->display, buf->pixmap, buf->window, buf->gc, 0, 0,
-              buf->dimensions.width, buf->dimensions.height, 0, 0);
+    XCopyArea(engine->display, engine->pixmap, engine->window, engine->context, 0, 0,
+              engine->dimensions.width, engine->dimensions.height, 0, 0);
+
+    XFlush(engine->display);
 }
 
 uint64_t X11queryTime
@@ -73,17 +135,4 @@ uint64_t X11queryTime
     }
 
     return spec.tv_sec;
-}
-
-int32_t X11shutdown
-(
-    Display *display,
-    Window  window,
-    GC      gc
-){
-    XFreeGC(display, gc);
-    XDestroyWindow(display, window);
-    XCloseDisplay(display);
-
-    return 0;
 }

@@ -3,52 +3,58 @@
 #include "river2D_main.h"
 #include "X11/Xlib.h"
 
+#define shutdownRiver2D            X11shutdown
+#define initRiver2D                X11init
+
 #define river2D_openWindow         X11openWindow
 #define river2D_drawFrame          X11drawFrame
 #define river2D_resizeBackbuffer   X11resizeBackbuffer
 #define river2D_updateBackbuffer   X11updateBackbuffer
 #define river2D_bltBuffer          X11bltBuffer
 #define river2D_queryTime          X11queryTime
-#define river2D_shutdown           X11shutdown
 
+#define EngineData                 X11EngineData
 #define Backbuffer                 X11Backbuffer
 
-typedef struct X11Backbuffer
+typedef struct X11EngineData
 {
-    Display    *display;
-    Window     window;
-    GC         gc;
-    Pixmap     pixmap;
-    Dimensions dimensions;
+    bool              running;
+    Display           *display;
+    Screen            *screen;
+    Window            window;
+    GC                context;
+    River2DControlMap controls;
+    Pixmap            pixmap;
+    Dimensions        dimensions;
+    const char*       windowName;
 }
-X11Backbuffer;
+X11EngineData;
 
 extern Window X11openWindow
 (
-    Display     *display,
-    Dimensions  dimensions,
-    const char* windowName
+    EngineData *engine
 );
 
 extern void X11drawFrame
 (
-    Backbuffer *buf
+    EngineData *engine
 );
 
 extern void X11resizeBackbuffer
 (
-    Backbuffer *buf,
-    Dimensions dimensions
+    EngineData *engine,
+    uint32_t   width,
+    uint32_t   height
 );
 
 extern void X11updateBackbuffer
 (
-    Backbuffer *buf
+    EngineData *engine
 );
 
 extern void X11bltBuffer
 (
-    Backbuffer *buf
+    EngineData *engine
 );
 
 extern uint64_t X11queryTime
@@ -56,9 +62,12 @@ extern uint64_t X11queryTime
     bool nano
 );
 
+extern void X11init
+(
+    EngineData *engine
+);
+
 extern int32_t X11shutdown
 (
-    Display *display,
-    Window  window,
-    GC      gc
+    EngineData *engine
 );
