@@ -52,7 +52,7 @@ project("river2D binary")
                 "./src/river2Dmapedit*",
                 "./include/river2Dmapedit*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
-        libdirs({"./vendor/imgsurf/bin/imgsurf_win64/%{cfg.buildcfg}/"})
+        libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/"})
         links({"imgsurf.lib"})
         buildoptions({"/wd4068"})
 
