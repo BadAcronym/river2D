@@ -1,6 +1,8 @@
 #include "river2Dsoftware_main.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 //TODO: allow for other font colours?
 //maybe load image as some stencil boolean, then operate on the pixels (with desired colour)
