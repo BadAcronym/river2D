@@ -78,6 +78,9 @@ int main
 
     bool running = true;
 
+    Atom WM_DELETE = XInternAtom(engine.display, "WM_DELETE_WINDOW", false);
+    XSetWMProtocols(engine.display, engine.window, &WM_DELETE, 1);
+
     while(running)
     {
         while(XPending(engine.display) > 0)
@@ -107,7 +110,10 @@ int main
                 }
                 case ClientMessage:
                 {
-                    running = false;
+                    if(event.xclient.data.l[0] == (long)WM_DELETE)
+                    {
+                        running = false;
+                    }
                     break;
                 }
                 //TODO: (river2D #12) handle ColormapNotify?
