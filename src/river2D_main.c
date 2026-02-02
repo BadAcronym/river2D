@@ -4,12 +4,6 @@
 //TODO: main menu with loading files, map creator/tile editor
 
 #include "river2D_main.h"
-#include <stdio.h>
-
-#define STBI_NO_HDR
-#define STBI_NO_LINEAR
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 void river2D_processControls
 (
@@ -113,10 +107,8 @@ void river2D_loadImage
     const char*   path,
     River2D_Image *image
 ){
-    uint32_t width;
-    uint32_t height;
 
-    //TODAY: try to read image from file.
+    uint8_t *pixels;
 
     if(!pixels)
     {
