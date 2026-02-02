@@ -1,12 +1,11 @@
 #include <stdint.h>
 #include <string.h>
 
-char* river2D_contains
+const char* river2D_contains
 (
     const char *bigStr,
     const char *smallStr
 ){
-    char *cptr = 0;
     uint32_t subsize = strlen(smallStr);
     uint32_t size = strlen(bigStr) - subsize;
 
@@ -21,11 +20,11 @@ char* river2D_contains
                     goto retry;
                 }
             }
-            return cptr;
+            return &bigStr[i];
         }
 retry:
         j = 0;
     }
 
-    return cptr;
+    return 0;
 }
