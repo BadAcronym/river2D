@@ -57,8 +57,8 @@ project("river2D binary")
         buildoptions({"/wd4068"})
 
     filter({"platforms:Linux", "configurations:debug or asan"})
-        buildoptions({"-gfull", "-O0"})
-        linkoptions({"-gfull", "-O0"})
+        buildoptions({"-gfull", "-O1"})
+        linkoptions({"-gfull", "-O1"})
 
     filter({"platforms:Linux", "configurations:asan"})
         buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
@@ -132,8 +132,8 @@ project("river2D common functions")
         buildoptions({"/wd4068"})
 
     filter({"platforms:Linux", "configurations:debug or asan"})
-        buildoptions({"-gfull", "-O0"})
-        linkoptions({"-gfull", "-O0"})
+        buildoptions({"-gfull", "-O1"})
+        linkoptions({"-gfull", "-O1"})
 
     filter({"platforms:Linux", "configurations:asan"})
         buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
@@ -202,8 +202,8 @@ project("river2D software renderer")
         buildoptions({"/wd4068"})
 
     filter({"platforms:Linux", "configurations:debug or asan"})
-        buildoptions({"-gfull", "-O0"})
-        linkoptions({"-gfull", "-O0"})
+        buildoptions({"-gfull", "-O1"})
+        linkoptions({"-gfull", "-O1"})
 
     filter({"platforms:Linux", "configurations:asan"})
         buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
