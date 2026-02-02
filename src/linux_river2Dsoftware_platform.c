@@ -171,7 +171,6 @@ int32_t river2D_shutdown
     return 0;
 }
 
-//FIXME: not working with bpp 3
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -219,19 +218,20 @@ void river2D_compositeImage
 
     for(uint32_t y = 0; y < cropHeight; ++y)
     {
-        for(uint32_t x = 0; x < cropWidth; x += RIVER2D_BPP)
+        for(uint32_t x = 0; x < cropWidth; ++x)
         {
-            uint8_t *dstIndexed = dest + y * bufWidth  + x;
-            uint8_t *srcIndexed = src  + y * copyWidth + x;
+            uint8_t *dstIndexed = &dest[y * bufWidth  + x * RIVER2D_BPP];
+            uint8_t *srcIndexed = &src [y * copyWidth + x * RIVER2D_BPP];
 
             if(srcIndexed[3])
             {
-                memcpy(dstIndexed, srcIndexed, 3);
+                memcpy(dstIndexed, srcIndexed, RIVER2D_BPP);
             }
         }
     }
 }
 
+// FIXME: factor 2 segfault
 void river2D_bltBuffer
 (
     EngineData *engine,
@@ -246,7 +246,6 @@ void river2D_bltBuffer
     XImage   *bufImg   = 0;
     uint64_t bltWidth  = engine->backbuffer.width  * factor;
     uint64_t bltHeight = engine->backbuffer.height * factor;
-    uint8_t  bpp       = engine->config.depth / 8;
 
     if(factor == 1)
     {
@@ -267,28 +266,23 @@ void river2D_bltBuffer
             fprintf(stderr, "\033[30;3;1mERROR: could not create bufImg.\033[0m\n");
             return;
         }
-
         bufImg->data = malloc(bltWidth * bltHeight * RIVER2D_BPP);
 
-        uint64_t bltWidthBytes  = bltWidth  * RIVER2D_BPP;
+        uint64_t bltWidthBytes = bltWidth  * RIVER2D_BPP;
 
         for(uint32_t y = 0; y < engine->backbuffer.height; y += factor)
         {
-            for(uint32_t x = 0; x < bltWidthBytes; x += RIVER2D_BPP)
+            for(uint32_t x = 0; x < engine->backbuffer.width; x += RIVER2D_BPP)
             {
-                uint8_t og = engine->backbuffer.data[y * bltWidthBytes + x];
-
-                bufImg->data[y * bltWidthBytes + x]     = og;
-                bufImg->data[y * bltWidthBytes + x + 1] = og;
-                bufImg->data[y * bltWidthBytes + x + 2] = og;
-                if(bpp == 4)
+                uint32_t ogPixel = engine->backbuffer.data[y * bltWidthBytes + x];
+                for(uint8_t i = 0; i < factor; ++i)
                 {
-                    bufImg->data[y * bltWidthBytes + x + 3] = og;
+                    bufImg->data[y * bltWidthBytes + x * factor + i * RIVER2D_BPP] = ogPixel;
                 }
             }
-            for(uint8_t i = 0; i < factor; ++i)
+            for(uint8_t i = 1; i < factor; ++i)
             {
-                memcpy((char*)&bufImg->data[(y + i + 1) * bltWidthBytes], (char*)bufImg->data + y * bltWidthBytes, bltWidthBytes);
+                memcpy((char*)&bufImg->data[(y + i) * bltWidthBytes], (char*)bufImg->data + y * bltWidthBytes, bltWidthBytes);
             }
         }
 
