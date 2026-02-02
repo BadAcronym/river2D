@@ -159,7 +159,10 @@ void river2D_init
         fprintf(stderr, "No matching format could be found.\n");
     }
 
-    engine->windowName = "unnamed river2D application";
+    if(!engine->windowName)
+    {
+        engine->windowName = "unnamed river2D application";
+    }
     engine->window = river2D_openWindow(engine);
     if(!engine->window)
     {
