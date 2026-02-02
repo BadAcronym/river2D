@@ -2,8 +2,8 @@
 require"ecc/ecc"
 
 workspace("river2D")
-    configurations({ "Debug", "Release" })
-    platforms({"Windows", "Linux"})
+    configurations({ "debug", "release" })
+    platforms({"windows", "linux"})
     location("build")
     architecture("x86_64")
 
@@ -12,18 +12,17 @@ workspace("river2D")
         cdialect("C23")
         warnings("Extra")
         includedirs({ "./include/", })
-        -- buildoptions{"/wd4068", "/wd4100"}
 
-filter("configurations:Debug")
+filter("configurations:debug")
     defines{"DEBUG"}
     staticruntime("off")
-    runtime("Debug")
+    runtime("debug")
     symbols("On")
     ignoredefaultlibraries({ "MSVCRT" })
 
-filter("configurations:Release")
+filter("configurations:release")
     staticruntime("off")
-    runtime("Release")
+    runtime("release")
     symbols("Off")
     optimize("Speed")
 
@@ -32,11 +31,12 @@ filter("platforms:Windows")
     targetdir("bin/Win64_%{cfg.buildcfg}")
     objdir("obj/Win64_%{cfg.buildcfg}")
     files({ "./src/win32*", "./include/win32*", "./src/river2D*", "./include/river2D*" })
+    buildoptions{"/wd4068", "/wd4100"}
 
-filter({"platforms:Windows", "configurations:Release"})
+filter({"platforms:Windows", "configurations:release"})
     kind("WindowedApp")
 
-filter({"platforms:Windows", "configurations:Debug"})
+filter({"platforms:Windows", "configurations:debug"})
     kind("ConsoleApp")
 
 filter("platforms:Linux")

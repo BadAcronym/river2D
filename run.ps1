@@ -1,13 +1,13 @@
 param
 (
     [Parameter(position=0,Mandatory=$false)]
-    $build = "DEBUG"
+    $build = "debug"
 )
 
 Write-Host "Building $build...`n"
 
 $Platforms = "Win64", "Linux"
-$Configurations = "Debug", "Release"
+$Configurations = "debug", "release"
 $target = ""
 
 if(-Not(Test-Path "./obj/"))
@@ -55,13 +55,18 @@ if($IsLinux)
 {
     &premake5 gmake
 
+    $makecfg = $build + "_linux"
+
     Push-Location "./build/"
-    &make
+    &make config=$makecfg
     Pop-Location
 
-    #TODO: move bin to target
-
     $target = "./bin/Linux" + "_$build/river2D"
+
+    if(Test-Path $target)
+    {
+        &chmod +x $target
+    }
 }
 elseIf($IsWindows)
 {
