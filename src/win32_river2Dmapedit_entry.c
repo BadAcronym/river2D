@@ -12,6 +12,32 @@ int main()
 }
 #endif
 
+clang_ignore_unused
+
+#define RIVER2D_INIT(name) void name(EngineData *engine)
+typedef RIVER2D_INIT(river2D_init_);
+RIVER2D_INIT(River2D_init_Stub)
+{
+    return;
+}
+global river2D_init_ *_river2D_init_ = River2D_init_Stub;
+#define river2D_init _river2D_init_
+
+clang_diagnostic_pop
+
+void win32LoadXInput(void)
+{
+    HMODULE software = LoadLibraryA("river2Dsoftware.dll");
+    if(software)
+    {
+        // clang_ignore_functype_mismatch
+
+        river2D_init     = (river2D_init_*)GetProcAddress(software, "river2D_init");
+
+        // clang_diagnostic_pop
+    }
+}
+
 LRESULT CALLBACK win32WindowCallback
 (
     HWND   window,
