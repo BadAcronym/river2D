@@ -1,5 +1,4 @@
 #include "river2D_main.h"
-#include "win32_river2Dsoftware_platform.h"
 
 #include <stdio.h>
 
@@ -43,8 +42,10 @@ global river2D_blt_ *_river2D_blt_ = River2D_blt_Stub;
 
 clang_diagnostic_pop
 
-internal void loadRender_software(void)
-{
+internal void loadRenderer_software
+(
+    void
+){
     HMODULE software = LoadLibraryA("river2Dsoftware.dll");
     if(!software)
     {
@@ -156,6 +157,8 @@ int CALLBACK WinMain
     EngineData    engine = {0};
     River2D_Image planes[RIVER2D_MAX_PLANES] = {0};
 
+    loadRenderer_software();
+
     engine.instance = instance;
 
     river2D_init(&engine, planes);
@@ -197,29 +200,6 @@ int CALLBACK WinMain
             TranslateMessage(&message);
             DispatchMessageA(&message);
         }
-
-        // resetRumble(&global_paddles);
-
-        // for(DWORD controlIndex = 0; controlIndex < XUSER_MAX_COUNT; ++controlIndex)
-        // {
-        //     XINPUT_STATE controlState;
-        //     if(XInputGetState(controlIndex, &controlState) == ERROR_SUCCESS)
-        //     {
-        //         XINPUT_GAMEPAD *pad = &controlState.Gamepad;
-        //         global_controllerMap.player1_up   = pad->wButtons & XINPUT_GAMEPAD_DPAD_UP ||
-        //                                             pad->sThumbLY > CPONG_DEADZONE;
-        //
-        //         global_controllerMap.player1_down = pad->wButtons & XINPUT_GAMEPAD_DPAD_DOWN ||
-        //                                             pad->sThumbLY < -CPONG_DEADZONE;
-        //
-        //         global_controllerMap.player2_up   = pad->wButtons & XINPUT_GAMEPAD_Y ||
-        //                                             pad->sThumbRY > CPONG_DEADZONE;
-        //
-        //         global_controllerMap.player2_down = pad->wButtons & XINPUT_GAMEPAD_A ||
-        //                                             pad->sThumbRY < -CPONG_DEADZONE;
-        //
-        //     }
-        // }
 
         mapedit_update();
         river2D_bltBuffer(&engine);
