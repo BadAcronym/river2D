@@ -41,6 +41,15 @@ void river2D_loadText
         free(image->data);
         image->data = 0;
     }
+    else if(image->width > minTextWidth || image->height > charsize)
+    {
+        int64_t diff = (image->width * image->height * RIVER2D_BPP) - (minTextWidth * charsize * RIVER2D_BPP);
+        if(diff > 0)
+        {
+            memset(&image->data[minTextWidth * charsize * RIVER2D_BPP], 0, (uint64_t)diff);
+        }
+    }
+
     if(!image->data)
     {
         image->height = charsize;
