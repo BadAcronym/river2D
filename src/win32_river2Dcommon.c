@@ -12,8 +12,8 @@ void river2D_queryTime
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&freq);
 
-    time->s  = (uint64_t)(t1.QuadPart * 1000 / freq.QuadPart);
-    time->ns = (uint64_t)(t1.QuadPart * 1000000000000 / freq.QuadPart);
+    time->s  = (uint64_t)(t1.QuadPart / freq.QuadPart);
+    time->ns = (uint64_t)(t1.QuadPart * 1000000000 / freq.QuadPart);
 }
 
 uint8_t river2D_verifyPath
