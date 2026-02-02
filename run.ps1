@@ -64,7 +64,18 @@ elseIf($IsWindows)
 
     $target = "./bin/$targetname" + "_win64/$build/$targetname.exe"
 
-    #TODO: go through compile_commands and replace the defines like BUILD_LINUX with the appropriate ones
+    if(Test-Path "./compile_commands.json")
+    {
+        $content = Get-Content -Path "./compile_commands.json" -Raw
+        $content = $content.Replace('-DBUILD_LINUX', '-DBUILD_WINDOWS')
+        if($build -eq "release")
+        {
+            $content = $content.Replace('-DDEBUG', '-DNDEBUG')
+            $content = $content.Replace('-fsanitize=address,leak,undefined', '')
+            $content = $content.Replace('-static-libasan', '')
+        }
+        Set-Content -Path "./compile_commands.json" -Value $content
+    }
 }
 
 if($isWindows -and 0 -eq $LASTEXITCODE -and $build -eq "debug")
