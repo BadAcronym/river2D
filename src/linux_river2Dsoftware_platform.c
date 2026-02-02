@@ -130,7 +130,8 @@ void river2D_init
 
     for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
     {
-        engine->pool.threadData[i] = (ThreadData*)malloc(sizeof(ThreadData));
+        engine->pool.scaleData[i] = (ScaleData*)malloc(sizeof(ScaleData));
+        engine->pool.pictopData[i] = (PictopData*)malloc(sizeof(PictopData));
     }
 
     River2D_Time time = river2D_queryTime();
@@ -162,7 +163,8 @@ int32_t river2D_shutdown
 ){
     for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
     {
-        free(engine->pool.threadData[i]);
+        // free(engine->pool.pictopData[i]);
+        // free(engine->pool.pictopData[i]);
     }
     for(uint8_t i = 0; i < RIVER2D_MAX_PLANES; ++i)
     {
@@ -174,31 +176,6 @@ int32_t river2D_shutdown
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
     XCloseDisplay(engine->display);
-
-    return 0;
-}
-
-internal void *pictopOver
-(
-    void *data
-){
-    PictopData *pd = ((ThreadData*)data)->data;
-
-    for(uint32_t y = 0; y < pd->threadHeight; ++y)
-    {
-        for(uint32_t x = 0; x < pd->srcCutoffX; x += RIVER2D_BPP)
-        {
-            uint64_t srcIndex = (((ThreadData*)data)->y + y) * pd->copyWidth + x;
-            uint64_t dstIndex = (((ThreadData*)data)->y + y) * pd->bufWidth + x;
-
-            uint8_t  *src  = pd->src;
-            uint8_t  *dest = pd->dest;
-            if(src[srcIndex + 3])
-            {
-                memcpy(&dest[dstIndex], &src[srcIndex], RIVER2D_BPP);
-            }
-        }
-    }
 
     return 0;
 }
@@ -244,136 +221,39 @@ void river2D_compositeImage
     //(in other words, that there's enough space)
     //also validate that offset doesn't exceed buffer destination image
 
-    PictopData pictopData =
-    {
-        .threadHeight = floor(cropHeight / RIVER2D_MAX_THREADS),
-        .srcCutoffX = cropWidth * RIVER2D_BPP,
-        .copyWidth  = image->width * RIVER2D_BPP,
-        .bufWidth   = engine->backbuffer.width * RIVER2D_BPP,
-        .dest = (uint8_t*)engine->backbuffer.data + offsetDstY * pictopData.bufWidth +
-                offsetDstX * RIVER2D_BPP,
-        .src  = image->data + offsetSrcY * pictopData.copyWidth + offsetSrcX * RIVER2D_BPP
-    };
+    uint32_t copyWidth = image->width * RIVER2D_BPP;
+    uint32_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;
+    uint8_t* dst = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth +
+           offsetDstX * RIVER2D_BPP;
+    uint8_t* src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
 
-    uint32_t y = 0;
-    uint32_t stopHeight = cropHeight - pictopData.threadHeight;
-
-    if(!pictopData.threadHeight)
-    {
-        pictopData.threadHeight = 1;
-    }
-
-    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
-    River2D_Time time = river2D_queryTime();
-    #endif
-
-    for(uint8_t i = 0; i < RIVER2D_MAX_THREADS && y < cropHeight; ++i)
-    {
-        if(y > stopHeight)
-        {
-            break;
-        }
-        engine->pool.threadData[i]->y = y;
-        engine->pool.threadData[i]->data = &pictopData;
-
-        pthread_create(&engine->pool.threads[i], 0, pictopOver,
-                       (void*)engine->pool.threadData[i]);
-
-        y += pictopData.threadHeight;
-    }
-
-    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
-    River2D_Time dispatchTime = river2D_deltaTime(&time);
-    engine->dispatchTime.s  += dispatchTime.s;
-    engine->dispatchTime.ns += dispatchTime.ns;
-    if(engine->dispatchTime.ns > 1000000000)
-    {
-        ++engine->dispatchTime.s;
-        engine->dispatchTime.ns = 0;
-    }
-
-    time = river2D_queryTime();
-    #endif
-
-    for(; y < cropHeight; ++y)
-    {
-        for(uint32_t x = 0; x < pictopData.srcCutoffX; x += RIVER2D_BPP)
-        {
-            uint64_t srcIndex = y * pictopData.copyWidth + x;
-            uint64_t dstIndex = y * pictopData.bufWidth + x;
-            uint8_t  *src  = pictopData.src;
-            uint8_t  *dest = pictopData.dest;
-
-            if(src[srcIndex + 3])
-            {
-                memcpy(&dest[dstIndex], &src[srcIndex], RIVER2D_BPP);
-            }
-        }
-    }
-
-    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
-    River2D_Time singleTime = river2D_deltaTime(&time);
-    engine->singleTime.s  += singleTime.s;
-    engine->singleTime.ns += singleTime.ns;
-    if(engine->singleTime.ns > 1000000000)
-    {
-        ++engine->singleTime.s;
-        engine->singleTime.ns = 0;
-    }
-
-    time = river2D_queryTime();
-    #endif
-
-    for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
-    {
-        if(engine->pool.threads[i])
-        {
-            pthread_join(engine->pool.threads[i], 0);
-            engine->pool.threads[i] = 0;
-        }
-    }
-
-    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
-    River2D_Time idleTime = river2D_deltaTime(&time);
-    engine->idleTime.s  += idleTime.s;
-    engine->idleTime.ns += idleTime.ns;
-    if(engine->idleTime.ns > 1000000000)
-    {
-        ++engine->idleTime.s;
-        engine->idleTime.ns = 0;
-    }
-    #endif
+    //TODAY: send this data to a queue
 }
 
 internal void *blt
 (
     void *data
 ){
-    ScaleData *sd = ((ThreadData*)data)->data;
+    ScaleData *sd = (ScaleData*)data;
     uint32_t bltWidth = sd->ogWidth * sd->factor;
 
     for(uint32_t y = 0; y < sd->threadHeight; ++y)
     {
-        uint32_t *dstIndexY = &sd->dest[(((ThreadData*)data)->y + y) * sd->factor * bltWidth];
-        uint32_t *srcIndexY = &sd->src[(((ThreadData*)data)->y + y) * sd->ogWidth];
-
         for(uint32_t x = 0; x < sd->ogWidth; ++x)
         {
-            uint32_t *srcIndexX = srcIndexY + x;
-            uint32_t *dstIndexX = dstIndexY + (x * sd->factor);
-
             for(uint8_t i = 0; i < sd->factor; ++i)
             {
-                *dstIndexX++ = *srcIndexX;
+                *sd->dst++ = *sd->src;
             }
+            ++sd->src;
         }
         for(uint8_t i = 0; i < sd->factor - 1; ++i)
         {
-            memcpy((dstIndexY + bltWidth * (i + 1)), dstIndexY, bltWidth * RIVER2D_BPP);
+            memcpy(sd->dst, sd->dst - bltWidth, bltWidth * RIVER2D_BPP);
         }
     }
 
-    return 0;
+    pthread_exit(0);
 }
 
 void river2D_bltBuffer
@@ -418,19 +298,35 @@ void river2D_bltBuffer
 
         uint32_t y = 0;
         uint32_t stopHeight = engine->backbuffer.height - RIVER2D_MAX_THREADS;
+        uint32_t threadHeight = floor(engine->backbuffer.height / RIVER2D_MAX_THREADS);
 
-        ScaleData scaleData =
+        struct sched_param threadParam =
         {
-            .threadHeight = floor(engine->backbuffer.height / RIVER2D_MAX_THREADS),
-            .ogWidth  = engine->backbuffer.width,
-            .factor = factor,
-            .src   = (uint32_t*)engine->backbuffer.data,
-            .dest  = (uint32_t*)bufImg->data
+            .sched_priority = 90
         };
 
-        if(!scaleData.threadHeight)
+        // pthread_attr_t threadAttr;
+        //
+        // if(pthread_attr_init(&threadAttr))
+        // {
+        //     fprintf(stderr, "pthread_attr_init failed.\n");
+        // }
+        // if(pthread_attr_setschedpolicy(&threadAttr, SCHED_FIFO))
+        // {
+        //     fprintf(stderr, "pthread_attr_setschedpolicy failed.\n");
+        // }
+        // if(pthread_attr_setschedparam(&threadAttr, &threadParam))
+        // {
+        //     fprintf(stderr, "pthread_attr_setschedparam failed.\n");
+        // }
+        // if(pthread_attr_setinheritsched(&threadAttr, PTHREAD_EXPLICIT_SCHED))
+        // {
+        //     fprintf(stderr, "pthread_attr_setinheritsched failed.\n");
+        // }
+
+        if(!threadHeight)
         {
-            scaleData.threadHeight = 1;
+            threadHeight = 1;
         }
 
         //WIP: debug
@@ -450,13 +346,28 @@ void river2D_bltBuffer
             {
                 break;
             }
-            engine->pool.threadData[i]->y = y;
-            engine->pool.threadData[i]->data = &scaleData;
 
-            pthread_create(&engine->pool.threads[i], 0, blt,
-                           (void*)engine->pool.threadData[i]);
+            //TODAY: calc src and dst
+            engine->pool.scaleData[i]->src = (uint32_t*)&engine->backbuffer.data[y * engine->backbuffer.width];
+            engine->pool.scaleData[i]->dst = (uint32_t*)&bufImg->data[y * bufImg->width];
+            engine->pool.scaleData[i]->factor = factor;
+            engine->pool.scaleData[i]->ogWidth = engine->backbuffer.width;
+            engine->pool.scaleData[i]->threadHeight = threadHeight;
 
-            y += scaleData.threadHeight;
+            if(pthread_create(&engine->pool.threads[i], 0, blt,
+                              (void*)engine->pool.scaleData[i]))
+            {
+                fprintf(stderr, "pthread_create failed.\n");
+            }
+
+            //WIP: debug:
+            // int policy;
+            // struct sched_param param;
+            // pthread_getschedparam(engine->pool.threads[i], &policy, &param);
+            // fprintf(stderr, "blt thread created with policy %i and prio %i\n", policy, param.sched_priority);
+            //
+
+            y += threadHeight;
         }
 
         #ifdef RIVER2D_PROFILING_BLT
@@ -473,23 +384,21 @@ void river2D_bltBuffer
         #endif
 
         //FIXME: this would overlap
-        for(; y < engine->backbuffer.height; ++y)
-        {
-            for(uint32_t x = 0; x < scaleData.ogWidth; ++x)
-            {
-                for(uint8_t i = 0; i < factor; ++i)
-                {
-                    *scaleData.dest++ = *scaleData.src;
-                }
-                ++scaleData.src;
-            }
-            for(uint8_t i = 0; i < factor - 1; ++i)
-            {
-                memcpy(&scaleData.dest[bltWidth * i],
-                &scaleData.dest[bltWidth * i - 1],
-                bltWidth * RIVER2D_BPP);
-            }
-        }
+        // for(; y < engine->backbuffer.height; ++y)
+        // {
+        //     for(uint32_t x = 0; x < engine->backbuffer.width; ++x)
+        //     {
+        //         for(uint8_t i = 0; i < factor; ++i)
+        //         {
+        //             *dst++ = *src;
+        //         }
+        //         ++src;
+        //     }
+        //     for(uint8_t i = 0; i < factor - 1; ++i)
+        //     {
+        //         memcpy(&dst[bltWidth * i], &dst[bltWidth * i - 1], bltWidth * RIVER2D_BPP);
+        //     }
+        // }
 
         #ifdef RIVER2D_PROFILING_BLT
         River2D_Time singleTime = river2D_deltaTime(&time);
@@ -512,6 +421,7 @@ void river2D_bltBuffer
                 engine->pool.threads[i] = 0;
             }
         }
+        // pthread_attr_destroy(&threadAttr);
 
         #ifdef RIVER2D_PROFILING_BLT
         River2D_Time idleTime = river2D_deltaTime(&time);
