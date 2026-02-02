@@ -6,8 +6,6 @@ that grants access to a couple different rendering backends via `.a/.so/.lib/.dl
 that serves as a map editor.
 
 ## State:
-- WIP: a cross-platform image loading library that supports conversions like RGBA -> BGRA
-for the software renderers.
 - WIP: the Linux (X11) software renderer.
 - Currently in development alongside a simple game, because writing an engine with no goal is pointless.
 - Once the project is in an MVP state, I will port the platform-specific code to windows.
@@ -19,3 +17,4 @@ for the software renderers.
 - dialogue system
 - platform porting
 - openGL & vulkan renderers
+- maybe: image loader for software renderers (load BGRA from RGBA, etc)
