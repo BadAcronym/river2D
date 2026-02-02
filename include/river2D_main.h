@@ -18,7 +18,7 @@
 #define clang_diagnostic_pop\
     _Pragma("clang diagnostic pop")\
 
-#define RIVER_BPP 4
+#define River2D_BPP 4
 
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever

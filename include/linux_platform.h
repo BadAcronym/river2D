@@ -5,7 +5,7 @@
 
 #define openWindow         X11openWindow
 #define drawFrame          X11drawFrame
-#define allocateBackbuffer X11allocateBackbuffer
+#define resizeBackbuffer   X11resizeBackbuffer
 #define updateBackbuffer   X11updateBackbuffer
 #define bltBuffer          X11bltBuffer
 #define queryTime          X11queryTime
@@ -14,7 +14,7 @@
 
 typedef struct X11Backbuffer
 {
-    void       *address;
+    void       *memory;
     Dimensions dimensions;
 }
 X11Backbuffer;
@@ -34,9 +34,9 @@ extern void X11drawFrame
     GC         gc
 );
 
-//TODO: do we need this? look at CPong
-extern Backbuffer* X11allocateBackbuffer
+extern void X11resizeBackbuffer
 (
+    Backbuffer *buf,
     Dimensions dimensions
 );
 

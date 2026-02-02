@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #define openWindow         win32openWindow
+#define drawFrame          win32drawFrame
 #define allocateBackbuffer win32allocateBackbuffer
 #define updateBackbuffer   win32updateBackbuffer
 #define BltBuffer          win32bltBuffer
@@ -30,3 +31,5 @@ typedef struct Win32Backbuffer
 Win32Backbuffer;
 
 extern void win32LoadXInput(void);
+
+extern Time win32QueryTime(void)
