@@ -1,5 +1,9 @@
 #include "river2D_main.h"
 
+#ifdef BUILD_WINDOWS
+    #include "win32_river2Dsoftware_platform.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
