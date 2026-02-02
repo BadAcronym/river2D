@@ -44,7 +44,6 @@ function Get-Compileprep()
     Write-Host ""
     Write-Host "`033[36mcompiling imgsurf...`033[0m"
     Write-Host ""
-    premake5 ecc
     premake5 vs2022
 }
 

@@ -44,7 +44,6 @@ then
     echo ""
     echo -e "\033[36mcompiling river2D...\033[0m"
     echo ""
-    premake5 ecc
     premake5 gmake
 
     pushd ./build/ > /dev/null
