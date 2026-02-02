@@ -30,7 +30,7 @@
 
 #define RIVER2D_BPP       4
 #define RIVER2D_PIXDEPTH  32
-#define RIVER2D_MAX_DEPTH 16
+#define RIVER2D_MAX_BACKGROUNDS 16
 
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
@@ -52,8 +52,10 @@
 #define RIVER2D_BIT_ESCAPE 0b100000
 
 #define RIVER2D_CHANNELS_RGBA 0
-#define RIVER2D_CHANNELS_RGB  1
-#define RIVER2D_CHANNELS_MAX  1
+#define RIVER2D_CHANNELS_BGRA 1
+#define RIVER2D_CHANNELS_RGB  2
+#define RIVER2D_CHANNELS_BGR  3
+#define RIVER2D_CHANNELS_MAX  3
 
 typedef struct PerformanceCounter
 {
@@ -101,7 +103,7 @@ typedef struct EngineData
     uint32_t           height;
     const char*        windowName;
     River2D_Config     config;
-    River2D_Image      backgrounds[RIVER2D_MAX_DEPTH];
+    River2D_Image      backgrounds[RIVER2D_MAX_BACKGROUNDS];
 
 #ifdef BUILD_LINUX
     Display            *display;
@@ -111,7 +113,7 @@ typedef struct EngineData
     Window             window;
     GC                 context;
     Pixmap             backbuffer;
-    Pixmap             compSrcBuf;
+    Pixmap             compBuffer;
     XImage             *compDestImg;
     XImage             *compSrcImg;
     Picture            compDestPict;
