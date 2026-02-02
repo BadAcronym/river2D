@@ -87,14 +87,13 @@ internal void writeMissingTexture
 void river2D_loadImage
 (
     EngineData    *engine,
-    const char    *path,
+    char          *path,
     River2D_Image *image,
     uint8_t       format,
     uint8_t       bitdepth
 ){
     image->data = imgsurf_load(path, &image->width, &image->height, format, bitdepth);
-    image->path = malloc(256);
-    sprintf(image->path, "%s", path);
+    image->path = path;
 
     if(!image->data)
     {
@@ -164,10 +163,10 @@ void river2D_destroyImage
         image->data = 0;
     }
 
-    // do we?
     // if(image->path)
     // {
     //     free(image->path);
+    //     image->path = 0;
     // }
 
     // TODO: free pixmap

@@ -266,7 +266,7 @@ EngineData;
 extern void river2D_loadImage
 (
     EngineData    *engine,
-    const char    *path,
+    char          *path,
     River2D_Image *image,
     uint8_t       format,
     uint8_t       bitdepth
