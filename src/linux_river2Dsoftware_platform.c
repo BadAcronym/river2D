@@ -177,7 +177,7 @@ void river2D_drawFrame
 (
     EngineData *engine
 ){
-    //TEST: draw something...
+    //TODO: remove test drawing
     XDrawRectangle(engine->display, engine->backbuffer, engine->context,
                    engine->width, engine->height, 0, 0);
 

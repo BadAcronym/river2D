@@ -1,4 +1,4 @@
-//TODO: load renderer .so/.dll (software, openGL, Vulkan) dynamically
+//TODO: load renderer .so/.dll (software, openGL, Vulkan) dynamically?
 //same with input libs (like Xinput)
 
 //TODO: main menu with loading files, map creator/tile editor
@@ -6,7 +6,7 @@
 #include "river2D_main.h"
 #include "imgsurf_load.h"
 #include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 
 void river2D_processControls
 (
