@@ -137,8 +137,6 @@ Win32Backbuffer;
 
 typedef struct EngineData
 {
-    uint32_t           width;
-    uint32_t           height;
     const char         *windowName;
     River2D_ControlMap controls;
     River2D_Config     config;
