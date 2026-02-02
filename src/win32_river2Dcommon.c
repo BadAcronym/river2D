@@ -1,6 +1,7 @@
 #include "river2D_main.h"
 
 #include <sys/stat.h>
+#include <stdio.h>
 
 River2D_Time river2D_queryTime
 (
@@ -41,6 +42,64 @@ uint8_t river2D_verifyPath
     }
 
     return RIVER2D_TYPE_OTHER;
+}
+
+const char* river2D_listFiles
+(
+    const char *path
+){
+    WIN32_FIND_DATAA fileData;
+    HANDLE           foundHandle;
+
+    uint16_t stringLength = strlen(path);
+    char *winPath         = malloc(stringLength + 3);
+    for(uint16_t i = 0; i < stringLength; ++i)
+    {
+        winPath[i] = path[i];
+    }
+    winPath[stringLength]     = '\\';
+    winPath[stringLength + 1] = '*';
+    winPath[stringLength + 2] = '\0';
+
+    foundHandle = FindFirstFileA(winPath, &fileData);
+    if(foundHandle == INVALID_HANDLE_VALUE)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: failed to open cwd.\033[0m\n");
+        return 0;
+    }
+
+    uint32_t listSize = 0;
+
+    while(FindNextFileA(foundHandle, &fileData))
+    {
+        uint8_t length = 0;
+        for(; length < 255 && fileData.cFileName[length] != '\0'; ++length)
+        {
+        }
+        listSize += length + 1;
+    }
+
+    FindClose(foundHandle);
+    foundHandle = FindFirstFileA(winPath, &fileData);
+
+    char     *list  = (char*)malloc(listSize + 1);
+    uint32_t offset = 0;
+
+    while(FindNextFileA(foundHandle, &fileData))
+    {
+        uint8_t length = 0;
+        for(; length < 255 && fileData.cFileName[length] != '\0'; ++length)
+        {
+            list[offset + length] = fileData.cFileName[length];
+        }
+        list[offset + length] = ';';
+        offset += length + 1;
+    }
+
+    list[offset] = '\0';
+
+    FindClose(foundHandle);
+    return list;
 }
 
 uint8_t river2D_interpretCharAsKey
