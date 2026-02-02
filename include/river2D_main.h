@@ -26,6 +26,10 @@
     #define RIVER2D_MOUSE1 Button1
     #define RIVER2D_MOUSE2 Button2
     #define RIVER2D_MOUSE3 Button3
+    #define RIVER2D_MOUSE4 Button4
+    #define RIVER2D_MOUSE5 Button5
+
+// LOOKUP: find scroolwheel
 
 #endif
 
@@ -172,10 +176,13 @@ Dimensions;
 
 typedef struct River2D_ControlMap
 {
-    uint64_t    keymap;
-    Coordinates pointer;
-    uint64_t    rumble;
-    uint8_t     keycodes[64];
+    uint64_t     keymap;
+    uint64_t     buttonmap;
+    Coordinates  pointer;
+    River2D_Time lastScrollTime;
+    uint64_t     rumble;
+    uint8_t      keycodes[64];
+    uint8_t      buttoncodes[64];
     //other general use stuff
 }
 River2D_ControlMap;
