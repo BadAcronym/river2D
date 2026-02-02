@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "river2D_main.h"
-#include "imgsurf_main.h"
 #include <stdio.h>
 
 const char* river2D_contains
@@ -31,35 +30,6 @@ retry:
     }
 
     return 0;
-}
-
-internal void writeMissingTexture
-(
-    River2D_Image *image
-){
-    for(uint32_t y = 0; y < image->height; ++y)
-    {
-        for(uint32_t x = 0; x < image->width; ++x)
-        {
-            ((uint32_t*)image->data)[x * y * RIVER2D_BPP] = 0xC64FACFF;
-        }
-    }
-}
-
-void river2D_loadImage
-(
-    const char    *path,
-    River2D_Image *image,
-    uint8_t       format,
-    uint8_t       bitdepth
-){
-    image->data = imgsurf_load(path, &image->width, &image->height, format, bitdepth);
-
-    if(!image->data)
-    {
-        fprintf(stderr, "Failed to load image from file: %s\n", path);
-        writeMissingTexture(image);
-    }
 }
 
 // TODO: (river2D #8) allow for hot reloading via menu if necessary, apply config

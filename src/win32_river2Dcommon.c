@@ -1,4 +1,5 @@
 #include "river2D_main.h"
+#include "imgsurf_main.h"
 
 #include <sys/stat.h>
 #include <stdio.h>
@@ -56,6 +57,24 @@ void river2D_resolveRenderer
     else
     {
         fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in river2D_resolveRenderer.\033[0m");
+    }
+}
+
+void river2D_loadImage
+(
+    EngineData    *engine,
+    const char    *path,
+    River2D_Image *image,
+    uint8_t       format,
+    uint8_t       bitdepth
+){
+    (void)engine;
+    image->data = imgsurf_load(path, &image->width, &image->height, format, bitdepth);
+
+    if(!image->data)
+    {
+        fprintf(stderr, "Failed to load image from file: %s\n", path);
+        writeMissingTexture(image);
     }
 }
 

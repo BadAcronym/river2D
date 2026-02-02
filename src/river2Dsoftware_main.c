@@ -37,16 +37,12 @@ void river2D_loadText
 
     if(image->width < minTextWidth || image->height < charsize)
     {
-        free(image->data);
-        image->data = 0;
+        river2D_destroyImage(image);
     }
 
     if(!image->data)
     {
-        image->height = charsize;
-        image->width  = minTextWidth;
-
-        image->data = calloc(image->height * image->width * RIVER2D_BPP, 1);
+        river2D_createImage(engine, image, minTextWidth, charsize);
     }
 
     if(offsetX > image->width)
