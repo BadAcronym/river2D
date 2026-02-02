@@ -26,8 +26,8 @@
 #define clang_diagnostic_pop\
     _Pragma("clang diagnostic pop")\
 
-#define RIVER2D_BPP               4
-#define RIVER2D_BACKGROUND_DEPTHS 16
+#define RIVER2D_BPP       4
+#define RIVER2D_MAX_DEPTH 16
 
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
@@ -61,6 +61,8 @@ typedef struct River2D_Config
     uint32_t static_canvas_width;
     uint32_t static_canvas_height;
 
+    uint8_t  backgrounds;
+
     //choose renderer here
 }
 River2D_Config;
@@ -91,7 +93,7 @@ typedef struct EngineData
     uint32_t           height;
     const char*        windowName;
     River2D_Config     config;
-    River2D_Image*     backgrounds[RIVER2D_BACKGROUND_DEPTHS];
+    River2D_Image      backgrounds[RIVER2D_MAX_DEPTH];
 
 #ifdef BUILD_LINUX
     Display            *display;

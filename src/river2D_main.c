@@ -117,14 +117,14 @@ void river2D_loadImage
     int32_t height;
     int32_t channels;
 
-    uint8_t *pixels = stbi_load(path, &width, &height,
-                                &channels, STBI_rgb_alpha);
+    uint8_t *pixels = stbi_load(path, &width, &height, &channels, STBI_rgb_alpha);
     if(!pixels)
     {
         fprintf(stderr, "Failed to load image from file: %s\n", path);
+        //TODO: load purple aah missing texture instead
     }
 
-    image->data = pixels;
+    image->data   = pixels;
     image->width  = (uint32_t)width;
     image->height = (uint32_t)height;
 }
