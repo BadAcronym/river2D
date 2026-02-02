@@ -15,8 +15,19 @@ then
     mkdir ./bin/
 fi
 
-pushd ./vendor/imgsurf/
-./run
+if [[ -f ./vendor/imgsurf/run ]]
+then
+    pushd ./vendor/imgsurf/
+    ./run --compile-only
+else
+    echo -e "\033[31mERROR: can't find river2D's run script.\033[0m"
+fi
+
+if [[ $? != 0 ]]
+then
+    exit -1
+fi
+
 popd
 
 premake5 ecc
@@ -24,4 +35,18 @@ premake5 gmake
 
 pushd ./build/
 make
+
+if [[ $? != 0 ]]
+then
+    exit -1
+fi
+
+if [[ $1 = "--compile-only" ]]
+then
+    exit 0
+fi
+
 popd
+
+chmod +x ./bin/release/river2Dmapedit
+./bin/release/river2Dmapedit
