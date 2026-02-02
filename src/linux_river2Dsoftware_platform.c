@@ -175,7 +175,6 @@ int32_t river2D_shutdown
     return 0;
 }
 
-//FIXME: not using proper portion
 internal void *pictopOver
 (
     void *data
@@ -194,10 +193,7 @@ internal void *pictopOver
             uint8_t  *dest = ((ThreadData*)data)->data->dest;
             if(src[srcIndex + 3])
             {
-                dest[dstIndex]     = src[srcIndex];
-                dest[dstIndex + 1] = src[srcIndex + 1];
-                dest[dstIndex + 2] = src[srcIndex + 2];
-                dest[dstIndex + 3] = src[srcIndex + 3];
+                memcpy(&dest[dstIndex], &src[srcIndex], RIVER2D_BPP);
             }
         }
     }
@@ -293,10 +289,7 @@ void river2D_compositeImage
 
             if(src[srcIndex + 3])
             {
-                dest[dstIndex]     = src[srcIndex];
-                dest[dstIndex + 1] = src[srcIndex + 1];
-                dest[dstIndex + 2] = src[srcIndex + 2];
-                dest[dstIndex + 3] = src[srcIndex + 3];
+                memcpy(&dest[dstIndex], &src[srcIndex], RIVER2D_BPP);
             }
         }
     }
@@ -315,6 +308,15 @@ void river2D_bltBuffer
 (
     EngineData *engine
 ){
+    //TODAY: oh boy. now it's time to create a way to stretch this thing.
+    //probably will have to treat each pixel in the backbuffer as a vertex.
+    //I can pass the backbuffer through a multi-threaded function which goes through each pixel
+    //in the desired buffer size (which will be the bufImg here) and calculates its value, based
+    //on some filtering of the source pixel and possibly its neighbours. I only want to scale up
+    //here, not down. If the desired buffer size is bigger than the window, I don't care. Or that
+    //is to say, that should probably be handled by some other downscaling function. for now,
+    //let's upscale.
+
     XImage *bufImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap,
                                   0, (char*)engine->backbuffer.data, engine->config.width,
                                   engine->config.height, RIVER2D_SCANLINE, 0);
