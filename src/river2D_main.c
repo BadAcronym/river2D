@@ -18,11 +18,11 @@ void river2D_processControls
         {
             if(isDown)
             {
-                controls->direction |= River2D_DIR_UP;
+                controls->keymap |= River2D_BIT_UP;
             }
             else
             {
-                controls->direction &= ~River2D_DIR_UP;
+                controls->keymap &= ~River2D_BIT_UP;
             }
             break;
         }
@@ -30,11 +30,11 @@ void river2D_processControls
         {
             if(isDown)
             {
-                controls->direction |= River2D_DIR_DOWN;
+                controls->keymap |= River2D_BIT_DOWN;
             }
             else
             {
-                controls->direction &= ~River2D_DIR_DOWN;
+                controls->keymap &= ~River2D_BIT_DOWN;
             }
             break;
         }
@@ -42,11 +42,11 @@ void river2D_processControls
         {
             if(isDown)
             {
-                controls->direction |= River2D_DIR_LEFT;
+                controls->keymap |= River2D_BIT_LEFT;
             }
             else
             {
-                controls->direction &= ~River2D_DIR_LEFT;
+                controls->keymap &= ~River2D_BIT_LEFT;
             }
             break;
         }
@@ -54,19 +54,45 @@ void river2D_processControls
         {
             if(isDown)
             {
-                controls->direction |= River2D_DIR_RIGHT;
+                controls->keymap |= River2D_BIT_RIGHT;
             }
             else
             {
-                controls->direction &= ~River2D_DIR_RIGHT;
+                controls->keymap &= ~River2D_BIT_RIGHT;
             }
             break;
         }
         case River2D_KEY_TAB:
         {
-            controls->tab = isDown;
+            if(isDown)
+            {
+                controls->keymap |= River2D_BIT_TAB;
+            }
+            else
+            {
+                controls->keymap &= ~River2D_BIT_TAB;
+            }
             break;
         }
+        case River2D_KEY_ESCAPE:
+        {
+            if(isDown)
+            {
+                controls->keymap |= River2D_BIT_ESCAPE;
+            }
+            else
+            {
+                controls->keymap &= ~River2D_BIT_ESCAPE;
+            }
+            break;
+        }
+        #ifdef DEBUG
+        default:
+        {
+            printf("%u", key);
+            printf("%c", '\n');
+        }
+        #endif
     }
 
     //TODO: tab and other hotkeys

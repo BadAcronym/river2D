@@ -23,17 +23,20 @@
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
 //find a way to define at runtime and just load a set of keycodes
-#define River2D_KEY_UP    41
-#define River2D_KEY_LEFT  27
-#define River2D_KEY_RIGHT 28
-#define River2D_KEY_DOWN  39
+//the bit macros stay, though
+#define River2D_KEY_UP     41
+#define River2D_KEY_LEFT   27
+#define River2D_KEY_RIGHT  28
+#define River2D_KEY_DOWN   39
+#define River2D_KEY_TAB    23
+#define River2D_KEY_ESCAPE 99
 
-#define River2D_KEY_TAB   23
-
-#define River2D_DIR_UP    0b0001
-#define River2D_DIR_DOWN  0b0010
-#define River2D_DIR_LEFT  0b0100
-#define River2D_DIR_RIGHT 0b1000
+#define River2D_BIT_UP     0b000001
+#define River2D_BIT_DOWN   0b000010
+#define River2D_BIT_LEFT   0b000100
+#define River2D_BIT_RIGHT  0b001000
+#define River2D_BIT_TAB    0b010000
+#define River2D_BIT_ESCAPE 0b100000
 
 typedef struct Dimensions
 {
@@ -49,14 +52,10 @@ typedef struct PerformanceCounter
 }
 PerformanceCounter;
 
-//the reason we're even using a uint8_t is so that we can have diagonal
-//movement in the editor even though you might not want it in the game.
 typedef struct River2DControlMap
 {
-    bool    mouseClick_left;
-    bool    mouseClick_right;
-    uint8_t direction;
-    bool    tab;
+    uint64_t keymap;
+    //others, if more than 64 bits are needed
 }
 River2DControlMap;
 

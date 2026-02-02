@@ -28,7 +28,7 @@ int main()
     {
         while(XPending(display) > 0)
         {
-            XEvent event = {0};
+            XEvent event = {};
             XNextEvent(display, &event);
             switch(event.type)
             {
