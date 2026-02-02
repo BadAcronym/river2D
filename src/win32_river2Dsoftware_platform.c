@@ -37,8 +37,6 @@ void river2D_init
     EngineData         *engine,
     River2D_Image      *planes
 ){
-    river2D_loadConfig(&engine->config);
-
     engine->planes = planes;
 
     engine->windowName = "unnamed river2D application";

@@ -97,7 +97,6 @@ void river2D_loadConfig
             return;
         }
 
-        //NOTE: we are reading the whole file twice. why..?
         char buf[bufsize];
         while(fgets(buf, bufsize, file))
         {

@@ -120,8 +120,6 @@ void river2D_init
     EngineData         *engine,
     River2D_Image      *planes
 ){
-    river2D_loadConfig(&engine->config);
-
     engine->planes = planes;
 
     engine->display = XOpenDisplay(0);
