@@ -104,7 +104,9 @@ void river2D_loadConfig
                     continue;
                 }
                 config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
+                #ifdef DEBUG
                 fprintf(stderr, "parsed result: true\n");
+                #endif
                 continue;
             }
 
@@ -127,7 +129,9 @@ void river2D_loadConfig
                     parsedWidth_canvas += (digit - 0x30);
                 }
 
+                #ifdef DEBUG
                 fprintf(stderr, "parsed result: %u\n", parsedWidth_canvas);
+                #endif
 
                 config->canvas_width = parsedWidth_canvas;
                 continue;
@@ -152,7 +156,9 @@ void river2D_loadConfig
                     parsedHeight_canvas += (digit - 0x30);
                 }
 
+                #ifdef DEBUG
                 fprintf(stderr, "parsed result: %u\n", parsedHeight_canvas);
+                #endif
 
                 config->canvas_height = parsedHeight_canvas;
                 continue;
@@ -177,7 +183,9 @@ void river2D_loadConfig
                     parsedWidth_window += (digit - 0x30);
                 }
 
+                #ifdef DEBUG
                 fprintf(stderr, "parsed result: %u\n", parsedWidth_window);
+                #endif
 
                 config->window_width = parsedWidth_window;
                 continue;
@@ -202,7 +210,9 @@ void river2D_loadConfig
                     parsedHeight_window += (digit - 0x30);
                 }
 
+                #ifdef DEBUG
                 fprintf(stderr, "parsed result: %u\n", parsedHeight_window);
+                #endif
 
                 config->window_height = parsedHeight_window;
                 continue;
