@@ -130,21 +130,22 @@ typedef struct River2D_Time
 }
 River2D_Time;
 
-typedef struct River2D_ControlMap
-{
-    uint64_t keymap;
-    uint64_t rumble;
-    uint8_t  keycodes[64];
-    //other general use stuff
-}
-River2D_ControlMap;
-
 typedef struct Coordinates
 {
     double x;
     double y;
 }
 Coordinates;
+
+typedef struct River2D_ControlMap
+{
+    uint64_t    keymap;
+    Coordinates pointer;
+    uint64_t    rumble;
+    uint8_t     keycodes[64];
+    //other general use stuff
+}
+River2D_ControlMap;
 
 #ifdef BUILD_LINUX
 typedef struct Buffer
