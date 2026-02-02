@@ -58,10 +58,10 @@ void river2D_init
     river2D_loadConfig(&engine->config);
     engine->running = true;
 
-    // if(!engine->config.static_canvas_enable)
-    // {
-    //     river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
-    // }
+    if(!engine->config.static_canvas_enable)
+    {
+        river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
+    }
 }
 
 int32_t river2D_shutdown
@@ -98,6 +98,7 @@ extern void river2D_drawFrame
     EngineData *engine
 ){
     //TEST: draw something...
+    XDrawRectangle(engine->display, engine->pixmap, engine->context, engine->width, engine->height, 0, 0);
 
     river2D_bltBuffer(engine);
 }
