@@ -106,8 +106,8 @@ int32_t river2D_shutdown
 (
     EngineData *engine
 ){
-    //TODO: does this not have to happen every update call?
-    // ReleaseDC(engine->window, engine->context);
+    //stuff
+    DestroyWindow(engine->window);
 
     return 0;
 }
