@@ -2,12 +2,6 @@
 
 #include <sys/stat.h>
 
-//WIP: debug
-#include <stdio.h>
-#include <inttypes.h>
-
-//TESTING: find out what unit of measurement I even get here
-//my assumption is that if the division result is 1, that was an entire second.
 void river2D_queryTime
 (
     River2D_Time *time
@@ -18,12 +12,8 @@ void river2D_queryTime
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&freq);
 
-    time->s  = (uint64_t)(t1.QuadPart / freq.QuadPart);
-    time->ns = (uint64_t)(t1.QuadPart * 1000000000 / freq.QuadPart);
-
-    //WIP: debug
-    fprintf(stderr, "%" PRIu64 "\n", time->s);
-    fprintf(stderr, "%" PRIu64 "\n", time->ns);
+    time->s  = (uint64_t)(t1.QuadPart * 1000 / freq.QuadPart);
+    time->ns = (uint64_t)(t1.QuadPart * 1000000000000 / freq.QuadPart);
 }
 
 uint8_t river2D_verifyPath
