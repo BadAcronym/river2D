@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [[ ! -d "./obj/" ]]
+then
+    mkdir ./obj/
+fi
+
+if [[ ! -d "./build/" ]]
+then
+    mkdir ./build/
+fi
+
+if [[ ! -d "./bin/" ]]
+then
+    mkdir ./bin/
+fi
+
+pushd ./vendor/imgsurf/
+./run
+popd
+
+premake5 ecc
+premake5 gmake
+
+pushd ./build/
+make
+popd
