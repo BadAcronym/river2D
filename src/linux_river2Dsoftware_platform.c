@@ -252,7 +252,7 @@ void river2D_compositeImage
               image->width, image->height);
 
     //TODO: pass PictOpX as parameter from river2D_composite? only if I need more than add...
-    XRenderComposite(engine->display, PictOpAdd, compSrcPict, None, compDestPict,
+    XRenderComposite(engine->display, PictOpOver, compSrcPict, None, compDestPict,
                      0, 0, 0, 0, 0, 0, engine->width, engine->height);
 
     XRenderFreePicture(engine->display, compSrcPict);
