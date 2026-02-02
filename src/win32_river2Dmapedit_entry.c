@@ -43,15 +43,18 @@ global river2D_blt_ *_river2D_blt_ = River2D_blt_Stub;
 
 clang_diagnostic_pop
 
-void win32LoadXInput(void)
+internal void loadRender_software(void)
 {
     HMODULE software = LoadLibraryA("river2Dsoftware.dll");
-    if(software)
+    if(!software)
     {
-        river2D_init      = (river2D_init_*)GetProcAddress(software, "river2D_init");
-        river2D_shutdown  = (river2D_shut_*)GetProcAddress(software, "river2D_shutdown");
-        river2D_bltBuffer =  (river2D_blt_*)GetProcAddress(software, "river2D_bltBuffer");
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load software renderer!\033[0m\n");
+        return;
     }
+
+    river2D_init      = (river2D_init_*)GetProcAddress(software, "river2D_init");
+    river2D_shutdown  = (river2D_shut_*)GetProcAddress(software, "river2D_shutdown");
+    river2D_bltBuffer =  (river2D_blt_*)GetProcAddress(software, "river2D_bltBuffer");
 }
 
 LRESULT CALLBACK win32WindowCallback
