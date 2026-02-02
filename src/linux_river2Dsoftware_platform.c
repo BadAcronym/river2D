@@ -256,13 +256,11 @@ void river2D_compositeImage
     };
 
     uint32_t y = 0;
-    uint32_t skipHeight = pictopData.threadHeight * RIVER2D_MAX_THREADS;
     uint32_t stopHeight = cropHeight - pictopData.threadHeight;
 
-    if(!skipHeight)
+    if(!pictopData.threadHeight)
     {
         pictopData.threadHeight = 1;
-        skipHeight = 1;
     }
 
     #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
@@ -336,6 +334,33 @@ internal void *blt
 (
     void *data
 ){
+    ScaleData *sd = ((ThreadData*)data)->data;
+    uint32_t bltWidth = sd->ogWidth * sd->factor;
+
+    for(uint32_t y = 0; y < sd->threadHeight; ++y)
+    {
+        uint32_t dstIndexY = (((ThreadData*)data)->y + y) * sd->factor * bltWidth;
+        uint32_t srcIndexY = (((ThreadData*)data)->y + y) * sd->ogWidth;
+
+        for(uint32_t x = 0; x < sd->ogWidth; ++x)
+        {
+            uint32_t srcIndexX = srcIndexY + x;
+            uint32_t dstIndexX = dstIndexY + (x * sd->factor);
+
+            for(uint8_t i = 0; i < sd->factor; ++i)
+            {
+                sd->dest[dstIndexX++] = sd->src[srcIndexX];
+            }
+        }
+        for(uint8_t i = 0; i < sd->factor - 1; ++i)
+        {
+            memcpy(&sd->dest[dstIndexY + bltWidth * (i + 1)],
+                   &sd->dest[dstIndexY],
+                   bltWidth * RIVER2D_BPP);
+        }
+    }
+
+    return 0;
 }
 
 void river2D_bltBuffer
@@ -361,8 +386,11 @@ void river2D_bltBuffer
     int bltWidth   = 0;
     int bltHeight  = 0;
 
-    //TODAY: (river2D #4): multi-thread this monstrosity.
-    //Same principle as the composite function.
+    //TODAY: (river2D #4): we are now multi-threaded but again just slower than our single-
+    //threaded counterpart. is this some sort of aliasing problem?
+    //try calculating the starting y index for both dest and src before spawning the thread,
+    //maybe that helps.
+    //don't pass the original src[] at all, possibly that is waited upon
 
     if(factor != 1)
     {
@@ -375,25 +403,97 @@ void river2D_bltBuffer
 
         bufImg->data = malloc(bltWidth * bltHeight * RIVER2D_BPP);
 
-        uint32_t *dest = (uint32_t*)bufImg->data;
-        uint32_t *src  = (uint32_t*)engine->backbuffer.data;
+        uint32_t y = 0;
+        uint32_t stopHeight = engine->backbuffer.height - RIVER2D_MAX_THREADS;
 
-        for(uint32_t y = 0; y < engine->backbuffer.height; ++y)
+        ScaleData scaleData =
         {
-            for(uint32_t x = 0; x < engine->backbuffer.width; ++x)
+            .threadHeight = floor(engine->backbuffer.height / RIVER2D_MAX_THREADS),
+            .ogWidth  = engine->backbuffer.width,
+            .factor = factor,
+            .src   = (uint32_t*)engine->backbuffer.data,
+            .dest  = (uint32_t*)bufImg->data
+        };
+
+        if(!scaleData.threadHeight)
+        {
+            scaleData.threadHeight = 1;
+        }
+
+        //WIP: debug
+        // fprintf(stderr, "sd.threadHeight: %u\n", scaleData.threadHeight);
+        // fprintf(stderr, "sd.ogWidth: %u\n", scaleData.ogWidth);
+        // fprintf(stderr, "bltWidth: %u\n", bltWidth);
+        // fprintf(stderr, "factor: %u\n", scaleData.factor);
+        // fprintf(stderr, "stopHeight: %u\n\n", stopHeight);
+
+        #ifdef RIVER2D_PROFILING_BLT
+        River2D_Time time = river2D_queryTime();
+        #endif
+
+        for(uint8_t i = 0; i < RIVER2D_MAX_THREADS && y < engine->backbuffer.height; ++i)
+        {
+            if(y > stopHeight)
+            {
+                break;
+            }
+            engine->pool.threadData[i]->y = y;
+            engine->pool.threadData[i]->data = &scaleData;
+
+            pthread_create(&engine->pool.threads[i], 0, blt,
+                           (void*)engine->pool.threadData[i]);
+
+            y += scaleData.threadHeight;
+        }
+
+        #ifdef RIVER2D_PROFILING_BLT
+        River2D_Time dispatchTime = river2D_deltaTime(&time);
+        engine->dispatchTime.s  += dispatchTime.s;
+        engine->dispatchTime.ns += dispatchTime.ns;
+
+        time = river2D_queryTime();
+        #endif
+
+        for(; y < engine->backbuffer.height; ++y)
+        {
+            for(uint32_t x = 0; x < scaleData.ogWidth; ++x)
             {
                 for(uint8_t i = 0; i < factor; ++i)
                 {
-                    *dest++ = *src;
+                    *scaleData.dest++ = *scaleData.src;
                 }
-                src++;
+                ++scaleData.src;
             }
             for(uint8_t i = 0; i < factor - 1; ++i)
             {
-                memcpy(dest, dest - bltWidth, bltWidth * RIVER2D_BPP);
-                dest += bltWidth;
+                memcpy(&scaleData.dest[bltWidth * i],
+                &scaleData.dest[bltWidth * i - 1],
+                bltWidth * RIVER2D_BPP);
             }
         }
+
+        #ifdef RIVER2D_PROFILING_BLT
+        River2D_Time singleTime = river2D_deltaTime(&time);
+        engine->singleTime.s  += singleTime.s;
+        engine->singleTime.ns += singleTime.ns;
+
+        time = river2D_queryTime();
+        #endif
+
+        for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
+        {
+            if(engine->pool.threads[i])
+            {
+                pthread_join(engine->pool.threads[i], 0);
+                engine->pool.threads[i] = 0;
+            }
+        }
+
+        #ifdef RIVER2D_PROFILING_BLT
+        River2D_Time idleTime = river2D_deltaTime(&time);
+        engine->idleTime.s  += idleTime.s;
+        engine->idleTime.ns += idleTime.ns;
+        #endif
     }
     else
     {

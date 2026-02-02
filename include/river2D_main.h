@@ -136,7 +136,9 @@ PictopData;
 
 typedef struct ScaleData
 {
-    uint32_t width;
+    uint32_t threadHeight;
+    uint32_t ogWidth;
+    uint8_t  factor;
     uint32_t *src;
     uint32_t *dest;
 }
@@ -190,7 +192,7 @@ typedef struct EngineData
     River2D_Image      *planes;
     River2D_Time       lastFrametime;
     River2D_Time       lastFPStime;
-    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
+    #ifdef RIVER2D_PROFILING
     River2D_Time       dispatchTime;
     River2D_Time       idleTime;
     River2D_Time       singleTime;
