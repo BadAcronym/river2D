@@ -1,5 +1,5 @@
 ---@diagnostic disable: undefined-global, undefined-field
-require"vendor/ecc/ecc"
+require"vendor/premake-ecc/ecc"
 
 -- TODAY: create separate compile targets for the renderer .dll/.so files
 -- and the actual tile editor:
