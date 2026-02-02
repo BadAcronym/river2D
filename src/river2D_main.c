@@ -122,9 +122,9 @@ void river2D_loadImage
     const char*   path,
     River2D_Image *image,
     uint8_t       format,
-    uint8_t       depth
+    uint8_t       bitdepth
 ){
-    image->data = imgsurf_load(path, &image->width, &image->height, format, depth);
+    image->data = imgsurf_load(path, &image->width, &image->height, format, bitdepth);
 
     if(!image->data)
     {

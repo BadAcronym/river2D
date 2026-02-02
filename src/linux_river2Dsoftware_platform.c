@@ -248,12 +248,10 @@ void river2D_compositeImage
         river2D_resizeBackbuffer(engine, image->width, image->height);
     }
 
-    //FIXME: heap use after free
-    //but how the fuck. if I create a new ximage every time
     XPutImage(engine->display, engine->compBuffer, engine->context, compSrcImg, 0, 0, 0, 0,
               image->width, image->height);
 
-    //TODO: pass PictOpX as parameter from river2D_composite
+    //TODO: pass PictOpX as parameter from river2D_composite? only if I need more than add...
     XRenderComposite(engine->display, PictOpAdd, compSrcPict, None, compDestPict,
                      0, 0, 0, 0, 0, 0, engine->width, engine->height);
 
