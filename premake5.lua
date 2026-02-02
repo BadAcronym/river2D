@@ -184,7 +184,7 @@ project("river2D software renderer")
         libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/", "./bin/%{cfg.buildcfg}/"})
         links({"imgsurf:static", "river2Dcommon:static"})
         buildoptions({"-Wextra", "-Wall", "-Wpedantic"})
-        linkoptions({"-lX11", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
+        linkoptions({"-lX11", "-lXrender", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
         toolset("clang")
 
     filter("platforms:Windows")

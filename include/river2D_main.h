@@ -13,6 +13,7 @@
 #ifdef BUILD_LINUX
     #include "X11/Xlib.h"
     #include "X11/Xutil.h"
+    #include "X11/extensions/Xrender.h"
 
     #define __USE_POSIX199309
     #include <time.h>
@@ -73,9 +74,22 @@
 #define RIVER2D_TYPE_OTHER     3
 #define RIVER2D_TYPE_MAX       3
 
-#define RIVER2D_PICTOP_OVER    0
-#define RIVER2D_PICTOP_REPLACE 1
-#define RIVER2D_PICTOP_MAXIMUM 2
+#define RIVER2D_PICTOP_MINIMUM	   0
+#define RIVER2D_PICTOP_CLEAR	   0
+#define RIVER2D_PICTOP_SRC		   1
+#define RIVER2D_PICTOP_DST		   2
+#define RIVER2D_PICTOP_OVER		   3
+#define RIVER2D_PICTOP_OVERREVERSE 4
+#define RIVER2D_PICTOP_IN		   5
+#define RIVER2D_PICTOP_INREVERSE   6
+#define RIVER2D_PICTOP_OUT		   7
+#define RIVER2D_PICTOP_OUTREVERSE  8
+#define RIVER2D_PICTOP_ATOP		   9
+#define RIVER2D_PICTOP_ATOPREVERSE 10
+#define RIVER2D_PICTOP_XOR		   11
+#define RIVER2D_PICTOP_ADD		   12
+#define RIVER2D_PICTOP_SATURATE	   13
+#define RIVER2D_PICTOP_MAXIMUM	   13
 
 #define RIVER2D_CHOICE_SHOW_FPS_BIT      1
 #define RIVER2D_CHOICE_STATIC_CANVAS_BIT 2
@@ -132,14 +146,6 @@ typedef struct Coordinates
 Coordinates;
 
 #ifdef BUILD_LINUX
-typedef struct X11Backbuffer
-{
-    uint8_t  *data;
-    uint32_t width;
-    uint32_t height;
-}
-X11Backbuffer;
-
 typedef struct PosixThreadpool
 {
     pthread_t  threads[RIVER2D_MAX_THREADS];
@@ -178,10 +184,12 @@ typedef struct EngineData
 #ifdef BUILD_LINUX
     Display            *display;
     Screen             *screen;
+    XRenderPictFormat  *format;
     Visual             *visual;
     Window             window;
     GC                 context;
-    X11Backbuffer      backbuffer;
+    Pixmap             backbuffer;
+    Pixmap             compBuffer;
     PosixThreadpool    pool;
 #endif
 
