@@ -2,9 +2,9 @@
 
 #include <sys/stat.h>
 
-void river2D_queryTime
+River2D_Time river2D_queryTime
 (
-    River2D_Time *time
+    void
 ){
     LARGE_INTEGER t1;
     LARGE_INTEGER freq;
@@ -12,8 +12,11 @@ void river2D_queryTime
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&freq);
 
-    time->s  = (uint64_t)(t1.QuadPart / freq.QuadPart);
-    time->ns = (uint64_t)(1000000 * t1.QuadPart / freq.QuadPart) / 1000;
+    River2D_Time time;
+    time.s  = (uint64_t)(t1.QuadPart / freq.QuadPart);
+    time.ns = (uint64_t)(1000000 * t1.QuadPart / freq.QuadPart) / 1000;
+
+    return time;
 }
 
 uint8_t river2D_verifyPath
@@ -38,4 +41,23 @@ uint8_t river2D_verifyPath
     }
 
     return RIVER2D_TYPE_OTHER;
+}
+
+//TODO: fixup windows control interpreting
+uint8_t river2D_interpretCharAsKey
+(
+    char inp
+){
+    const uint8_t alphabetic_table[26] =
+    {
+        38, 56, 54, 40, 26, 41, 42, 43, 31, 44,
+        45, 46, 58, 57, 32, 33, 24, 27, 39, 28,
+        30, 55, 25, 53, 29, 52,
+    };
+
+    if(inp < 123 && inp > 96)
+    {
+        return alphabetic_table[inp - 97];
+    }
+    return 0;
 }
