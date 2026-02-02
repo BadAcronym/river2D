@@ -28,6 +28,7 @@
     _Pragma("clang diagnostic pop")\
 
 #define RIVER2D_BPP       4
+#define RIVER2D_PIXDEPTH  32
 #define RIVER2D_MAX_DEPTH 16
 
 //X keycodes

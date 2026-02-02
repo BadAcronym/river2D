@@ -47,6 +47,7 @@ int main()
                     engine.running = false;
                     break;
                 }
+                //TODO: handle ColormapNotify?
             }
         }
         river2D_updateEditor();
