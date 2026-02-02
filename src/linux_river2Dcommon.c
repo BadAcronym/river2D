@@ -1,8 +1,81 @@
 #include "river2D_main.h"
 
-#include <stdlib.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 #include <dirent.h>
+#include <dlfcn.h>
+#include <stdio.h>
+
+#ifdef ASAN
+        #define LIBPATH "./vendor/river2D/bin/asan/"
+#else
+    #ifdef DEBUG
+        #define LIBPATH "./vendor/river2D/bin/debug/"
+    #else
+        #define LIBPATH "./vendor/river2D/bin/release/"
+    #endif
+#endif
+
+internal void resolveFunction
+(
+    void       **fptr,
+    void       *renderer,
+    const char *name,
+    char       **error
+){
+    *fptr = dlsym(renderer, name);
+    if((*error = dlerror()))
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol %s.\n", name);
+        fputs(*error, stderr);
+        fprintf(stderr, "\033[0m\n");
+    }
+
+    #ifdef DEBUG
+    fprintf(stderr, "Loaded symbol: %s\n", name);
+    #endif
+}
+
+void river2D_resolveRenderer
+(
+    EngineData *engine,
+    uint8_t    renderer
+){
+    if(renderer == RIVER2D_RENDERER_SOFTWARE)
+    {
+        char *error = 0;
+        void *software = dlopen(LIBPATH "libriver2Dsoftware.so", RTLD_NOW);
+        if(!software)
+        {
+            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded.\n");
+            fputs(dlerror(), stderr);
+            fprintf(stderr, "\033[0m\n");
+        }
+
+        resolveFunction((void**)&engine->river2D_init,           software, "river2D_init",           &error);
+        resolveFunction((void**)&engine->river2D_shutdown,       software, "river2D_shutdown",       &error);
+        resolveFunction((void**)&engine->river2D_loadText,       software, "river2D_loadText",       &error);
+        resolveFunction((void**)&engine->river2D_bltBuffer,      software, "river2D_bltBuffer",      &error);
+        resolveFunction((void**)&engine->river2D_compositeImage, software, "river2D_compositeImage", &error);
+
+    }
+    else if(renderer == RIVER2D_RENDERER_OPENGL)
+    {
+        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for river2D.\033[0m");
+    }
+    else if(renderer == RIVER2D_RENDERER_VULKAN)
+    {
+        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for river2D.\033[0m");
+    }
+    else if(renderer == RIVER2D_RENDERER_DIRECTX)
+    {
+        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for river2D.\033[0m");
+    }
+    else
+    {
+        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in river2D_resolveRenderer.\033[0m");
+    }
+}
 
 River2D_Time river2D_queryTime
 (
