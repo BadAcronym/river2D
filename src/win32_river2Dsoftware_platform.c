@@ -41,9 +41,13 @@ void river2D_init
 
     engine->windowName = "unnamed river2D application";
 
-    if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
+    if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
+        river2D_resizeBackbuffer(engine, engine->config.canvas_width, engine->config.canvas_height);
+    }
+    else
+    {
+        river2D_resizeBackbuffer(engine, engine->config.window_width, engine->config.window_height);
     }
 
     River2D_Time time = river2D_queryTime();
