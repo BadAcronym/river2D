@@ -128,6 +128,8 @@ void river2D_bltBuffer
 }
 
 //TODAY: add graceful handling of buffer size
+//FIXME: anchor is bottom left, not top
+//this is probably the reversed drawing's fault
 void river2D_compositeImage
 (
     EngineData    *engine,
