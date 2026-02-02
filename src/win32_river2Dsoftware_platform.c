@@ -62,7 +62,7 @@ void river2D_resizeBackbuffer
 
     engine->backbuffer.info.bmiHeader.biSize   = sizeof(engine->backbuffer.info.bmiHeader);
     engine->backbuffer.info.bmiHeader.biWidth  = (long)engine->backbuffer.width;
-    engine->backbuffer.info.bmiHeader.biHeight = (long)engine->backbuffer.height;
+    engine->backbuffer.info.bmiHeader.biHeight = -(long)engine->backbuffer.height;
     engine->backbuffer.info.bmiHeader.biPlanes = 1;
     engine->backbuffer.info.bmiHeader.biBitCount = 32;
     engine->backbuffer.info.bmiHeader.biCompression = BI_RGB;
@@ -127,9 +127,7 @@ void river2D_bltBuffer
     river2D_queryTime(&engine->lastFrametime);
 }
 
-//TODAY: add graceful handling of buffer size
-//FIXME: anchor is bottom left, not top
-//this is probably the reversed drawing's fault
+//TODO: add graceful handling of buffer size
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -171,7 +169,7 @@ void river2D_compositeImage
         for(uint32_t x = 0; x < copyWidth; x += RIVER2D_BPP)
         {
             uint64_t srcIndex  = y * copyWidth + x;
-            uint64_t dstIndex  = ((image->height - y - 1) * bufWidth) + x;
+            uint64_t dstIndex  = y * bufWidth + x;
             if(image->data[srcIndex + 3])
             {
                 dest[dstIndex]     = image->data[srcIndex];
