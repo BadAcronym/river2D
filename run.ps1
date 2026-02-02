@@ -1,29 +1,31 @@
 param
 (
-    [Parameter(position=0,mandatory=$false)]
-    $build = "DEBUG",
-    [Parameter(position=1,mandatory=$false)]
-    [switch]$dontrun = $false
+    [Parameter(position=0,Mandatory=$false)]
+    $build = "DEBUG"
 )
 
 Write-Host "Building $build...`n"
 
+$Platforms = "Win64", "Linux"
 $Configurations = "Debug", "Release"
-$Name = "river2D"
+$target = ""
 
-foreach($config in $Configurations)
+foreach($platform in $Platforms)
 {
-    $objPath = "./obj/Win64" + "_$config"
-    $binPath = "./bin/Win64" + "_$config"
-
-    if(-Not(Test-Path $objPath))
+    foreach($config in $Configurations)
     {
-        &mkdir $objPath
-    }
+        $objPath = "./obj/$platform" + "_$config"
+        $binPath = "./bin/$platform" + "_$config"
 
-    if(-Not(Test-Path $binPath))
-    {
-        &mkdir $binPath
+        if(-Not(Test-Path $objPath))
+        {
+            &mkdir $objPath
+        }
+
+        if(-Not(Test-Path $binPath))
+        {
+            &mkdir $binPath
+        }
     }
 }
 
@@ -32,17 +34,39 @@ if(-Not(Test-Path "./build/"))
     &mkdir "./build/"
 }
 
+if(-Not(Test-Path "./log/"))
+{
+    &mkdir "./log/"
+}
+
 &premake5 ecc
-&premake5 vs2022
 
-&MSBuild ./build/$Name.sln -p:Configuration=$build
+if($IsLinux)
+{
+    &premake5 gmake
 
-$target = "./bin/Win64" + "_$build/$Name.exe"
+    #TODO: make the makey file
 
-if($LASTEXITCODE -eq 0 -and -not $dontrun)
+    $target = "./bin/Linux" + "_$build/river2D"
+}
+elseIf($IsWindows)
+{
+    &premake5 vs2022
+
+    &MSBuild ./build/River.sln -p:Configuration=$build
+
+    $target = "./bin/Win64" + "_$build/river2D.exe"
+}
+
+if($isWindows -and 0 -eq $LASTEXITCODE -and $build -eq "debug")
+{
+    Write-Host "`ngenerating rdi debug info..."
+
+    Invoke-Expression "radbin --rdi $target"
+}
+
+if(0 -eq $LASTEXITCODE)
 {
     Write-Host "`nrunning $target..."
-
     Invoke-Expression $target
 }
-exit $LASTEXITCODE
