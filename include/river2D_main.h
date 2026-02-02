@@ -48,13 +48,12 @@
 #define RIVER2D_KEY_TAB    23
 #define RIVER2D_KEY_ESCAPE 99
 
-//thought: could we be wasting cache here? is 1 << n somehow more efficient?
-#define RIVER2D_BIT_UP     1  //0b000001
-#define RIVER2D_BIT_DOWN   2  //0b000010
-#define RIVER2D_BIT_LEFT   4  //0b000100
-#define RIVER2D_BIT_RIGHT  8  //0b001000
-#define RIVER2D_BIT_TAB    16 //0b010000
-#define RIVER2D_BIT_ESCAPE 32 //0b100000
+#define RIVER2D_BIT_UP     1
+#define RIVER2D_BIT_DOWN   2
+#define RIVER2D_BIT_LEFT   4
+#define RIVER2D_BIT_RIGHT  8
+#define RIVER2D_BIT_TAB    16
+#define RIVER2D_BIT_ESCAPE 32
 
 #define RIVER2D_CHANNELS_RGBA 0
 #define RIVER2D_CHANNELS_BGRA 1
@@ -130,9 +129,9 @@ River2D_Time;
 typedef struct River2D_ControlMap
 {
     uint64_t keymap;
-    //others, if more than 64 bits are needed
-    //
-    //later add velocities for gamepads
+    uint64_t rumble;
+    uint8_t  keycodes[64];
+    //other general use stuff
 }
 River2D_ControlMap;
 
