@@ -101,6 +101,7 @@ typedef struct EngineData
 #ifdef BUILD_LINUX
     Display            *display;
     Screen             *screen;
+    XRenderPictFormat  *format;
     Visual             *visual;
     Window             window;
     GC                 context;

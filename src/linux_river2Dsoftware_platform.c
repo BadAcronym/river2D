@@ -82,7 +82,14 @@ void river2D_init
         fprintf(stderr, "No matching visual could be found.\n");
     }
 
+    engine->format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
+    if(!engine->format)
+    {
+        fprintf(stderr, "No matching format could be found.\n");
+    }
+
     engine->windowName = "river2D editor";
+
     engine->window = river2D_openWindow(engine);
     if(!engine->window)
     {
@@ -176,6 +183,8 @@ void river2D_drawFrame
 }
 
 //TODO: multi-thread some of this?
+//TODAY: rewrite so that instead of compositing two images and overwriting the backbuffer,
+//it composits the requested image on top of the backbuffer.
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -193,19 +202,17 @@ void river2D_compositeImage
         return;
     }
 
-    XRenderPictFormat *format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
-
     if(destImg->width != engine->width || destImg->height != engine->height)
     {
         river2D_resizeXImage(engine, engine->compDestImg, destImg->width, destImg->height);
     }
-    memcpy(engine->compDestImg->data, destImg->data, destImg->width * destImg->height * RIVER2D_BPP);
+    memcpy(engine->compDestImg->data, (char*)destImg->data, destImg->width * destImg->height * RIVER2D_BPP);
 
     if(srcImg->width != engine->width || srcImg->height != engine->height)
     {
         river2D_resizeXImage(engine, engine->compSrcImg, srcImg->width, srcImg->height);
     }
-    memcpy(engine->compDestImg->data, srcImg->data, srcImg->width * srcImg->height * RIVER2D_BPP);
+    memcpy(engine->compSrcImg->data, (char*)srcImg->data, srcImg->width * srcImg->height * RIVER2D_BPP);
 
     XPutImage(engine->display, engine->compDestBuf, engine->context, engine->compDestImg, 0, 0, 0, 0,
               destImg->width, destImg->height);
@@ -213,13 +220,14 @@ void river2D_compositeImage
     XPutImage(engine->display, engine->compSrcBuf, engine->context, engine->compSrcImg, 0, 0, 0, 0,
               srcImg->width, srcImg->height);
 
-    Picture destPict = XRenderCreatePicture(engine->display, engine->compDestBuf, format, 0, 0);
-    Picture srcPict  = XRenderCreatePicture(engine->display, engine->compSrcBuf,  format, 0, 0);
-    Picture compPict = XRenderCreatePicture(engine->display, engine->backbuffer,  format, 0, 0);
+    Picture destPict = XRenderCreatePicture(engine->display, engine->compDestBuf, engine->format, 0, 0);
+    Picture srcPict  = XRenderCreatePicture(engine->display, engine->compSrcBuf,  engine->format, 0, 0);
+    Picture compPict = XRenderCreatePicture(engine->display, engine->backbuffer,  engine->format, 0, 0);
 
     XRenderComposite(engine->display, PictOpOver, destPict, srcPict, compPict,
                      0, 0, 0, 0, 0, 0, destImg->width, destImg->height);
 
+    //TODO: see if you can't preallocate these too, then you don't have to alloc/free every frame
     XRenderFreePicture(engine->display, destPict);
     XRenderFreePicture(engine->display, srcPict);
     XRenderFreePicture(engine->display, compPict);
