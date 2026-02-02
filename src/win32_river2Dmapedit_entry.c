@@ -51,13 +51,30 @@ internal void loadRenderer_software
     HMODULE software = LoadLibraryA("river2Dsoftware.dll");
     if(!software)
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load software renderer!\033[0m\n");
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load software renderer!\n");
+        fprintf(stderr, "Tried to load from library path:" LIBPATH);
+        fprintf(stderr, "\033[0m\n");
         return;
     }
 
     river2D_init      = (river2D_init_*)GetProcAddress(software, "river2D_init");
+    if(!river2D_init)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load symbol river2D_init!\033[0m\n");
+        return;
+    }
     river2D_shutdown  = (river2D_shut_*)GetProcAddress(software, "river2D_shutdown");
+    if(!river2D_shutdown)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load symbol river2D_shutdown!\033[0m\n");
+        return;
+    }
     river2D_bltBuffer =  (river2D_blt_*)GetProcAddress(software, "river2D_bltBuffer");
+    if(!river2D_bltBuffer)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load symbol river2D_bltBuffer!\033[0m\n");
+        return;
+    }
 }
 
 LRESULT CALLBACK win32WindowCallback
