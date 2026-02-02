@@ -29,11 +29,11 @@ project("river2D binary")
         system("Windows")
         defines("BUILD_WINDOWS")
         targetdir("bin/river2Dmapedit_win64/%{cfg.buildcfg}")
-        objdir("obj/river2Dmapedit/%{cfg.buildcfg}")
-        files({ "./src/win32_river2D*",
-                "./include/win32_river2D*",
-                "./src/river2D*",
-                "./include/river2D*" })
+        objdir("obj/")
+        files({ "./src/win32_river2Dmapedit*",
+                "./include/win32_river2Dmapedit*",
+                "./src/river2Dmapedit*",
+                "./include/river2Dmapedit*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
         libdirs({"./vendor/imgsurf/bin/**",
             "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/km/x64/"})
@@ -52,10 +52,10 @@ project("river2D binary")
         kind("ConsoleApp")
         targetdir("bin/river2Dmapedit_linux/%{cfg.buildcfg}")
         objdir("obj/river2Dmapedit/%{cfg.buildcfg}")
-        files({"./src/linux_river2D*",
-               "./include/linux_river2D*",
-               "./src/river2D*",
-               "./include/river2D*" })
+        files({"./src/linux_river2Dmapedit*",
+               "./include/linux_river2Dmapedit*",
+               "./src/river2Dmapedit*",
+               "./include/river2Dmapedit*" })
         includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         libdirs({"./vendor/imgsurf/bin/**"})
         links("imgsurf:static")
@@ -92,7 +92,7 @@ project("river2D common functions")
         system("Windows")
         defines("BUILD_WINDOWS")
         targetdir("bin/river2Dcommon_win64/%{cfg.buildcfg}")
-        objdir("obj/river2Dcommon/%{cfg.buildcfg}")
+        objdir("obj/")
         files({"./src/river2D_*",
                "./include/river2D_*",
                "./src/win32_river2Dcommon*",
@@ -152,7 +152,7 @@ project("river2D software renderer")
         system("Windows")
         defines("BUILD_WINDOWS")
         targetdir("bin/river2Dsoftware_win64/%{cfg.buildcfg}")
-        objdir("obj/river2Dsoftware/%{cfg.buildcfg}")
+        objdir("obj/")
         files({"./src/river2D_*",
                "./include/river2D_*",
                "./src/win32_river2Dsoftware*",
@@ -161,7 +161,7 @@ project("river2D software renderer")
                "./include/river2Dsoftware*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
         libdirs({"./vendor/imgsurf/bin/**"})
-        links("imgsurf.lib")
+        links({"imgsurf.lib", "river2Dcommon.lib"})
         ignoredefaultlibraries({ "MSVCRT" })
 
     filter("platforms:Linux")
@@ -177,7 +177,7 @@ project("river2D software renderer")
                "./include/river2Dsoftware*" })
         includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         libdirs({"./vendor/imgsurf/bin/**"})
-        links("imgsurf:static")
+        links({"imgsurf:static", "river2Dcommon:static"})
         buildoptions({"-Wextra", "-Wall", "-Werror"})
         linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
         toolset("clang")

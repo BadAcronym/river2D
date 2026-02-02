@@ -163,13 +163,6 @@ typedef struct EngineData
 }
 EngineData;
 
-extern void river2D_processControls
-(
-    bool               isDown,
-    int32_t            key,
-    River2D_ControlMap *controls
-);
-
 extern void river2D_loadImage
 (
     const char    *path,
