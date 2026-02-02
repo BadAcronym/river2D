@@ -70,3 +70,11 @@ Dimensions river2D_getWindowSize
     Dimensions dim = {0};
     return dim;
 }
+
+// TODO: do hCursor shenanigans
+void river2D_changeCursor
+(
+    EngineData *engine,
+    River2D_Image *image
+){
+}
