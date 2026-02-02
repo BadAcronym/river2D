@@ -13,10 +13,13 @@ void river2D_loadConfig
     River2D_Config *config
 ){
     //TODO: parse & load from engine file
+    //allow for hot reloading via menu if necessary, apply config
     config->static_canvas_enable = false;
+    //add foregrounds, players, etc in config? idk if necessary
     config->backgrounds = 4;
     config->width  = 1280;
     config->height = 720;
+    config->showFPS = true;
 }
 
 internal Visual* findVisual
@@ -176,7 +179,7 @@ Window river2D_openWindow
     return window;
 }
 
-//TODO: allow for other font colours
+//TODO: allow for other font colours?
 void river2D_loadText
 (
     EngineData    *engine,

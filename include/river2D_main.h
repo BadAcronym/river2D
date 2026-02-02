@@ -89,8 +89,7 @@ typedef struct River2D_Config
     uint32_t width;
     uint32_t height;
     bool     static_canvas_enable;
-    // uint32_t static_canvas_width;
-    // uint32_t static_canvas_height;
+    bool     showFPS;
 
     uint8_t  backgrounds;
 
