@@ -110,6 +110,7 @@ void river2D_loadConfig
                 }
                 config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
                 fprintf(stderr, "parsed result: true\n");
+                continue;
             }
 
             const char* cwidthloc = river2D_contains(buf, "canvas_width");
@@ -134,6 +135,7 @@ void river2D_loadConfig
                 fprintf(stderr, "parsed result: %u\n", parsedWidth_canvas);
 
                 config->canvas_width = parsedWidth_canvas;
+                continue;
             }
 
             const char* cheightloc = river2D_contains(buf, "canvas_height");
@@ -158,6 +160,7 @@ void river2D_loadConfig
                 fprintf(stderr, "parsed result: %u\n", parsedHeight_canvas);
 
                 config->canvas_height = parsedHeight_canvas;
+                continue;
             }
 
             const char* wwidthloc = river2D_contains(buf, "window_width");
@@ -182,6 +185,7 @@ void river2D_loadConfig
                 fprintf(stderr, "parsed result: %u\n", parsedWidth_window);
 
                 config->window_width = parsedWidth_window;
+                continue;
             }
 
             const char* wheightloc = river2D_contains(buf, "window_height");
@@ -206,6 +210,7 @@ void river2D_loadConfig
                 fprintf(stderr, "parsed result: %u\n", parsedHeight_window);
 
                 config->window_height = parsedHeight_window;
+                continue;
             }
         }
 
