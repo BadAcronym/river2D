@@ -5,7 +5,7 @@ River2D_Time river2D_deltaTime
     const River2D_Time *time
 ){
     River2D_Time current = river2D_queryTime();
-    River2D_Time delta = {0};
+    River2D_Time delta   = {0};
 
     if(current.ns < time->ns)
     {
