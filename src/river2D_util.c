@@ -10,19 +10,14 @@ const char* river2D_contains
     const char *bigStr,
     const char *smallStr
 ){
-    size_t subsize = strlen(smallStr);
-    size_t size = strlen(bigStr) - subsize;
+    size_t smallsize = strlen(smallStr);
+    size_t bigsize   = strlen(bigStr);
 
-    if(size > subsize)
-    {
-        return 0;
-    }
-
-    for(size_t i = 0, j = 0; i < size; ++i)
+    for(size_t i = 0, j = 0; i < bigsize - smallsize; ++i)
     {
         if(bigStr[i] == smallStr[j])
         {
-            for(; j < subsize; ++j)
+            for(; j < smallsize; ++j)
             {
                 if(bigStr[i + j] != smallStr[j])
                 {
