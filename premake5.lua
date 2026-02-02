@@ -30,7 +30,7 @@ filter("platforms:Windows")
     targetdir("bin/Win64_%{cfg.buildcfg}")
     objdir("obj/Win64_%{cfg.buildcfg}")
     files({ "./src/win32*", "./include/win32*", "./src/river2D*", "./include/river2D*" })
-    includedirs({ "./include/" })
+    includedirs({ "./include/", "./vendor/stb/"})
     buildoptions{"/wd4068", "/wd4100"}
 
 filter({"platforms:Windows", "configurations:release"})
@@ -45,5 +45,5 @@ filter("platforms:Linux")
     targetdir("bin/Linux_%{cfg.buildcfg}")
     objdir("obj/Linux_%{cfg.buildcfg}")
     files({ "./src/linux*", "./include/linux*", "./src/river2D*", "./include/river2D*" })
-    includedirs({ "./include/", "/usr/include/"})
+    includedirs({ "./include/", "/usr/include/", "./vendor/stb/"})
     linkoptions{"-lX11"}
