@@ -3,6 +3,62 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
+internal void resolveFunction
+(
+    void       **fptr,
+    HMODULE    renderer,
+    const char *name
+){
+    *fptr = GetProcAddress(renderer, name);
+    if(!fptr)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load symbol %s!\033[0m\n", name);
+    }
+}
+
+void river2D_resolveRenderer
+(
+    EngineData *engine,
+    const char *libpath,
+    uint8_t    renderer
+){
+    SetDllDirectoryA(libpath);
+
+    if(renderer == RIVER2D_RENDERER_SOFTWARE)
+    {
+        HMODULE software = LoadLibraryA("river2Dsoftware.dll");
+        if(!software)
+        {
+            fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load software renderer!\n");
+            fprintf(stderr, "Tried to load from library path:%s ", libpath);
+            fprintf(stderr, "\033[0m\n");
+            return;
+        }
+
+        resolveFunction((void**)&engine->river2D_init,           software, "river2D_init");
+        resolveFunction((void**)&engine->river2D_shutdown,       software, "river2D_shutdown");
+        resolveFunction((void**)&engine->river2D_loadText,       software, "river2D_loadText");
+        resolveFunction((void**)&engine->river2D_bltBuffer,      software, "river2D_bltBuffer");
+        resolveFunction((void**)&engine->river2D_compositeImage, software, "river2D_compositeImage");
+    }
+    else if(renderer == RIVER2D_RENDERER_OPENGL)
+    {
+        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for river2D.\033[0m");
+    }
+    else if(renderer == RIVER2D_RENDERER_VULKAN)
+    {
+        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for river2D.\033[0m");
+    }
+    else if(renderer == RIVER2D_RENDERER_DIRECTX)
+    {
+        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for river2D.\033[0m");
+    }
+    else
+    {
+        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in river2D_resolveRenderer.\033[0m");
+    }
+}
+
 River2D_Time river2D_queryTime
 (
     void

@@ -38,17 +38,6 @@
     #define RIVER2D_MOUSE3 0x10
 #endif
 
-#define clang_ignore_unused\
-    _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Wunused-parameter\"") \
-
-#define clang_ignore_functype_mismatch\
-    _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Wcast-function-type-mismatch\"") \
-
-#define clang_diagnostic_pop\
-    _Pragma("clang diagnostic pop")\
-
 #define RIVER2D_BPP         4
 #define RIVER2D_PIXDEPTH    32
 #define RIVER2D_MAX_PLANES  64
