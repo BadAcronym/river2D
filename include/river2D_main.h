@@ -22,11 +22,20 @@
     #include "pthread.h"
     #define  RIVER2D_SCANLINE 32
     #define  RIVER2D_CONFIG_PATH "./.river2Dconf"
+
+    #define RIVER2D_MOUSE1 Mouse1
+    #define RIVER2D_MOUSE2 Mouse2
+    #define RIVER2D_MOUSE3 Mouse3
+
 #endif
 
 #ifdef BUILD_WINDOWS
     #include "Windows.h"
     #define  RIVER2D_CONFIG_PATH "./river2D.ini"
+
+    #define RIVER2D_MOUSE1 0x01
+    #define RIVER2D_MOUSE2 0x02
+    #define RIVER2D_MOUSE3 0x10
 #endif
 
 #define clang_ignore_unused\
