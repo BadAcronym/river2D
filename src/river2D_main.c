@@ -4,6 +4,8 @@
 //TODO: main menu with loading files, map creator/tile editor
 
 #include "river2D_main.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void river2D_processControls
 (
@@ -105,18 +107,29 @@ void river2D_updateEditor()
 void river2D_loadImage
 (
     const char*   path,
-    River2D_Image *image
+    River2D_Image *img
 ){
+    // uint32_t pixelcount = width * height;
+    uint32_t pixelcount = 2560 * 1440;
 
-    uint8_t *pixels;
+    img->data = malloc(pixelcount * RIVER2D_BPP);
 
-    if(!pixels)
+    //TODAY: load from RGBA.png, but load as BGRA
+
+    if(!img->data)
     {
         fprintf(stderr, "Failed to load image from file: %s\n", path);
-        //TODO: load purple aah missing texture instead
     }
 
-    image->data   = pixels;
-    image->width  = width;
-    image->height = height;
+    //TESTING:
+    for(uint32_t i = 0; i < pixelcount; i += 4)
+    {
+        img->data[i]     = 0xC6;
+        img->data[i + 1] = 0x4F;
+        img->data[i + 2] = 0xAC;
+        img->data[i + 3] = 0xFF;
+    }
+
+    img->width  = 2560;
+    img->height = 1440;
 }

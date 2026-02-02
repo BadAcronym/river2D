@@ -57,7 +57,7 @@ project("river2D binary")
             "./src/river2D*",
             "./include/river2D*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/stb/"})
-        linkoptions{"-lX11", "-fuse-ld=mold"}
+        linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}
 
 project("river2D software renderer")
     language("C")
@@ -107,4 +107,4 @@ project("river2D software renderer")
             "./src/river2Dsoftware*",
             "./include/river2Dsoftware*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/stb/"})
-        linkoptions{"-lX11"}
+        linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}

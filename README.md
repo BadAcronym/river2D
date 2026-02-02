@@ -6,7 +6,7 @@ that grants access to a couple different rendering backends via `.a/.so/.lib/.dl
 that serves as a map editor.
 
 ## State:
-- WIP: the Linux (X11) software renderer.
+- Current Priority is the Linux (X11) software renderer.
 - Currently in development alongside a simple game, because writing an engine with no goal is pointless.
 - Once the project is in an MVP state, I will port the platform-specific code to windows.
 

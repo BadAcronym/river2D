@@ -12,8 +12,6 @@
 #define BltBuffer          win32bltBuffer
 #define queryTime          win32queryTime
 
-#define Backbuffer         win32Backbuffer
-
 typedef struct Win32WindowDimensions
 {
     uint32_t width;

@@ -92,17 +92,18 @@ void river2D_drawFrame
     EngineData *engine
 ){
     //TEST: draw something...
-    XDrawRectangle(engine->display, engine->pixmap, engine->context, engine->width, engine->height, 0, 0);
+    XDrawRectangle(engine->display, engine->backbuffer, engine->context,
+                   engine->width, engine->height, 0, 0);
 
     river2D_bltBuffer(engine);
 }
 
-void river2D_drawImage
+void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image img
+    River2D_Image *img
 ){
-    if(!img.data)
+    if(!img->data)
     {
         fprintf(stderr, "No image to draw.\n");
     }
@@ -111,17 +112,26 @@ void river2D_drawImage
     visual.visualid     = DirectColor;
     visual.bits_per_rgb = 8;
 
-    XImage *ximage = XCreateImage(engine->display, &visual, 24, ZPixmap, 0, (char*)img.data,
-                                  img.width, img.height, 32, RIVER2D_BPP * img.width);
+    //TODAY: use xrender to composit onto the backbuffer
+    //shenanigans going on here. I need to figure out some order of operations
+    //and conventions.
+    XRenderPictFormat *format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
+
+    Picture backbuffer = XRenderCreatePicture(engine->display, engine->backbuffer, format, 0, 0);
+    Picture composite  = XRenderCreatePicture(engine->display, engine->comp_canvas, format, 0, 0);
+
+    XRenderComposite(engine->display, PictOpOver, composite, 0, backbuffer,
+                     0, 0, 0, 0, 0, 0, img->width, img->height);
+
+    XImage *ximage = XCreateImage(engine->display, &visual, 24, ZPixmap, 0, (char*)img->data,
+                                  img->width, img->height, 32, RIVER2D_BPP * img->width);
     if(!ximage->data)
     {
         fprintf(stderr, "Failed to create XImage.\n");
     }
 
-    //WIP: will this fix BGR/RGB weirdness?
-
-    XPutImage(engine->display, engine->pixmap, engine->context, ximage,
-              0, 0, 0, 0, img.width, img.height);
+    XPutImage(engine->display, engine->backbuffer, engine->context, ximage,
+              0, 0, 0, 0, img->width, img->height);
 }
 
 void river2D_resizeBackbuffer
@@ -130,22 +140,22 @@ void river2D_resizeBackbuffer
     uint32_t   width,
     uint32_t   height
 ){
-    if(engine->pixmap)
+    if(engine->backbuffer)
     {
-        XFreePixmap(engine->display, engine->pixmap);
+        XFreePixmap(engine->display, engine->backbuffer);
     }
 
     engine->width  = width;
     engine->height = height;
 
-    engine->pixmap = XCreatePixmap(engine->display, engine->window, engine->width, engine->height, 24);
+    engine->backbuffer = XCreatePixmap(engine->display, engine->window, engine->width, engine->height, 24);
 }
 
 void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    XCopyArea(engine->display, engine->pixmap, engine->window,
+    XCopyArea(engine->display, engine->backbuffer, engine->window,
               engine->context, 0, 0, engine->width, engine->height, 0, 0);
 
     XFlush(engine->display);
