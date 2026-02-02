@@ -12,13 +12,13 @@ void river2D_loadConfig
 (
     River2D_Config *config
 ){
-    //TODO: parse & load from file
+    //TODO: parse & load from engine file
     config->static_canvas_enable = false;
     config->backgrounds = 4;
     // config->static_canvas_width  = 1280;
     // config->static_canvas_height = 720;
-    config->width  = 2560;
-    config->height = 1440;
+    config->width  = 1280;
+    config->height = 720;
 }
 
 internal Visual* findVisual
@@ -219,6 +219,7 @@ void river2D_loadText
         fprintf(stderr, "offsetX too large.\n");
         return;
     }
+    uint8_t fontImgWidth = engine->planes[font].width;
 
     for(uint32_t i = 0; text[i] != '\0'; ++i)
     {
@@ -226,8 +227,6 @@ void river2D_loadText
         {
             continue;
         }
-        uint8_t fontImgWidth = engine->planes[font].width;
-
         uint8_t  charBigY = (text[i] - 33) * charsize / fontImgWidth;
         uint8_t  charBigX = (text[i] - 33) * charsize % fontImgWidth;
 
@@ -242,6 +241,7 @@ void river2D_loadText
             uint8_t* charlineLoc = charloc + j * fontImgWidth * RIVER2D_BPP;
             uint8_t* destlineLoc = destloc + j * image->width * RIVER2D_BPP;
 
+            memset(destlineLoc, 0, 2 * charsize * RIVER2D_BPP);
             memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
         }
     }
