@@ -1,0 +1,11 @@
+BuildRules*
+.cache*
+
+build/
+bin/
+obj/
+
+ecc*
+compile_commands*
+*.raddbg
+*.log
