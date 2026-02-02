@@ -141,12 +141,10 @@ typedef struct ThreadData
 }
 ThreadData;
 
-//TODAY: (river2D #3) revise in favour of floats 0.0f - 1.0f
-//I think that's less prone to errors than absolute screen coords...
 typedef struct Coordinates
 {
-    uint32_t x;
-    uint32_t y;
+    double x;
+    double y;
 }
 Coordinates;
 
