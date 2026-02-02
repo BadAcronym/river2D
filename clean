@@ -2,9 +2,12 @@
 
 if [[ -f ./vendor/imgsurf/clean ]]
 then
-    echo -e "\033[33mcleaning up imgsurf builds...\033[0m"
-    ./vendor/imgsurf/clean
+    pushd ./vendor/imgsurf > /dev/null
+    ./clean
+    popd > /dev/null
 fi
+
+echo -e "\033[33mcleaning up river2D builds...\033[0m"
 
 if [[ -d ./build/ ]]
 then
@@ -21,4 +24,4 @@ then
     rm ./build/ -rf
 fi
 
-echo -e "\033[32mcleaned river2D!\033[0m"
+echo -e "\033[32mcleaned river2D!\n\033[0m"

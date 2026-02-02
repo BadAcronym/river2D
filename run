@@ -19,9 +19,9 @@ compile_imgsurf()
 {
     if [[ -f "./vendor/imgsurf/run" ]]
     then
-        pushd ./vendor/imgsurf/
+        pushd ./vendor/imgsurf/ > /dev/null
         ./run $1 --compile-only
-        popd
+        popd > /dev/null
     else
         echo -e "\033[31mERROR: can't find imgsurf's run script.\033[0m"
     fi
@@ -32,37 +32,44 @@ then
     exit -1
 fi
 
-compilemsg()
+compileprep()
 {
     echo ""
     echo -e "\033[36mcompiling river2D...\033[0m"
     echo ""
+    premake5 ecc
+    premake5 gmake
 }
-
-premake5 ecc
-premake5 gmake
 
 if [[ $1 = "debug" ]]
 then
     compile_imgsurf $1
-    compilemsg
-    pushd ./build/
+    compileprep
+    pushd ./build/ > /dev/null
     make config=debug_linux
 elif [[ $1 = "release" ]]
 then
     compile_imgsurf $1
-    compilemsg
-    pushd ./build/
+    compileprep
+    pushd ./build/ > /dev/null
     make config=release_linux
 elif [[ $1 = "asan" ]]
 then
     compile_imgsurf $1
-    compilemsg
-    pushd ./build/
+    compileprep
+    pushd ./build/ > /dev/null
     make config=asan_linux
 else
     echo -e "\033[31m\nERROR: invalid make config: $1.\033[0m"
     exit -2;
+fi
+
+echo -e "\n"
+
+if [[ $? != 0 ]]
+then
+    echo -e "\033[31m\nERROR: failed to compile.\n\033[0m"
+    exit -1
 fi
 
 if [[ $2 = "--compile-only" ]]
@@ -70,7 +77,7 @@ then
     exit 0
 fi
 
-popd
+popd > /dev/null
 
-chmod +x ./bin/release/river2Dmapedit
-./bin/release/river2Dmapedit
+chmod +x ./bin/$1/river2Dmapedit
+./bin/$1/river2Dmapedit
