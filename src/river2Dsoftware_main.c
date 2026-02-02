@@ -1,11 +1,6 @@
 #include "river2D_main.h"
 
-#ifdef BUILD_WINDOWS
-    #include "win32_river2Dsoftware_platform.h"
-#endif
-
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 // TODO: (river2D #7) allow for other font colours
@@ -23,13 +18,13 @@ void river2D_loadText
 ){
     if(!engine->planes[font].data)
     {
-        fprintf(stderr, "Font not found. Check loaded planes.\n");
+        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes.\033[0m\n");
         return;
     }
 
     if(!image)
     {
-        fprintf(stderr, "Destination image is null.\n");
+        fprintf(stderr, "\033[31;3;1mERROR: Destination image is null.\033[0m\n");
         return;
     }
 
@@ -64,10 +59,10 @@ void river2D_loadText
             continue;
         }
 
-        uint32_t  charBigX = (uint32_t)(text[i] - 0x21) * charsize % fontImgWidth;
-        uint32_t  charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
+        uint32_t charBigX = (uint32_t)(text[i] - 0x21) * charsize % fontImgWidth;
+        uint32_t charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
 
-        uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
+        uint64_t trueSrcOffset  = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
         uint64_t trueDestOffset = (offsetY * image->width + offsetX + i * (charsize + spacing)) * RIVER2D_BPP;
 
         uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
@@ -81,4 +76,10 @@ void river2D_loadText
             memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
         }
     }
+
+    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+
+    img->data = NULL;
+    XDestroyImage(img);
 }
