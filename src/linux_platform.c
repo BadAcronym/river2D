@@ -16,7 +16,10 @@ Window X11openWindow
                                   InputOutput, CopyFromParent, 0, 0);
 
     XStoreName(display, window, windowName);
-    XSelectInput(display, window, KeyPressMask|KeyReleaseMask|StructureNotifyMask);
+
+    XSelectInput(display, window, KeyPressMask | KeyReleaseMask
+                                  | StructureNotifyMask);
+
     XMapWindow(display, window);
 
     return window;
@@ -26,11 +29,6 @@ Backbuffer* X11allocateBackbuffer
 (
     Dimensions dimensions
 ){
-    Backbuffer *buf = {0};
-
-    //TODO:
-
-    return buf;
 }
 
 void X11updateBackbuffer
