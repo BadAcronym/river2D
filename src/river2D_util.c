@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "river2D_main.h"
-#include "imgsurf_load.h"
+#include "imgsurf_main.h"
 #include <stdio.h>
 
 const char* river2D_contains
