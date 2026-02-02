@@ -29,8 +29,6 @@
     #define RIVER2D_MOUSE4 Button4
     #define RIVER2D_MOUSE5 Button5
 
-// LOOKUP: find scroolwheel
-
 #endif
 
 #ifdef BUILD_WINDOWS
