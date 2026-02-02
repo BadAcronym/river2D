@@ -89,7 +89,7 @@ void river2D_processControls
             break;
         }
         //test keycodes
-        #if 1
+        #if 0
         default:
         {
             printf("keycode: %u\n", key);
