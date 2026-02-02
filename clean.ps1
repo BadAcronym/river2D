@@ -7,7 +7,7 @@ if(Test-Path "vendor/imgsurf")
 
 $toDelete =
     "./build/",
-    "./bin/",
+    "./bin/river2Dmapedit_linux/",
     "./obj/",
     "./log/",
     "./compile_commands.json"
