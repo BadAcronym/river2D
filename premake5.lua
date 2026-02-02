@@ -16,8 +16,13 @@ project("river2D common functions")
     libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/"})
     includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
 
-    filter("configurations:debug or asan")
+    filter("configurations:asan")
+        defines{"ASAN"}
+
+    filter("configurations:debug")
         defines{"DEBUG"}
+
+    filter("configurations:debug or asan")
         runtime("debug")
         symbols("On")
         optimize("Off")
@@ -70,8 +75,7 @@ project("river2D common functions")
 
     filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
-        debugformat("c7")
-        buildoptions({"/fsanitize=address"})
+        buildoptions({"/fsanitize=address", "/Zi", "/INCREMENTAL:NO"})
 
     filter({"platforms:Windows", "configurations:release"})
         linkoptions("/NODEFAULTLIB:MSVCRTD")
@@ -85,8 +89,13 @@ project("river2D software renderer")
     libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/", "./bin/%{cfg.buildcfg}/"})
     includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
 
-    filter("configurations:debug or asan")
+    filter("configurations:asan")
+        defines{"ASAN"}
+
+    filter("configurations:debug")
         defines{"DEBUG"}
+
+    filter("configurations:debug or asan")
         runtime("debug")
         symbols("On")
         optimize("Off")
@@ -135,8 +144,7 @@ project("river2D software renderer")
 
     filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
-        debugformat("c7")
-        buildoptions({"/fsanitize=address"})
+        buildoptions({"/fsanitize=address", "/Zi", "/INCREMENTAL:NO"})
 
     filter({"platforms:Windows", "configurations:release"})
         linkoptions("/NODEFAULTLIB:MSVCRTD")
