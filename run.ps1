@@ -63,7 +63,7 @@ if($IsLinux)
     &make config=$makecfg
     Pop-Location
 
-    $target = "./bin/Linux" + "_$build/river2Dmapedit"
+    $target = "./bin/Linux" + "_$build/$targetname"
 
     if(Test-Path $target)
     {
@@ -76,7 +76,7 @@ elseIf($IsWindows)
 
     &MSBuild ./build/River.sln -p:Configuration=$build
 
-    $target = "./bin/Win64" + "_$build/river2Dmapedit.exe"
+    $target = "./bin/Win64" + "_$build/$targetname.exe"
 }
 
 if($isWindows -and 0 -eq $LASTEXITCODE -and $build -eq "debug")
