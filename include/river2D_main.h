@@ -108,6 +108,15 @@ typedef struct River2D_Image
 }
 River2D_Image;
 
+typedef struct River2D_Time
+{
+    uint64_t s;
+    uint64_t ms;
+    uint64_t us;
+    uint64_t ns;
+}
+River2D_Time;
+
 typedef struct River2D_ControlMap
 {
     uint64_t keymap;
@@ -126,7 +135,9 @@ typedef struct EngineData
     const char*        windowName;
     River2D_Config     config;
     River2D_Image      planes[RIVER2D_MAX_PLANES];
-    uint64_t           lastframetime;
+    River2D_Time       lastFrametime;
+    River2D_Time       lastFPStime;
+    uint32_t           runningFrames;
 
 #ifdef BUILD_LINUX
     Display            *display;
@@ -182,13 +193,13 @@ extern void river2D_loadText
     River2D_Image *image,
     const char    *text,
     uint8_t       font,
-    uint8_t       scale,
+    uint16_t      charsize,
     uint32_t      spacing,
     uint32_t      offsetY,
     uint32_t      offsetX
 );
 
-extern uint64_t river2D_queryTime
+extern River2D_Time river2D_queryTime
 (
-    bool nano
+    void
 );
