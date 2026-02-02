@@ -62,8 +62,10 @@ project("river2D binary")
         toolset("clang")
 
     filter({"platforms:Linux", "configurations:debug"})
-        buildoptions({"-gfull", "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
-        linkoptions({"-gfull",  "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
+        buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+                      "-static-libasan"})
+        linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+                     "-static-libasan"})
 
 project("river2D software renderer")
     language("C")
@@ -116,5 +118,7 @@ project("river2D software renderer")
         toolset("clang")
 
     filter({"platforms:Linux", "configurations:debug"})
-        buildoptions({"-gfull", "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
-        linkoptions({"-gfull",  "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
+        buildoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+                      "-static-libasan"})
+        linkoptions({"-gfull", "-O0", "-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
+                     "-static-libasan"})
