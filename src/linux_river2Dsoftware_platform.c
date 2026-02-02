@@ -268,9 +268,9 @@ void river2D_bltBuffer
         }
         bufImg->data = malloc(bltWidth * bltHeight * RIVER2D_BPP);
 
-        uint64_t bltWidthBytes = bltWidth  * RIVER2D_BPP;
+        uint64_t bltWidthBytes = bltWidth * RIVER2D_BPP;
 
-        for(uint32_t y = 0; y < engine->backbuffer.height; y += factor)
+        for(uint32_t y = 0; y < engine->backbuffer.height; ++y)
         {
             for(uint32_t x = 0; x < engine->backbuffer.width; ++x)
             {
@@ -278,14 +278,14 @@ void river2D_bltBuffer
 
                 for(uint8_t i = 0; i < factor; ++i)
                 {
-                    bufImg->data[y * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP]     = *ogPixel;
-                    bufImg->data[y * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 1] = *(ogPixel + 1);
-                    bufImg->data[y * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 2] = *(ogPixel + 2);
+                    bufImg->data[y * factor * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP]     = *ogPixel;
+                    bufImg->data[y * factor * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 1] = *(ogPixel + 1);
+                    bufImg->data[y * factor * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 2] = *(ogPixel + 2);
                 }
             }
             for(uint8_t i = 1; i < factor; ++i)
             {
-                memcpy(&bufImg->data[(y + i) * bltWidthBytes], &bufImg->data[y * bltWidthBytes], bltWidthBytes);
+                memcpy(&bufImg->data[(y * factor + i) * bltWidthBytes], &bufImg->data[y * factor * bltWidthBytes], bltWidthBytes);
             }
         }
 
