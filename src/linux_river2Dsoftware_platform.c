@@ -73,8 +73,9 @@ void river2D_init
         fprintf(stderr, "Failed to get default screen!\n");
     }
 
-    engine->width  = WidthOfScreen(engine->screen);
-    engine->height = HeightOfScreen(engine->screen);
+    //TODO: get this from config, worry about scaling
+    engine->width  = 1920;
+    engine->height = 1080;
 
     engine->visual = findVisual(engine->display);
     if(!engine->visual)
@@ -107,7 +108,8 @@ void river2D_init
 
     if(!engine->config.static_canvas_enable)
     {
-        river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
+        //TODO: get from config, worry about scaling
+        river2D_resizeBackbuffer(engine, 1920, 1080);
     }
 
     engine->compDestImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
@@ -132,11 +134,28 @@ void river2D_init
         fprintf(stderr, "Failed to create compDestPict!\n");
     }
 
-    engine->compSrcPict  = XRenderCreatePicture(engine->display, engine->compSrcBuf, engine->format, 0, 0);
+    engine->compSrcPict  = XRenderCreatePicture(engine->display, engine->compBuffer, engine->format, 0, 0);
     if(!engine->compDestPict)
     {
         fprintf(stderr, "Failed to create compSrcPict!\n");
     }
+}
+
+void river2D_destroyImage
+(
+    River2D_Image *image
+){
+    if(!image)
+    {
+        return;
+    }
+
+    if(!image->data)
+    {
+        return;
+    }
+
+    free(image->data);
 }
 
 //TODO: not safely shutting down for some reason... why?
@@ -145,7 +164,7 @@ int32_t river2D_shutdown
     EngineData *engine
 ){
     XFreePixmap(engine->display, engine->backbuffer);
-    XFreePixmap(engine->display, engine->compSrcBuf);
+    XFreePixmap(engine->display, engine->compBuffer);
 
     XRenderFreePicture(engine->display, engine->compDestPict);
     XRenderFreePicture(engine->display, engine->compSrcPict);
@@ -156,6 +175,11 @@ int32_t river2D_shutdown
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
     XCloseDisplay(engine->display);
+
+    for(uint8_t i = 0; i < RIVER2D_MAX_BACKGROUNDS; ++i)
+    {
+        river2D_destroyImage(&engine->backgrounds[i]);
+    }
 
     return 0;
 }
@@ -207,24 +231,38 @@ void river2D_compositeImage
         fprintf(stderr, "No image to composite onto.\n");
         return;
     }
-    else if(!image->data)
+
+    if(!image || !image->data)
     {
         fprintf(stderr, "No image to composite with.\n");
         return;
     }
 
-    if(image->width != engine->width || image->height != engine->height)
+    if(!engine->compSrcImg)
+    {
+        fprintf(stderr, "No buffer to composite with.\n");
+        return;
+    }
+
+    if(image->width > (uint32_t)engine->compSrcImg->width || image->height > (uint32_t)engine->compSrcImg->height)
     {
         river2D_resizeXImage(engine, engine->compSrcImg, image->width, image->height);
     }
-    memcpy(engine->compSrcImg->data, (char*)image->data, image->width * image->height * RIVER2D_BPP);
 
-    XPutImage(engine->display, engine->compSrcBuf, engine->context, engine->compSrcImg, 0, 0, 0, 0,
+    if(!engine->compSrcImg->data)
+    {
+        engine->compSrcImg->data = malloc(engine->compSrcImg->width * engine->compSrcImg->height * RIVER2D_BPP);
+    }
+
+    //FIXME: asan heap-use-after-free
+    memcpy(engine->compSrcImg->data, image->data, image->width * image->height * RIVER2D_BPP);
+
+    XPutImage(engine->display, engine->compBuffer, engine->context, engine->compSrcImg, 0, 0, 0, 0,
               image->width, image->height);
 
-    XRenderComposite(engine->display, PictOpOver, engine->compSrcPict, None, engine->compDestPict,
+    //TODO: pass PictOP as parameter from river2D_composite
+    XRenderComposite(engine->display, PictOpAdd, engine->compSrcPict, None, engine->compDestPict,
                      0, 0, 0, 0, 0, 0, engine->width, engine->height);
-
 }
 
 void river2D_resizeBackbuffer
@@ -233,41 +271,28 @@ void river2D_resizeBackbuffer
     uint32_t   width,
     uint32_t   height
 ){
-    engine->width  = width;
-    engine->height = height;
-
     if(engine->backbuffer)
     {
         XFreePixmap(engine->display, engine->backbuffer);
     }
-    engine->backbuffer = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
-                                       RIVER2D_PIXDEPTH);
+    engine->backbuffer = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
     if(!engine->backbuffer)
     {
         fprintf(stderr, "Failed to resize backbuffer Pixmap!\n");
     }
 
-    // if(engine->compDestBuf)
-    // {
-    //     XFreePixmap(engine->display, engine->compDestBuf);
-    // }
-    // engine->compDestBuf = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
-    //                                    RIVER2D_PIXDEPTH);
-    // if(!engine->compDestBuf)
-    // {
-    //     fprintf(stderr, "Failed to resize compDestBuf Pixmap!\n");
-    // }
-
-    if(engine->compSrcBuf)
+    if(engine->compBuffer)
     {
-        XFreePixmap(engine->display, engine->compSrcBuf);
+        XFreePixmap(engine->display, engine->compBuffer);
     }
-    engine->compSrcBuf = XCreatePixmap(engine->display, engine->window, engine->width, engine->height,
-                                       RIVER2D_PIXDEPTH);
-    if(!engine->compSrcBuf)
+    engine->compBuffer = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
+    if(!engine->compBuffer)
     {
         fprintf(stderr, "Failed to resize compSrcBuf Pixmap!\n");
     }
+
+    engine->width  = width;
+    engine->height = height;
 }
 
 void river2D_resizeXImage
@@ -289,7 +314,8 @@ void river2D_resizeXImage
         fprintf(stderr, "Failed to resize XImage!\n");
     }
 
-    ximage->data = (char*)malloc(width * height * RIVER2D_BPP);
+    //WIP: possible memory leak
+    ximage->data = malloc(width * height * RIVER2D_BPP);
 
     if(!ximage->data)
     {
@@ -305,6 +331,9 @@ void river2D_bltBuffer
               engine->context, 0, 0, engine->width, engine->height, 0, 0);
 
     XFlush(engine->display);
+
+    XSetForeground(engine->display, engine->context, 0x00000000);
+    XFillRectangle(engine->display, engine->backbuffer, engine->context, 0, 0, engine->width, engine->height);
 }
 
 uint64_t river2D_queryTime
