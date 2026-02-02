@@ -19,3 +19,13 @@
     _Pragma("clang diagnostic pop")\
 
 #define RIVER_BPP 4
+
+//TODO: declare all basic, abstracted functions
+//and define them outside, built against the correct platform layer
+extern void updateBitmap
+(
+);
+
+extern uint8_t* getBitmapAddress
+(
+);
