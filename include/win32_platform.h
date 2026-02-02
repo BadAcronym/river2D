@@ -5,6 +5,14 @@
 
 #include <stdint.h>
 
+#define openWindow         win32openWindow
+#define allocateBackbuffer win32allocateBackbuffer
+#define updateBackbuffer   win32updateBackbuffer
+#define BltBuffer          win32bltBuffer
+#define queryTime          win32queryTime
+
+#define Backbuffer         win32Backbuffer
+
 typedef struct Win32WindowDimensions
 {
     uint32_t width;
@@ -12,19 +20,13 @@ typedef struct Win32WindowDimensions
 }
 Win32WindowDimensions;
 
-typedef struct Win32OffscreenBuffer
+typedef struct Win32Backbuffer
 {
     BITMAPINFO info;
     void       *memory;
     uint32_t   width;
     uint32_t   height;
 }
-Win32OffscreenBuffer;
-
-typedef struct
-{
-    uint64_t time;
-    uint64_t freq;
-}Time;
+Win32Backbuffer;
 
 extern void win32LoadXInput(void);

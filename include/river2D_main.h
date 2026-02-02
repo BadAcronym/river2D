@@ -20,12 +20,15 @@
 
 #define RIVER_BPP 4
 
-//TODO: declare all basic, abstracted functions
-//and define them outside, built against the correct platform layer
-extern void updateBitmap
-(
-);
+typedef struct Dimensions
+{
+    uint32_t width;
+    uint32_t height;
+}
+Dimensions;
 
-extern uint8_t* getBitmapAddress
-(
-);
+typedef struct PerformanceCounter
+{
+    uint64_t time;
+    uint64_t freq;
+}PerformanceCounter;
