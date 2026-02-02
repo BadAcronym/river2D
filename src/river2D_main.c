@@ -4,6 +4,7 @@
 //TODO: main menu with loading files, map creator/tile editor
 
 #include "river2D_main.h"
+#include <stdio.h>
 
 void river2D_processControls
 (
@@ -11,48 +12,60 @@ void river2D_processControls
     int32_t           key,
     River2DControlMap *controls
 ){
-    if(key == River2D_KEY_UP)
+    switch(key)
     {
-        if(isDown)
+        case River2D_KEY_UP:
         {
-            controls->direction |= River2D_DIR_UP;
+            if(isDown)
+            {
+                controls->direction |= River2D_DIR_UP;
+            }
+            else
+            {
+                controls->direction &= ~River2D_DIR_UP;
+            }
+            break;
         }
-        else
+        case River2D_KEY_DOWN:
         {
-            controls->direction &= ~River2D_DIR_UP;
+            if(isDown)
+            {
+                controls->direction |= River2D_DIR_DOWN;
+            }
+            else
+            {
+                controls->direction &= ~River2D_DIR_DOWN;
+            }
+            break;
         }
-    }
-    else if(key == River2D_KEY_DOWN)
-    {
-        if(isDown)
+        case River2D_KEY_LEFT:
         {
-            controls->direction |= River2D_DIR_DOWN;
+            if(isDown)
+            {
+                controls->direction |= River2D_DIR_LEFT;
+            }
+            else
+            {
+                controls->direction &= ~River2D_DIR_LEFT;
+            }
+            break;
         }
-        else
+        case River2D_KEY_RIGHT:
         {
-            controls->direction &= ~River2D_DIR_DOWN;
+            if(isDown)
+            {
+                controls->direction |= River2D_DIR_RIGHT;
+            }
+            else
+            {
+                controls->direction &= ~River2D_DIR_RIGHT;
+            }
+            break;
         }
-    }
-    else if(key == River2D_KEY_LEFT)
-    {
-        if(isDown)
+        case River2D_KEY_TAB:
         {
-            controls->direction |= River2D_DIR_LEFT;
-        }
-        else
-        {
-            controls->direction &= ~River2D_DIR_LEFT;
-        }
-    }
-    else if(key == River2D_KEY_RIGHT)
-    {
-        if(isDown)
-        {
-            controls->direction |= River2D_DIR_RIGHT;
-        }
-        else
-        {
-            controls->direction &= ~River2D_DIR_RIGHT;
+            controls->tab = isDown;
+            break;
         }
     }
 

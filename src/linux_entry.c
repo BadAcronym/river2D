@@ -24,18 +24,23 @@ int main()
         {
             XEvent event = {0};
             XNextEvent(display, &event);
-            if(event.type == KeyPress)
+            switch(event.type)
             {
-                river2D_processControls(true, event.xkey.keycode, &controls);
-            }
-            else if(event.type == KeyRelease)
-            {
-                river2D_processControls(false, event.xkey.keycode, &controls);
-            }
-            else if(event.type == ClientMessage)
-            {
-                running = false;
-                break;
+                case KeyPress:
+                {
+                    river2D_processControls(true, event.xkey.keycode, &controls);
+                    break;
+                }
+                case KeyRelease:
+                {
+                    river2D_processControls(false, event.xkey.keycode, &controls);
+                    break;
+                }
+                case ClientMessage:
+                {
+                    running = false;
+                    break;
+                }
             }
         }
 
