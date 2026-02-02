@@ -17,6 +17,5 @@ that serves as a map editor.
 - level editor
 - multi-threading the software renderer
 - Figuring out stretching/sizing behaviour, both win32 and linux
-- ridding the linux (X11) software renderer of alpha windows and the Xrender extension
 - sound
 - openGL & vulkan renderers

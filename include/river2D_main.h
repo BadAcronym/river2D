@@ -12,7 +12,7 @@
 
 #ifdef BUILD_LINUX
     #include "X11/Xlib.h"
-    #include "X11/extensions/Xrender.h"
+    #include "X11/Xutil.h"
     #define  RIVER2D_SCANLINE  8
     #define  RIVER2D_CONFIG_PATH "./.river2Dconf"
 #endif
@@ -37,32 +37,28 @@
 #define RIVER2D_PIXDEPTH   32
 #define RIVER2D_MAX_PLANES 64
 
-//X keycodes
-//TODO: read from config file and translate to X, Win32 or whatever
-//
-//find a way to define at runtime and just load a set of keycodes
-#define RIVER2D_KEY_UP     25
-#define RIVER2D_KEY_LEFT   27
-#define RIVER2D_KEY_RIGHT  28
-#define RIVER2D_KEY_DOWN   39
-#define RIVER2D_KEY_TAB    23
-#define RIVER2D_KEY_ESCAPE 99
+#define RIVER2D_KEY_UP         0
+#define RIVER2D_KEY_LEFT       1
+#define RIVER2D_KEY_RIGHT      2
+#define RIVER2D_KEY_DOWN       3
+#define RIVER2D_KEY_TAB        4
+#define RIVER2D_KEY_ESCAPE     5
 
-#define RIVER2D_BIT_UP     1
-#define RIVER2D_BIT_DOWN   2
-#define RIVER2D_BIT_LEFT   4
-#define RIVER2D_BIT_RIGHT  8
-#define RIVER2D_BIT_TAB    16
-#define RIVER2D_BIT_ESCAPE 32
+#define RIVER2D_BIT_UP         1
+#define RIVER2D_BIT_DOWN       2
+#define RIVER2D_BIT_LEFT       4
+#define RIVER2D_BIT_RIGHT      8
+#define RIVER2D_BIT_TAB        16
+#define RIVER2D_BIT_ESCAPE     32
 
-#define RIVER2D_CHANNELS_RGBA 0
-#define RIVER2D_CHANNELS_BGRA 1
-#define RIVER2D_CHANNELS_RGB  2
-#define RIVER2D_CHANNELS_BGR  3
-#define RIVER2D_CHANNELS_MAX  3
+#define RIVER2D_CHANNELS_RGBA  0
+#define RIVER2D_CHANNELS_BGRA  1
+#define RIVER2D_CHANNELS_RGB   2
+#define RIVER2D_CHANNELS_BGR   3
+#define RIVER2D_CHANNELS_MAX   3
 
-#define RIVER2D_FONT_DEFAULT 0
-#define RIVER2D_FONT_MAX     0
+#define RIVER2D_FONT_DEFAULT   0
+#define RIVER2D_FONT_MAX       0
 
 #define RIVER2D_TYPE_FILE      0
 #define RIVER2D_TYPE_DIRECTORY 1
@@ -70,23 +66,13 @@
 #define RIVER2D_TYPE_OTHER     3
 #define RIVER2D_TYPE_MAX       3
 
-//probably only needed for Xrender
-//should greatly reduce options here.
-#define RIVER2D_PICTOP_CLEAR		0
-#define RIVER2D_PICTOP_SRC			1
-#define RIVER2D_PICTOP_DST			2
-#define RIVER2D_PICTOP_OVER			3
-#define RIVER2D_PICTOP_OVERREVERSE	4
-#define RIVER2D_PICTOP_IN			5
-#define RIVER2D_PICTOP_INREVERSE	6
-#define RIVER2D_PICTOP_OUT			7
-#define RIVER2D_PICTOP_OUTREVERSE	8
-#define RIVER2D_PICTOP_ATOP			9
-#define RIVER2D_PICTOP_ATOPREVERSE	10
-#define RIVER2D_PICTOP_XOR			11
-#define RIVER2D_PICTOP_ADD			12
-#define RIVER2D_PICTOP_SATURATE		13
-#define RIVER2D_PICTOP_MAXIMUM		13
+#define RIVER2D_PICTOP_OVER    0
+#define RIVER2D_PICTOP_REPLACE 1
+#define RIVER2D_PICTOP_MAXIMUM 2
+
+#define RIVER2D_CHOICE_SHOW_FPS_BIT      1
+#define RIVER2D_CHOICE_STATIC_CANVAS_BIT 2
+#define RIVER2D_CHOICE_BACKGROUNDS_BYTE  0xFF000000
 
 typedef struct PerformanceCounter
 {
@@ -94,10 +80,6 @@ typedef struct PerformanceCounter
     uint64_t freq;
 }
 PerformanceCounter;
-
-#define RIVER2D_CHOICE_SHOW_FPS_BIT      1          //0b00000000000000000000000000000001
-#define RIVER2D_CHOICE_STATIC_CANVAS_BIT 2          //0b00000000000000000000000000000010
-#define RIVER2D_CHOICE_BACKGROUNDS_BYTE  0xFF000000 //0b11111111000000000000000000000000
 
 typedef struct River2D_Config
 {
@@ -109,13 +91,12 @@ typedef struct River2D_Config
 }
 River2D_Config;
 
-//TODO: give images some sort of parallax option
 typedef struct River2D_Image
 {
-    uint8_t     *data;
-    uint8_t     channels;
-    uint32_t    width;
-    uint32_t    height;
+    uint8_t  *data;
+    uint8_t  channels;
+    uint32_t width;
+    uint32_t height;
 }
 River2D_Image;
 
@@ -135,7 +116,15 @@ typedef struct River2D_ControlMap
 }
 River2D_ControlMap;
 
-#ifdef BUILD_WINDOWS
+#ifdef BUILD_LINUX
+typedef struct X11Backbuffer
+{
+    uint8_t  *data;
+    uint32_t width;
+    uint32_t height;
+}
+X11Backbuffer;
+#elif defined(BUILD_WINDOWS)
 typedef struct Win32Backbuffer
 {
     BITMAPINFO info;
@@ -161,12 +150,10 @@ typedef struct EngineData
 #ifdef BUILD_LINUX
     Display            *display;
     Screen             *screen;
-    XRenderPictFormat  *format;
     Visual             *visual;
     Window             window;
     GC                 context;
-    Pixmap             backbuffer;
-    Pixmap             compBuffer;
+    X11Backbuffer      backbuffer;
 #endif
 
 #ifdef BUILD_WINDOWS
@@ -183,7 +170,7 @@ extern void river2D_loadImage
     const char    *path,
     River2D_Image *image,
     uint8_t       format,
-    uint8_t       depth
+    uint8_t       bitdepth
 );
 
 extern void river2D_destroyImage
