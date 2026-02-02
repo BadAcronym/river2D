@@ -8,8 +8,8 @@ workspace("river2D")
     architecture("x86_64")
 
     project("river2D")
-        language("C")
-        cdialect("C23")
+        language("C++")
+        cppdialect("C++23")
         warnings("Extra")
 
 filter("configurations:debug")
