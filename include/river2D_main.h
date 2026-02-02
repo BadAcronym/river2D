@@ -69,7 +69,7 @@ River2D_Config;
 
 typedef struct River2D_Image
 {
-    void*       data;
+    uint8_t*    data;
     char*       format;
     uint32_t    width;
     uint32_t    height;
@@ -124,6 +124,12 @@ extern void river2D_loadImage
 (
     const char*   path,
     River2D_Image *image
+);
+
+extern void river2D_drawImage
+(
+    EngineData    *engine,
+    River2D_Image img
 );
 
 extern uint64_t river2D_queryTime

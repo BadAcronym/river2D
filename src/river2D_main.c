@@ -113,11 +113,11 @@ void river2D_loadImage
     const char*   path,
     River2D_Image *image
 ){
-    int32_t width;
-    int32_t height;
-    int32_t channels;
+    uint32_t width;
+    uint32_t height;
 
-    uint8_t *pixels = stbi_load(path, &width, &height, &channels, STBI_rgb_alpha);
+    //TODAY: try to read image from file.
+
     if(!pixels)
     {
         fprintf(stderr, "Failed to load image from file: %s\n", path);
@@ -125,6 +125,6 @@ void river2D_loadImage
     }
 
     image->data   = pixels;
-    image->width  = (uint32_t)width;
-    image->height = (uint32_t)height;
+    image->width  = width;
+    image->height = height;
 }

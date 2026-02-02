@@ -12,6 +12,7 @@ void river2D_loadConfig
 ){
     //TODO: parse & load from file
     config->static_canvas_enable = false;
+    config->backgrounds = 4;
     // config->static_canvas_width  = 1280;
     // config->static_canvas_height = 720;
 }
@@ -86,7 +87,7 @@ Window river2D_openWindow
     return window;
 }
 
-extern void river2D_drawFrame
+void river2D_drawFrame
 (
     EngineData *engine
 ){
@@ -94,6 +95,33 @@ extern void river2D_drawFrame
     XDrawRectangle(engine->display, engine->pixmap, engine->context, engine->width, engine->height, 0, 0);
 
     river2D_bltBuffer(engine);
+}
+
+void river2D_drawImage
+(
+    EngineData    *engine,
+    River2D_Image img
+){
+    if(!img.data)
+    {
+        fprintf(stderr, "No image to draw.\n");
+    }
+
+    Visual visual       = {0};
+    visual.visualid     = DirectColor;
+    visual.bits_per_rgb = 8;
+
+    XImage *ximage = XCreateImage(engine->display, &visual, 24, ZPixmap, 0, (char*)img.data,
+                                  img.width, img.height, 32, RIVER2D_BPP * img.width);
+    if(!ximage->data)
+    {
+        fprintf(stderr, "Failed to create XImage.\n");
+    }
+
+    //WIP: will this fix BGR/RGB weirdness?
+
+    XPutImage(engine->display, engine->pixmap, engine->context, ximage,
+              0, 0, 0, 0, img.width, img.height);
 }
 
 void river2D_resizeBackbuffer
@@ -110,8 +138,7 @@ void river2D_resizeBackbuffer
     engine->width  = width;
     engine->height = height;
 
-    engine->pixmap = XCreatePixmap(engine->display, engine->window, engine->width,
-                                   engine->height, 24);
+    engine->pixmap = XCreatePixmap(engine->display, engine->window, engine->width, engine->height, 24);
 }
 
 void river2D_bltBuffer

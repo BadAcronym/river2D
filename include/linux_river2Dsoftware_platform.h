@@ -24,12 +24,12 @@ extern void river2D_updateBackbuffer
     EngineData *engine
 );
 
-extern void river2D_bltBuffer
+extern void river2D_init
 (
     EngineData *engine
 );
 
-extern void river2D_init
+extern void river2D_bltBuffer
 (
     EngineData *engine
 );
