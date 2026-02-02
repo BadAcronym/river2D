@@ -190,7 +190,6 @@ void river2D_changeCursor
     EngineData    *engine,
     River2D_Image *image
 ){
-    // TODO: add this early return to linux, too
     if(engine->currentCursor == image)
     {
         return;

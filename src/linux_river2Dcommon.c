@@ -209,6 +209,11 @@ void river2D_changeCursor
     EngineData    *engine,
     River2D_Image *image
 ){
+    if(engine->currentCursor == image)
+    {
+        return;
+    }
+
     XcursorImage ximg = {0};
     ximg.pixels       = (uint32_t*)image->data;
     ximg.width        = image->width;
@@ -217,4 +222,5 @@ void river2D_changeCursor
     Cursor cursor = XcursorImageLoadCursor(engine->display, &ximg);
 
     XDefineCursor(engine->display, engine->window, cursor);
+    engine->currentCursor = image;
 }
