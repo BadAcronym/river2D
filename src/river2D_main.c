@@ -135,6 +135,9 @@ void river2D_loadImage
 
 //TODO: allow for hot reloading via menu if necessary, apply config
 //TODO: fuzz config file, make sure it can't crash the engine
+
+#define bufsize 32
+
 void river2D_loadConfig
 (
     River2D_Config *config
@@ -156,15 +159,33 @@ void river2D_loadConfig
             return;
         }
 
-        //TODAY: parse config data and pass to *config
-        char buf[128];
-        while(fgets(buf, 128, file))
-        {
-            printf("%s", buf);
+        bool parsedWidth = false;
+        bool parsedHeight = false;
 
-            // if()
-            // {
-            // }
+        char buf[bufsize];
+        while(fgets(buf, bufsize, file))
+        {
+            const char* fpsloc = river2D_contains(buf, "showFPS");
+            if(fpsloc && (fpsloc - buf) < bufsize)
+            {
+                bool parsedShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
+                if(!parsedShowFps)
+                {
+                    continue;
+                }
+                config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
+            }
+
+            //TODAY: parse width, height, etc
+        }
+
+        if(!parsedWidth)
+        {
+            config->width = 1280;
+        }
+        if(!parsedHeight)
+        {
+            config->height = 720;
         }
 
         fclose(file);
