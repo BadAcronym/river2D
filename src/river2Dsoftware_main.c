@@ -28,7 +28,7 @@ void river2D_loadText
         return;
     }
 
-    uint32_t minTextWidth = charsize * (uint32_t)(strlen(text) + 1);
+    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)strlen(text);
 
     if(image->width < minTextWidth || image->height < charsize)
     {
