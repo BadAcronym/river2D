@@ -15,8 +15,6 @@ void river2D_loadConfig
     //TODO: parse & load from engine file
     config->static_canvas_enable = false;
     config->backgrounds = 4;
-    // config->static_canvas_width  = 1280;
-    // config->static_canvas_height = 720;
     config->width  = 1280;
     config->height = 720;
 }
@@ -385,7 +383,7 @@ River2D_Time river2D_queryTime
     clock_gettime(CLOCK_REALTIME, &spec);
 
     River2D_Time time;
-    time.s = spec.tv_sec;
+    time.s  = spec.tv_sec;
     time.ms = spec.tv_nsec / 1000000;
     time.us = spec.tv_nsec / 1000;
     time.ns = spec.tv_nsec;
