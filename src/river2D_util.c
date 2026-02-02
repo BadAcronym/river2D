@@ -78,6 +78,7 @@ void river2D_loadConfig
     }
     bool parsedWidth  = false;
     bool parsedHeight = false;
+    bool parsedDepth  = false;
 
     uint8_t code = river2D_verifyPath(RIVER2D_CONFIG_PATH);
 
@@ -131,5 +132,9 @@ void river2D_loadConfig
     if(!parsedHeight)
     {
         config->height = 720;
+    }
+    if(!parsedDepth)
+    {
+        config->depth = 24;
     }
 }

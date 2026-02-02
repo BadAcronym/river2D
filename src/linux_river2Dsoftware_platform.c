@@ -8,13 +8,14 @@
 
 internal Visual* findVisual
 (
-    Display *display
+    Display *display,
+    uint8_t depth
 ){
     Visual *visual = {0};
 
     XVisualInfo visualInfo = {0};
     visualInfo.screen = DefaultScreen(display);
-    visualInfo.depth  = RIVER2D_PIXDEPTH;
+    visualInfo.depth  = depth;
 
     int numVisuals;
     XVisualInfo *foundVisuals = XGetVisualInfo(display, VisualScreenMask | VisualDepthMask,
@@ -31,7 +32,7 @@ internal Visual* findVisual
     for(int i = 0; i < numVisuals; ++i)
     {
         if(foundVisuals[i].class == rootAttributes.visual->class &&
-           foundVisuals[i].depth == RIVER2D_PIXDEPTH
+           foundVisuals[i].depth == depth
         ){
             visual = foundVisuals[i].visual;
             break;
@@ -56,10 +57,8 @@ Window river2D_openWindow
                                           engine->visual, AllocNone);
     attributes.override_redirect = false;
 
-    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display),
-                                  0, 0, engine->config.width, engine->config.height,
-                                  0, RIVER2D_PIXDEPTH, InputOutput, engine->visual,
-                                  valuemask, &attributes);
+    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display), 0, 0, engine->config.width, engine->config.height,
+                                  0, engine->config.depth, InputOutput, engine->visual, valuemask, &attributes);
 
     XStoreName(engine->display, window, engine->windowName);
     XSelectInput(engine->display, window, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
@@ -104,7 +103,7 @@ void river2D_init
         fprintf(stderr, "Failed to get default screen!\n");
     }
 
-    engine->visual = findVisual(engine->display);
+    engine->visual = findVisual(engine->display, engine->config.depth);
     if(!engine->visual)
     {
         fprintf(stderr, "No matching visual could be found.\n");
@@ -290,11 +289,11 @@ void river2D_bltBuffer
         bltWidth  = engine->backbuffer.width  * factor;
         bltHeight = engine->backbuffer.height * factor;
 
-        bufImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH,
+        bufImg = XCreateImage(engine->display, engine->visual, engine->config.depth,
                               ZPixmap, 0, 0, bltWidth, bltHeight,
                               RIVER2D_SCANLINE, 0);
 
-        bufImg->data = malloc(bltWidth * bltHeight * RIVER2D_BPP);
+        bufImg->data = malloc(bltWidth * bltHeight * engine->config.depth / 8);
 
         uint32_t y = 0;
         uint32_t stopHeight = engine->backbuffer.height - RIVER2D_MAX_THREADS;
@@ -438,21 +437,16 @@ void river2D_bltBuffer
     {
         bltWidth  = engine->backbuffer.width;
         bltHeight = engine->backbuffer.height;
-        bufImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH,
-                              ZPixmap, 0, (char*)engine->backbuffer.data,
-                              bltWidth, bltHeight, RIVER2D_SCANLINE, 0);
+        bufImg = XCreateImage(engine->display, engine->visual, engine->config.depth, ZPixmap, 0,
+                              (char*)engine->backbuffer.data, bltWidth, bltHeight, RIVER2D_SCANLINE, 0);
     }
 
-    Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window,
-                                                (char*)engine->backbuffer.data,
-                                                bltWidth, bltHeight,
-                                                0x00000000, 0x00000000, RIVER2D_PIXDEPTH);
+    Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window, (char*)engine->backbuffer.data,
+                                                bltWidth, bltHeight, 0x000000, 0x000000, engine->config.depth);
 
-    XPutImage(engine->display, pixmap, engine->context, bufImg, 0, 0, 0, 0,
-              bltWidth, bltHeight);
+    XPutImage(engine->display, pixmap, engine->context, bufImg, 0, 0, 0, 0, bltWidth, bltHeight);
 
-    XCopyArea(engine->display, pixmap, engine->window, engine->context, 0, 0,
-              bltWidth, bltHeight, 0, 0);
+    XCopyArea(engine->display, pixmap, engine->window, engine->context, 0, 0, bltWidth, bltHeight, 0, 0);
 
     XFlush(engine->display);
 

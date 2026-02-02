@@ -90,6 +90,7 @@ PerformanceCounter;
 
 typedef struct River2D_Config
 {
+    uint8_t  depth;
     uint32_t choices;
     uint8_t  renderer;
     uint8_t  backgrounds;
