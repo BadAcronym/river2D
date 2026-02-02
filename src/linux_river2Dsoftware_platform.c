@@ -312,6 +312,4 @@ void river2D_bltBuffer
     XFlush(engine->display);
 
     XFree(bufImg);
-    // XDestroyImage(bufImg);
-    // XFreePixmap(engine->display, pixmap);
 }
