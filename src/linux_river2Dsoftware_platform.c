@@ -121,6 +121,7 @@ void river2D_init
     EngineData         *engine,
     River2D_Image      *planes
 ){
+    engine->running = true;
     engine->planes = planes;
 
     engine->display = XOpenDisplay(0);
