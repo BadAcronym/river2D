@@ -59,8 +59,14 @@ Dimensions river2D_getWindowSize
 (
     EngineData *engine
 ){
-    //TODO: query win32 for window size
-    Dimensions dim = {0};
+    Dimensions dim  = {0};
+    RECT       rect = {0};
+
+    GetWindowRect(engine->window, &rect);
+
+    dim.width  = rect.right  - rect.left;
+    dim.height = rect.bottom - rect.top;
+
     return dim;
 }
 
