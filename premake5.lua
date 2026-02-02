@@ -16,7 +16,6 @@ project("river2D binary")
 
     filter("configurations:debug")
         defines{"DEBUG"}
-        staticruntime("off")
         runtime("debug")
         symbols("On")
         optimize("Off")
@@ -59,12 +58,12 @@ project("river2D binary")
                "./include/river2D*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         libdirs({"./vendor/imgsurf/bin/**"})
-        linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}
+        linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
         toolset("clang")
 
     filter({"platforms:Linux", "configurations:debug"})
-        buildoptions({"-g", "-fsanitize=address", "-static-libasan"})
-        linkoptions({"-fsanitize=address", "-static-libasan"})
+        buildoptions({"-gfull", "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
+        linkoptions({"-gfull",  "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
 
 project("river2D software renderer")
     language("C")
@@ -76,7 +75,6 @@ project("river2D software renderer")
 
     filter("configurations:debug")
         defines{"DEBUG"}
-        staticruntime("off")
         runtime("debug")
         symbols("On")
         optimize("Off")
@@ -114,9 +112,9 @@ project("river2D software renderer")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
-        linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}
+        linkoptions({"-lX11", "-lXrender", "-fuse-ld=mold"})
         toolset("clang")
 
     filter({"platforms:Linux", "configurations:debug"})
-        buildoptions({"-fsanitize=address", "-static-libasan"})
-        linkoptions({"-fsanitize=address", "-static-libasan"})
+        buildoptions({"-gfull", "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
+        linkoptions({"-gfull",  "-O0", "-fsanitize=address", "-fno-omit-frame-pointer", "-static-libasan"})
