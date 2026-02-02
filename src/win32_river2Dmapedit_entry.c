@@ -180,12 +180,13 @@ int CALLBACK WinMain
 
     river2D_init(&engine, planes);
 
-    WNDCLASS wc = {0};
+    WNDCLASSA wc = {0};
+    LPCSTR className = "River2DClass";
 
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = win32WindowCallback;
     wc.hInstance = engine.instance;
-    wc.lpszClassName = "River2DClass";
+    wc.lpszClassName = className;
 
     if(!RegisterClassA(&wc))
     {
