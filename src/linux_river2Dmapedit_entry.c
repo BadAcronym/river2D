@@ -59,18 +59,7 @@ int main
         fprintf(stderr, "\033[0m\n");
         return -1;
     }
-
-    void (*river2D_resizeBackbuffer)(EngineData *engine, uint32_t width, uint32_t height);
-    river2D_resizeBackbuffer = (void (*)(EngineData *engine, uint32_t width, uint32_t height))
-                               dlsym(software, "river2D_resizeBackbuffer");
-    if((error = dlerror()))
-    {
-        fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol river2D_resizeBackbuffer.\n");
-        fputs(error, stderr);
-        fprintf(stderr, "\033[0m\n");
-        return -1;
-    }
-
+    ;
     EngineData    engine = {0};
     River2D_Image planes[RIVER2D_MAX_PLANES] = {0};
 
@@ -99,20 +88,35 @@ int main
                     mapedit_processControls(false, event.xkey.keycode, &engine.controls);
                     break;
                 }
-                case ConfigureNotify:
-                {
-                    if(!(engine.config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
-                    {
-                        river2D_resizeBackbuffer(&engine, (uint32_t)event.xconfigure.width,
-                                                          (uint32_t)event.xconfigure.height);
-                    }
-                    break;
-                }
                 case ClientMessage:
                 {
                     if(event.xclient.data.l[0] == (long)WM_DELETE)
                     {
                         running = false;
+                    }
+                    break;
+                }
+                case Expose:
+                {
+                    mapedit_update();
+                    river2D_bltBuffer(&engine);
+                    break;
+                }
+                case GraphicsExpose:
+                {
+                    mapedit_update();
+                    river2D_bltBuffer(&engine);
+                    break;
+                }
+                case ConfigureNotify:
+                {
+                    uint32_t newWidth  = event.xconfigure.width;
+                    uint32_t newHeight = event.xconfigure.height;
+
+                    if(newWidth != engine.config.window_width || newHeight != engine.config.window_height)
+                    {
+                        engine.config.window_width  = newWidth;
+                        engine.config.window_height = newHeight;
                     }
                     break;
                 }
