@@ -46,12 +46,14 @@ Window river2D_openWindow
 (
     EngineData *engine
 ){
-    unsigned long valuemask = CWBackPixel | CWBorderPixel | CWColormap | CWOverrideRedirect;
+    unsigned long valuemask = CWBackPixel | CWBorderPixel |
+                              CWColormap  | CWOverrideRedirect;
 
     XSetWindowAttributes attributes;
     attributes.background_pixel  = BlackPixel(engine->display, DefaultScreen(engine->display));
     attributes.background_pixmap = 0;
     attributes.border_pixel      = BlackPixel(engine->display, DefaultScreen(engine->display));
+    attributes.border_pixmap     = 0;
     attributes.colormap          = XCreateColormap(engine->display, XDefaultRootWindow(engine->display),
                                           engine->visual, AllocNone);
     attributes.override_redirect = false;
@@ -179,6 +181,9 @@ void river2D_init
         river2D_resizeBackbuffer(engine, engine->config.window_width, engine->config.window_height);
     }
 
+    engine->blitSrcPict = XRenderCreatePicture(engine->display, engine->backbuffer.pixmap, engine->format, 0, 0);
+    engine->blitDstPict = XRenderCreatePicture(engine->display, engine->window, engine->format, 0, 0);
+
     River2D_Time time = river2D_queryTime();
     engine->lastFrametime  = time;
     engine->lastFPStime    = time;
@@ -210,6 +215,11 @@ int32_t river2D_shutdown
     {
         river2D_destroyImage(&engine->planes[i]);
     }
+
+    XRenderFreePicture(engine->display, engine->compSrcPict);
+    XRenderFreePicture(engine->display, engine->compDstPict);
+    XRenderFreePicture(engine->display, engine->blitSrcPict);
+    XRenderFreePicture(engine->display, engine->blitDstPict);
 
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
@@ -280,36 +290,15 @@ void river2D_bltBuffer
     double x_s = (double)engine->backbuffer.width  / (double)engine->config.window_width;
     double y_s = (double)engine->backbuffer.height / (double)engine->config.window_height;
 
-    if(x_s != 1.0 || y_s != 1.0)
-    {
-        Picture srcPict = XRenderCreatePicture(engine->display, engine->backbuffer.pixmap, engine->format, 0, 0);
-        Picture dstPict = XRenderCreatePicture(engine->display, engine->window, engine->format, 0, 0);
+    XTransform transform =
+    {{
+        {XDoubleToFixed(x_s),                   0,                   0},
+        {                  0, XDoubleToFixed(y_s),                   0},
+        {                  0,                   0, XDoubleToFixed(1.0)}
+    }};
+    XRenderSetPictureTransform(engine->display, engine->blitSrcPict, &transform);
+    XRenderSetPictureFilter(engine->display, engine->blitSrcPict, FilterNearest, 0, 0);
 
-        XTransform transform =
-        {{
-            {XDoubleToFixed(x_s), XDoubleToFixed(0.0), XDoubleToFixed(0.0)},
-            {XDoubleToFixed(0.0), XDoubleToFixed(y_s), XDoubleToFixed(0.0)},
-            {XDoubleToFixed(0.0), XDoubleToFixed(0.0), XDoubleToFixed(1.0)}
-        }};
-
-        XRenderSetPictureTransform(engine->display, srcPict, &transform);
-
-        XRenderComposite(engine->display, PictOpSrc, srcPict, 0, dstPict, 0, 0, 0, 0, 0, 0,
-                         engine->config.window_width, engine->config.window_height);
-
-        XRenderFreePicture(engine->display, srcPict);
-        XRenderFreePicture(engine->display, dstPict);
-
-        XFlush(engine->display);
-        return;
-    }
-
-    XCopyArea(engine->display, engine->backbuffer.pixmap, engine->window, engine->context,
-              0, 0, engine->backbuffer.width, engine->backbuffer.height, 0, 0);
-
-    XSetForeground(engine->display, engine->context, 0xFF000000);
-    XSetBackground(engine->display, engine->context, 0xFF000000);
-    XFillRectangle(engine->display, engine->backbuffer.pixmap, engine->context, 0, 0, engine->backbuffer.width, engine->backbuffer.height);
-
-    XFlush(engine->display);
+    XRenderComposite(engine->display, PictOpSrc, engine->blitSrcPict, 0, engine->blitDstPict,
+                     0, 0, 0, 0, 0, 0, engine->config.window_width, engine->config.window_height);
 }

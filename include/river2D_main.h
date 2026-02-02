@@ -222,6 +222,8 @@ typedef struct EngineData
     Buffer             compBuffer;
     Picture            compSrcPict;
     Picture            compDstPict;
+    Picture            blitSrcPict;
+    Picture            blitDstPict;
     PosixThreadpool    pool;
 #endif
 
