@@ -77,7 +77,7 @@ void river2D_init
     EngineData *engine
 ){
     river2D_loadConfig(&engine->config);
-    engine->width = engine->config.width;
+    engine->width  = engine->config.width;
     engine->height = engine->config.height;
 
     engine->display = XOpenDisplay(0);
