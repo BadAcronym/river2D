@@ -59,3 +59,15 @@ uint8_t river2D_interpretCharAsKey
     }
     return 0;
 }
+
+Dimensions river2D_getWindowSize
+(
+    EngineData *engine
+){
+    XWindowAttributes attr;
+    XGetWindowAttributes(engine->display, engine->window, &attr);
+
+    Dimensions dim = {attr.width, attr.height};
+
+    return dim;
+}
