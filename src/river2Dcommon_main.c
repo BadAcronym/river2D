@@ -4,6 +4,11 @@ River2D_Time river2D_deltaTime
 (
     const River2D_Time *time
 ){
+    if(!time->s)
+    {
+        fprintf(stderr, "\033[33mWARNING: passed uninitialized timestamp.\033[0m\n");
+    }
+
     River2D_Time current = river2D_queryTime();
     River2D_Time delta   = {0};
 
