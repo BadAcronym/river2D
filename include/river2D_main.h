@@ -1,7 +1,10 @@
 #pragma once
 
-#include <stdbool.h>
 #include <stdint.h>
+
+#define bool  _Bool
+#define true  1
+#define false 0
 
 #define persistent  static
 #define global      static
