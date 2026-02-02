@@ -104,12 +104,13 @@ PerformanceCounter;
 
 typedef struct River2D_Config
 {
-    uint8_t  depth;
     uint32_t choices;
     uint8_t  renderer;
     uint8_t  backgrounds;
-    uint32_t width;
-    uint32_t height;
+    uint32_t window_width;
+    uint32_t window_height;
+    uint32_t canvas_width;
+    uint32_t canvas_height;
 }
 River2D_Config;
 
@@ -146,13 +147,21 @@ typedef struct Coordinates
 Coordinates;
 
 #ifdef BUILD_LINUX
+typedef struct Buffer
+{
+    Pixmap   pixmap;
+    uint32_t width;
+    uint32_t height;
+}
+Buffer;
+
 typedef struct PosixThreadpool
 {
     pthread_t  threads[RIVER2D_MAX_THREADS];
 }
 PosixThreadpool;
 #elif defined(BUILD_WINDOWS)
-typedef struct Win32Backbuffer
+typedef struct Buffer
 {
     BITMAPINFO info;
     void       *data;
@@ -188,8 +197,8 @@ typedef struct EngineData
     Visual             *visual;
     Window             window;
     GC                 context;
-    Pixmap             backbuffer;
-    Pixmap             compBuffer;
+    Buffer             backbuffer;
+    Buffer             compBuffer;
     PosixThreadpool    pool;
 #endif
 

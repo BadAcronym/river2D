@@ -55,8 +55,9 @@ Window river2D_openWindow
                                           engine->visual, AllocNone);
     attributes.override_redirect = false;
 
-    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display), 0, 0, engine->config.width, engine->config.height,
-                                  0, engine->config.depth, InputOutput, engine->visual, valuemask, &attributes);
+    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display), 0, 0,
+                                  engine->config.window_width, engine->config.window_height,
+                                  0, RIVER2D_PIXDEPTH, InputOutput, engine->visual, valuemask, &attributes);
 
     XStoreName(engine->display, window, engine->windowName);
     XSelectInput(engine->display, window, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
@@ -71,17 +72,21 @@ void river2D_resizeBackbuffer
     uint32_t   width,
     uint32_t   height
 ){
-    if(engine->backbuffer)
+    if(engine->backbuffer.pixmap)
     {
-        XFreePixmap(engine->display, engine->backbuffer);
+        XFreePixmap(engine->display, engine->backbuffer.pixmap);
     }
-    engine->backbuffer = XCreatePixmap(engine->display, engine->window, width, height, engine->config.depth);
+    engine->backbuffer.pixmap = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
+    engine->backbuffer.width  = width;
+    engine->backbuffer.height = height;
 
-    if(engine->compBuffer)
+    if(engine->compBuffer.pixmap)
     {
-        XFreePixmap(engine->display, engine->compBuffer);
+        XFreePixmap(engine->display, engine->compBuffer.pixmap);
     }
-    engine->compBuffer = XCreatePixmap(engine->display, engine->window, width, height, engine->config.depth);
+    engine->compBuffer.pixmap = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
+    engine->compBuffer.width  = width;
+    engine->compBuffer.height = height;
 }
 
 void river2D_init
@@ -105,13 +110,13 @@ void river2D_init
         fprintf(stderr, "Failed to get default screen!\n");
     }
 
-    engine->visual = findVisual(engine->display, engine->config.depth);
+    engine->visual = findVisual(engine->display, RIVER2D_PIXDEPTH);
     if(!engine->visual)
     {
         fprintf(stderr, "No matching visual could be found.\n");
     }
 
-    if(engine->config.depth / 8 == 4)
+    if(RIVER2D_PIXDEPTH / 8 == 4)
     {
         engine->format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
     }
@@ -138,9 +143,13 @@ void river2D_init
         fprintf(stderr, "Failed to create Graphics Context!\n");
     }
 
-    if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
+    if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
+        river2D_resizeBackbuffer(engine, engine->config.canvas_width, engine->config.canvas_height);
+    }
+    else
+    {
+        river2D_resizeBackbuffer(engine, engine->config.window_width, engine->config.window_height);
     }
 
     River2D_Time time = river2D_queryTime();
@@ -175,8 +184,8 @@ int32_t river2D_shutdown
         river2D_destroyImage(&engine->planes[i]);
     }
 
-    XFreePixmap(engine->display, engine->backbuffer);
-    XFreePixmap(engine->display, engine->compBuffer);
+    XFreePixmap(engine->display, engine->backbuffer.pixmap);
+    XFreePixmap(engine->display, engine->compBuffer.pixmap);
 
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
@@ -185,7 +194,6 @@ int32_t river2D_shutdown
     return 0;
 }
 
-//FIXME: getting a black image. debug each and every image in comp & blt...
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -209,34 +217,31 @@ void river2D_compositeImage
         return;
     }
 
-    if(!engine->backbuffer)
+    if(!engine->backbuffer.pixmap)
     {
         fprintf(stderr, "\033[31;1;7mERROR: no image to composite onto.\033[0m\n");
         return;
     }
 
-    XImage *compSrcImg = XCreateImage(engine->display, engine->visual, engine->config.depth, ZPixmap, 0,
+    XImage *compSrcImg  = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
                                       (char*)image->data, image->width, image->height, RIVER2D_SCANLINE, 0);
 
-    XImage *compDestImg = XCreateImage(engine->display, engine->visual, engine->config.depth, ZPixmap, 0,
-                                      0, engine->config.width, engine->config.height, RIVER2D_SCANLINE, 0);
+    XImage *compDestImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
+                                      0, engine->backbuffer.width, engine->backbuffer.height, RIVER2D_SCANLINE, 0);
     if(!compDestImg)
     {
         fprintf(stderr, "Failed to create compDestImg!\n");
         return;
     }
 
-    Picture compSrcPict = XRenderCreatePicture(engine->display, engine->compBuffer, engine->format, 0, 0);
+    Picture compSrcPict = XRenderCreatePicture(engine->display, engine->compBuffer.pixmap, engine->format, 0, 0);
     if(!compSrcPict)
     {
         fprintf(stderr, "Failed to create compSrcPict!\n");
         return;
     }
 
-    Pixmap backbufPixmap = XCreatePixmap(engine->display, engine->window, engine->config.width,
-                                         engine->config.height, engine->config.depth);
-
-    Picture compDestPict = XRenderCreatePicture(engine->display, backbufPixmap, engine->format, 0, 0);
+    Picture compDestPict = XRenderCreatePicture(engine->display, engine->backbuffer.pixmap, engine->format, 0, 0);
     if(!compDestPict)
     {
         fprintf(stderr, "Failed to create compDestPict!\n");
@@ -244,7 +249,7 @@ void river2D_compositeImage
         return;
     }
 
-    XPutImage(engine->display, engine->compBuffer, engine->context, compSrcImg, 0, 0, 0, 0,
+    XPutImage(engine->display, engine->compBuffer.pixmap, engine->context, compSrcImg, 0, 0, 0, 0,
               image->width, image->height);
 
     XRenderComposite(engine->display, pictop, compSrcPict, None, compDestPict, offsetSrcX, offsetSrcY,
@@ -262,74 +267,38 @@ void river2D_compositeImage
 
 void river2D_bltBuffer
 (
-    EngineData *engine,
-    uint8_t    factor
+    EngineData *engine
 ){
-    if(factor == 0)
+    double x_s = (double)engine->backbuffer.width  / (double)engine->config.window_width;
+    double y_s = (double)engine->backbuffer.height / (double)engine->config.window_height;
+
+    if(x_s != 1.0 || y_s != 1.0)
     {
-        fprintf(stderr, "\033[33;3;1m0 is an invalid scaling factor.\033[0m\n");
+        Picture srcPict = XRenderCreatePicture(engine->display, engine->backbuffer.pixmap, engine->format, 0, 0);
+        Picture dstPict = XRenderCreatePicture(engine->display, engine->window, engine->format, 0, 0);
+
+        XTransform transform =
+        {{
+            {XDoubleToFixed(x_s), XDoubleToFixed(0.0), XDoubleToFixed(0.0)},
+            {XDoubleToFixed(0.0), XDoubleToFixed(y_s), XDoubleToFixed(0.0)},
+            {XDoubleToFixed(0.0), XDoubleToFixed(0.0), XDoubleToFixed(1.0)}
+        }};
+
+        XRenderSetPictureTransform(engine->display, srcPict, &transform);
+
+        XRenderComposite(engine->display, PictOpSrc, srcPict, 0, dstPict, 0, 0, 0, 0, 0, 0,
+                         engine->config.window_width, engine->config.window_height);
+
+        XFlush(engine->display);
         return;
     }
 
-    if(factor == 1)
-    {
-        XCopyArea(engine->display, engine->backbuffer, engine->window, engine->context,
-                  0, 0, engine->config.width, engine->config.height, 0, 0);
-    }
-    else
-    {
-        // XImage   *bufImg   = 0;
-        // uint64_t bltWidth  = engine->config.width  * factor;
-        // uint64_t bltHeight = engine->config.height * factor;
-        //
-        // bufImg = XCreateImage(engine->display, engine->visual, engine->config.depth, ZPixmap, 0,
-        //                       0, bltWidth, bltHeight, RIVER2D_SCANLINE, 0);
-        // if(!bufImg)
-        // {
-        //     fprintf(stderr, "\033[30;3;1mERROR: could not create bufImg.\033[0m\n");
-        //     return;
-        // }
-        // bufImg->data = malloc(bltWidth * bltHeight * RIVER2D_BPP);
-        //
-        // uint64_t bltWidthBytes = bltWidth * RIVER2D_BPP;
-        //
-        // for(uint32_t y = 0; y < engine->config.height; ++y)
-        // {
-        //     for(uint32_t x = 0; x < engine->config.width; ++x)
-        //     {
-        //         uint8_t *ogPixel = &engine->backbuffer.data[y * engine->backbuffer.width * RIVER2D_BPP + x * RIVER2D_BPP];
-        //
-        //         for(uint8_t i = 0; i < factor; ++i)
-        //         {
-        //             bufImg->data[y * factor * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP]     = *ogPixel;
-        //             bufImg->data[y * factor * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 1] = *(ogPixel + 1);
-        //             bufImg->data[y * factor * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 2] = *(ogPixel + 2);
-        //         }
-        //     }
-        //     for(uint8_t i = 1; i < factor; ++i)
-        //     {
-        //         memcpy(&bufImg->data[(y * factor + i) * bltWidthBytes], &bufImg->data[y * factor * bltWidthBytes], bltWidthBytes);
-        //     }
-        // }
-        // Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window, (char*)bufImg->data,
-        //                                             bltWidth, bltHeight, 0, 0, engine->config.depth);
-        // if(!pixmap)
-        // {
-        //     fprintf(stderr, "\033[30;3;1mERROR: could not create pixmap.\033[0m\n");
-        //     return;
-        // }
-        //
-        // XPutImage(engine->display, pixmap, engine->context, bufImg, 0, 0, 0, 0, bltWidth, bltHeight);
-        // XCopyArea(engine->display, pixmap, engine->window, engine->context, 0, 0, bltWidth, bltHeight, 0, 0);
-        //
-        // if(bufImg->data && factor != 1)
-        // {
-        //     free(bufImg->data);
-        // }
-        //
-        // XFree(bufImg);
-        // XFreePixmap(engine->display, pixmap);
-    }
+    XCopyArea(engine->display, engine->backbuffer.pixmap, engine->window, engine->context,
+              0, 0, engine->backbuffer.width, engine->backbuffer.height, 0, 0);
+
+    XSetForeground(engine->display, engine->context, 0xFF000000);
+    XSetBackground(engine->display, engine->context, 0xFF000000);
+    XFillRectangle(engine->display, engine->backbuffer.pixmap, engine->context, 0, 0, engine->backbuffer.width, engine->backbuffer.height);
 
     XFlush(engine->display);
 }
