@@ -63,6 +63,7 @@ int main
     EngineData    engine = {0};
     River2D_Image planes[RIVER2D_MAX_PLANES] = {0};
 
+    river2D_loadConfig(&engine.config);
     river2D_init(&engine, planes);
 
     bool running = true;
