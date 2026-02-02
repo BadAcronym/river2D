@@ -25,7 +25,7 @@ extern Window X11openWindow
     const char* windowName
 );
 
-//TODO: do we need this?
+//TODO: do we need this? look at CPong
 extern Backbuffer* X11allocateBackbuffer
 (
     Dimensions dimensions

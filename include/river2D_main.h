@@ -20,6 +20,9 @@
 
 #define RIVER_BPP 4
 
+#define EDITOR_WIDTH  1920
+#define EDITOR_HEIGHT 1080
+
 typedef struct Dimensions
 {
     uint32_t width;

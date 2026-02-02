@@ -12,7 +12,7 @@ Window X11openWindow
     const char* windowName
 ){
     Window window = XCreateWindow(display, XDefaultRootWindow(display), 0, 0,
-                                  dimensions.width, dimensions.height, 0, 0,
+                                  dimensions.width, dimensions.height,  0, 0,
                                   InputOutput, CopyFromParent, 0, 0);
 
     XStoreName(display, window, windowName);

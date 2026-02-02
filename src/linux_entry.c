@@ -6,12 +6,12 @@
 int main()
 {
     Dimensions dimensions = {0};
-    dimensions.width = 640;
-    dimensions.height = 360;
+    dimensions.width = EDITOR_WIDTH;
+    dimensions.height = EDITOR_HEIGHT;
 
     Display *display = XOpenDisplay(NULL);
 
-    Window window = X11openWindow(display, dimensions, "river2D");
+    Window window = X11openWindow(display, dimensions, "river2D Editor");
 
     X11allocateBackbuffer(dimensions);
 
@@ -39,7 +39,7 @@ int main()
             }
         }
 
-        //TODO: work!
+        //TODO: update & editor work
     }
 
     XDestroyWindow(display, window);
