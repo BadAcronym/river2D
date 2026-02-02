@@ -29,8 +29,8 @@ project("river2D binary")
     filter("platforms:Windows")
         system("Windows")
         defines("BUILD_WINDOWS")
-        targetdir("bin/Win64_%{cfg.buildcfg}")
-        objdir("obj/Win64_%{cfg.buildcfg}")
+        targetdir("bin/river2Dmapedit_win64/%{cfg.buildcfg}")
+        objdir("obj/river2Dmapedit/%{cfg.buildcfg}")
         files({ "./src/win32_river2D*",
                 "./include/win32_river2D*",
                 "./src/river2D*",
@@ -50,8 +50,8 @@ project("river2D binary")
         system("Linux")
         defines("BUILD_LINUX")
         kind("ConsoleApp")
-        targetdir("bin/Linux_%{cfg.buildcfg}")
-        objdir("obj/")
+        targetdir("bin/river2Dmapedit_linux/%{cfg.buildcfg}")
+        objdir("obj/river2Dmapedit/%{cfg.buildcfg}")
         files({"./src/linux_river2D*",
                "./include/linux_river2D*",
                "./src/river2D*",
@@ -59,6 +59,11 @@ project("river2D binary")
         includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         libdirs({"./vendor/imgsurf/bin/**"})
         linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}
+        toolset("clang")
+
+    filter({"platforms:Linux", "configurations:debug"})
+        buildoptions({"-g", "-fsanitize=address", "-static-libasan"})
+        linkoptions({"-fsanitize=address", "-static-libasan"})
 
 project("river2D software renderer")
     language("C")
@@ -83,8 +88,8 @@ project("river2D software renderer")
     filter("platforms:Windows")
         system("Windows")
         defines("BUILD_WINDOWS")
-        targetdir("bin/Win64_%{cfg.buildcfg}")
-        objdir("obj/Win64_%{cfg.buildcfg}")
+        targetdir("bin/river2D_win64/%{cfg.buildcfg}")
+        objdir("obj/river2D/%{cfg.buildcfg}")
         files({"./src/river2D_main.c",
                "./include/river2D_main.h",
                "./src/win32_river2Dsoftware*",
@@ -98,8 +103,8 @@ project("river2D software renderer")
     filter("platforms:Linux")
         system("Linux")
         defines("BUILD_LINUX")
-        targetdir("bin/Linux_%{cfg.buildcfg}")
-        objdir("obj/Linux_")
+        targetdir("bin/river2D_linux/%{cfg.buildcfg}")
+        objdir("obj/river2D/%{cfg.buildcfg}")
         files({"./src/river2D_main.c",
                "./include/river2D_main.h",
                "./src/linux_river2Dsoftware*",
@@ -108,3 +113,8 @@ project("river2D software renderer")
                "./include/river2Dsoftware*" })
         includedirs({ "./include/", "/usr/include/", "./vendor/imgsurf/include/"})
         linkoptions{"-lX11", "-lXrender", "-fuse-ld=mold"}
+        toolset("clang")
+
+    filter({"platforms:Linux", "configurations:debug"})
+        buildoptions({"-fsanitize=address", "-static-libasan"})
+        linkoptions({"-fsanitize=address", "-static-libasan"})
