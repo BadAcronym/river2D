@@ -1,9 +1,9 @@
 #include "river2D_main.h"
-#include "linux_river2Dsoftware_platform.h"
 
 #include <stdio.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 internal Visual* findVisual
 (
@@ -167,6 +167,111 @@ int32_t river2D_shutdown
     XCloseDisplay(engine->display);
 
     return 0;
+}
+
+internal void *pictopOver
+(
+    void *voidData
+){
+    pictopData *data = (pictopData*)voidData;
+
+    uint64_t srcIndex = data->y * data->copyWidth + data->x;
+    uint64_t dstIndex = data->y * data->bufWidth + data->x;
+    if(data->src[srcIndex + 3])
+    {
+        data->dest[dstIndex]     = data->src[srcIndex];
+        data->dest[dstIndex + 1] = data->src[srcIndex + 1];
+        data->dest[dstIndex + 2] = data->src[srcIndex + 2];
+        data->dest[dstIndex + 3] = data->src[srcIndex + 3];
+    }
+
+    return 0;
+}
+
+//TODAY: multi-thread.
+//1 pixel at a time for each thread, if possible.
+//this is by far the biggest bottleneck.
+//pthread_t seems to be real easy to work with.
+//I wonder if windows has a good equivalent...
+void river2D_compositeImage
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    uint8_t       pictop,
+    uint32_t      offsetDstX,
+    uint32_t      offsetDstY,
+    uint32_t      offsetSrcX,
+    uint32_t      offsetSrcY,
+    uint32_t      cropWidth,
+    uint32_t      cropHeight
+){
+    //TODO: deal with alpha and actual compositing instead of just overlaying/copying
+    if(pictop != RIVER2D_PICTOP_OVER)
+    {
+        fprintf(stderr, "\033[33;1;7mSORRY: only RIVER2D_PICTOP_OVER implemented for now. :/\033[0m\n");
+        return;
+    }
+
+    if(!image)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
+        return;
+    }
+    if(!image->data)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: image->data is nullptr.\033[0m\n");
+        return;
+    }
+
+    if(!engine->backbuffer.data)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: no image to composite onto.\033[0m\n");
+        return;
+    }
+
+    //TODO: verify that both images are actually RGBA
+    //(in other words, that there's enough space)
+
+    //TODO: validate that offset doesn't exceed buffer destination image
+
+    uint32_t srcCutoffX = cropWidth * RIVER2D_BPP;
+    uint64_t copyWidth  = image->width * RIVER2D_BPP;
+    uint64_t bufWidth   = engine->backbuffer.width * RIVER2D_BPP;
+    uint8_t  *dest = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth +
+                    offsetDstX * RIVER2D_BPP;
+    uint8_t  *src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
+
+    //TODAY: try thread for each height?
+    for(uint32_t y = 0; y < cropHeight; ++y)
+    {
+        for(uint32_t x = 0; x < srcCutoffX; x += RIVER2D_BPP)
+        {
+        //     uint64_t srcIndex = y * copyWidth + x;
+        //     uint64_t dstIndex = y * bufWidth + x;
+        //     if(src[srcIndex + 3])
+        //     {
+        //         dest[dstIndex]     = src[srcIndex];
+        //         dest[dstIndex + 1] = src[srcIndex + 1];
+        //         dest[dstIndex + 2] = src[srcIndex + 2];
+        //         dest[dstIndex + 3] = src[srcIndex + 3];
+        //     }
+            pictopData data =
+            {
+                .x = x,
+                .y = y,
+                .copyWidth = copyWidth,
+                .bufWidth  = bufWidth,
+                .src  = src,
+                .dest = dest,
+            };
+            pthread_create(&engine->pool.thread1, 0, pictopOver, (void*)&data);
+            //WIP: DEBUG
+            fprintf(stderr, "thread1 created.\n");
+            pthread_join(engine->pool.thread1, 0);
+            //WIP: DEBUG
+            fprintf(stderr, "thread1 joined.\n");
+        }
+    }
 }
 
 void river2D_bltBuffer
