@@ -25,15 +25,15 @@
 
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
-#define River2D_UP    41
-#define River2D_LEFT  27
-#define River2D_RIGHT 28
-#define River2D_DOWN  39
+#define River2D_KEY_UP    41
+#define River2D_KEY_LEFT  27
+#define River2D_KEY_RIGHT 28
+#define River2D_KEY_DOWN  39
 
-#define River2D_DIR_UP    0x0001
-#define River2D_DIR_DOWN  0x0010
-#define River2D_DIR_LEFT  0x0100
-#define River2D_DIR_RIGHT 0x1000
+#define River2D_DIR_UP    0b0001
+#define River2D_DIR_DOWN  0b0010
+#define River2D_DIR_LEFT  0b0100
+#define River2D_DIR_RIGHT 0b1000
 
 typedef struct Dimensions
 {

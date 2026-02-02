@@ -11,7 +11,7 @@ void river2D_processControls
     int32_t           key,
     River2DControlMap *controls
 ){
-    if(key == River2D_UP)
+    if(key == River2D_KEY_UP)
     {
         if(isDown)
         {
@@ -22,7 +22,7 @@ void river2D_processControls
             controls->direction &= ~River2D_DIR_UP;
         }
     }
-    else if(key == River2D_DOWN)
+    else if(key == River2D_KEY_DOWN)
     {
         if(isDown)
         {
@@ -33,7 +33,7 @@ void river2D_processControls
             controls->direction &= ~River2D_DIR_DOWN;
         }
     }
-    else if(key == River2D_LEFT)
+    else if(key == River2D_KEY_LEFT)
     {
         if(isDown)
         {
@@ -44,7 +44,7 @@ void river2D_processControls
             controls->direction &= ~River2D_DIR_LEFT;
         }
     }
-    else if(key == River2D_RIGHT)
+    else if(key == River2D_KEY_RIGHT)
     {
         if(isDown)
         {
