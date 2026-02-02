@@ -10,11 +10,13 @@
 #ifdef BUILD_LINUX
     #include "X11/Xlib.h"
     #include "X11/extensions/Xrender.h"
-    #define RIVER2D_SCANLINE  8
+    #define  RIVER2D_SCANLINE  8
+    #define  RIVER2D_CONFIG_PATH "./.config"
 #endif
 
 #ifdef BUILD_WINDOWS
     #include "Windows.h"
+    #define  RIVER2D_CONFIG_PATH "./config.ini"
 #endif
 
 #define clang_ignore_unused\
@@ -60,6 +62,12 @@
 #define RIVER2D_FONT_DEFAULT 0
 #define RIVER2D_FONT_MAX     0
 
+#define RIVER2D_TYPE_FILE      0
+#define RIVER2D_TYPE_DIRECTORY 1
+#define RIVER2D_TYPE_ERROR     2
+#define RIVER2D_TYPE_OTHER     3
+#define RIVER2D_TYPE_MAX       3
+
 //probably only needed for Xrender
 #define RIVER2D_PICTOP_CLEAR			0
 #define RIVER2D_PICTOP_SRC			    1
@@ -88,20 +96,19 @@ typedef struct River2D_Config
 {
     uint32_t width;
     uint32_t height;
+    uint8_t  renderer;
     bool     static_canvas_enable;
     bool     showFPS;
-
+    //TODO: rework planes options, what you can specify and what's the minimum (3 prob)
     uint8_t  backgrounds;
-
-    //choose renderer here
 }
 River2D_Config;
 
+//TODO: give images some sort of parallax option
 typedef struct River2D_Image
 {
     uint8_t*    data;
-    //TODO: make format enum or ID
-    char*       format;
+    uint8_t     channels;
     uint32_t    width;
     uint32_t    height;
 }
@@ -201,4 +208,24 @@ extern void river2D_loadText
 extern River2D_Time river2D_queryTime
 (
     void
+);
+
+extern uint8_t river2D_verifyPath
+(
+    const char *path
+);
+
+extern void river2D_loadConfig
+(
+    River2D_Config *config
+);
+
+extern void river2D_init
+(
+    EngineData *engine
+);
+
+extern int32_t river2D_shutdown
+(
+    EngineData *engine
 );
