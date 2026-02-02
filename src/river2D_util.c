@@ -76,6 +76,9 @@ void river2D_loadConfig
         fprintf(stderr, "\n\033[31;1;7mERROR: *config is nullptr.\033[0m\n");
         return;
     }
+    bool parsedWidth  = false;
+    bool parsedHeight = false;
+    bool parsedFPS    = false;
 
     uint8_t code = river2D_verifyPath(RIVER2D_CONFIG_PATH);
 
@@ -88,17 +91,15 @@ void river2D_loadConfig
             return;
         }
 
-        bool parsedWidth  = false;
-        bool parsedHeight = false;
-
         char buf[bufsize];
         while(fgets(buf, bufsize, file))
         {
             const char* fpsloc = river2D_contains(buf, "showFPS");
             if(fpsloc && (fpsloc - buf) < bufsize)
             {
-                bool parsedShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
-                if(!parsedShowFps)
+                parsedFPS = true;
+                bool foundShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
+                if(!foundShowFps)
                 {
                     continue;
                 }
@@ -106,15 +107,6 @@ void river2D_loadConfig
             }
 
             //TODAY: (river2D #2) parse width, height, etc
-        }
-
-        if(!parsedWidth)
-        {
-            config->width = 1280;
-        }
-        if(!parsedHeight)
-        {
-            config->height = 720;
         }
 
         fclose(file);
@@ -135,7 +127,17 @@ void river2D_loadConfig
     }
 
     config->choices = 0;
-    config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
-    config->width   = 1280;
-    config->height  = 720;
+
+    // if(!parsedFPS)
+    // {
+    //     config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
+    // }
+    if(!parsedWidth)
+    {
+        config->width = 4000;
+    }
+    if(!parsedHeight)
+    {
+        config->height = 4000;
+    }
 }
