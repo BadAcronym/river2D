@@ -8,7 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-//TODO: multi-thread. 1 pixel at a time for each thread, if possible.
+//TODAY: multi-thread.
+//1 pixel at a time for each thread, if possible.
+//this is by far the biggest bottleneck.
+//pthread_t seems to be real easy to work with.
+//I wonder if windows has a good equivalent...
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -50,7 +54,7 @@ void river2D_compositeImage
 
     uint8_t *dest = (uint8_t*)engine->backbuffer.data;
     uint64_t copyWidth = image->width * RIVER2D_BPP;
-    uint64_t bufWidth  = engine->width * RIVER2D_BPP;
+    uint64_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;
 
     for(uint32_t y = 0; y < image->height; ++y)
     {
