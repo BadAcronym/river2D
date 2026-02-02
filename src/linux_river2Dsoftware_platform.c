@@ -272,17 +272,20 @@ void river2D_bltBuffer
 
         for(uint32_t y = 0; y < engine->backbuffer.height; y += factor)
         {
-            for(uint32_t x = 0; x < engine->backbuffer.width; x += RIVER2D_BPP)
+            for(uint32_t x = 0; x < engine->backbuffer.width; ++x)
             {
-                uint32_t ogPixel = engine->backbuffer.data[y * bltWidthBytes + x];
+                uint8_t *ogPixel = &engine->backbuffer.data[y * engine->backbuffer.width * RIVER2D_BPP + x * RIVER2D_BPP];
+
                 for(uint8_t i = 0; i < factor; ++i)
                 {
-                    bufImg->data[y * bltWidthBytes + x * factor + i * RIVER2D_BPP] = ogPixel;
+                    bufImg->data[y * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP]     = *ogPixel;
+                    bufImg->data[y * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 1] = *(ogPixel + 1);
+                    bufImg->data[y * bltWidthBytes + x * factor * RIVER2D_BPP + i * RIVER2D_BPP + 2] = *(ogPixel + 2);
                 }
             }
             for(uint8_t i = 1; i < factor; ++i)
             {
-                memcpy((char*)&bufImg->data[(y + i) * bltWidthBytes], (char*)bufImg->data + y * bltWidthBytes, bltWidthBytes);
+                memcpy(&bufImg->data[(y + i) * bltWidthBytes], &bufImg->data[y * bltWidthBytes], bltWidthBytes);
             }
         }
 
