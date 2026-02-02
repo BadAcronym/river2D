@@ -280,3 +280,10 @@ extern bool river2D_insideArea
     Coordinates *point,
     Area        *area
 );
+
+extern void river2D_completeRect
+(
+    Area        *area,
+    Coordinates *upperLeft,
+    Coordinates *lowerRight
+);
