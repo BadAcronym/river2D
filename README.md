@@ -6,15 +6,17 @@ that grants access to a couple different rendering backends via `.a/.so/.lib/.dl
 that serves as a map editor.
 
 ## State:
-- Current Priority is the Linux (X11) software renderer.
+- Both Linux/Windows working.
+- Software renderer - done.
+- Text/Font loading done on the software side.
+- Image loader as submodule / standalone - done.
 - Currently in development alongside a simple game, because writing an engine with no goal is pointless.
-- Once the project is in an MVP state, I will port the platform-specific code to windows.
 
 ## Plans:
 
 - level editor
+- multi-threading the software renderer
+- Figuring out stretching/sizing behaviour, both win32 and linux
+- ridding the linux (X11) software renderer of alpha windows and the Xrender extension
 - sound
-- dialogue system
-- platform porting
 - openGL & vulkan renderers
-- maybe: image loader for software renderers (load BGRA from RGBA, etc)
