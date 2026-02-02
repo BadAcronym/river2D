@@ -11,6 +11,7 @@ int main()
 }
 #endif
 
+//TODAY: try just declaring signatures, will that work?
 clang_ignore_unused
 
 #define RIVER2D_INIT(name) void name(EngineData *engine, River2D_Image *planes)
