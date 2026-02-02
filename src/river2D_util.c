@@ -105,7 +105,7 @@ void river2D_loadConfig
                 config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
             }
 
-            //TODAY: (river2D #2) parse width, height, etc
+            //TODAY: (river2D #2) parse width, height, depth, etc
         }
 
         fclose(file);

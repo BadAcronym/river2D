@@ -17,8 +17,7 @@ internal Visual* findVisual
     visualInfo.depth  = depth;
 
     int numVisuals;
-    XVisualInfo *foundVisuals = XGetVisualInfo(display, VisualScreenMask | VisualDepthMask,
-                                               &visualInfo, &numVisuals);
+    XVisualInfo *foundVisuals = XGetVisualInfo(display, VisualScreenMask | VisualDepthMask, &visualInfo, &numVisuals);
     if(!foundVisuals)
     {
         fprintf(stderr, "No valid visuals could be found for the desired depth of %i.\n", visualInfo.depth);
@@ -76,7 +75,7 @@ void river2D_resizeBackbuffer
     {
         free(engine->backbuffer.data);
     }
-    engine->backbuffer.data = calloc(width * height * RIVER2D_BPP, 1);
+    engine->backbuffer.data   = calloc(width * height * RIVER2D_BPP, 1);
     engine->backbuffer.width  = width;
     engine->backbuffer.height = height;
 }
@@ -172,6 +171,7 @@ int32_t river2D_shutdown
     return 0;
 }
 
+//FIXME: not working with bpp 3
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -211,25 +211,22 @@ void river2D_compositeImage
     //TODAY: (river2D #5) verify source image channelcount, destination (backbuf) is always RGB w/o A
     //also validate that offset doesn't exceed buffer destination image
 
-    uint8_t  bpp = engine->config.depth / 8;
-    uint32_t copyWidth = image->width * bpp;
-    uint32_t bufWidth  = engine->backbuffer.width * bpp;
+    uint32_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;
+    uint32_t copyWidth = image->width * RIVER2D_BPP;
 
-    uint8_t *dest = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth + offsetDstX * bpp;
-
+    uint8_t *dest = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth + offsetDstX * RIVER2D_BPP;
     uint8_t *src  = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
 
     for(uint32_t y = 0; y < cropHeight; ++y)
     {
         for(uint32_t x = 0; x < cropWidth; x += RIVER2D_BPP)
         {
-            uint64_t srcIndex = y * copyWidth + x;
-            uint64_t dstIndex = y * bufWidth  + x;
-            if(src[srcIndex + 3])
+            uint8_t *dstIndexed = dest + y * bufWidth  + x;
+            uint8_t *srcIndexed = src  + y * copyWidth + x;
+
+            if(srcIndexed[3])
             {
-                dest[dstIndex]     = src[srcIndex];
-                dest[dstIndex + 1] = src[srcIndex + 1];
-                dest[dstIndex + 2] = src[srcIndex + 2];
+                memcpy(dstIndexed, srcIndexed, 3);
             }
         }
     }
@@ -253,7 +250,6 @@ void river2D_bltBuffer
 
     if(factor == 1)
     {
-        //LEAK: from calloc <- XCreateImage
         bufImg = XCreateImage(engine->display, engine->visual, engine->config.depth, ZPixmap, 0,
                               (char*)engine->backbuffer.data, bltWidth, bltHeight, RIVER2D_SCANLINE, 0);
         if(!bufImg)
@@ -272,33 +268,34 @@ void river2D_bltBuffer
             return;
         }
 
-        bufImg->data = (char*)malloc(bltWidth * bltHeight * bpp);
+        bufImg->data = malloc(bltWidth * bltHeight * RIVER2D_BPP);
+
+        uint64_t bltWidthBytes  = bltWidth  * RIVER2D_BPP;
 
         for(uint32_t y = 0; y < engine->backbuffer.height; y += factor)
         {
-            for(uint32_t x = 0; x < engine->backbuffer.width * bpp; x += bpp)
+            for(uint32_t x = 0; x < bltWidthBytes; x += RIVER2D_BPP)
             {
-                uint8_t og = engine->backbuffer.data[y * engine->backbuffer.width + x];
+                uint8_t og = engine->backbuffer.data[y * bltWidthBytes + x];
 
-                bufImg->data[y * bltWidth * bpp + x]     = og;
-                bufImg->data[y * bltWidth * bpp + x + 1] = og;
-                bufImg->data[y * bltWidth * bpp + x + 2] = og;
+                bufImg->data[y * bltWidthBytes + x]     = og;
+                bufImg->data[y * bltWidthBytes + x + 1] = og;
+                bufImg->data[y * bltWidthBytes + x + 2] = og;
                 if(bpp == 4)
                 {
-                    bufImg->data[y * bltWidth * bpp + x + 3] = og;
+                    bufImg->data[y * bltWidthBytes + x + 3] = og;
                 }
             }
             for(uint8_t i = 0; i < factor; ++i)
             {
-                memcpy((char*)bufImg->data + (y + i + 1) * bltWidth * bpp, (char*)bufImg->data + y * bltWidth * bpp, bltWidth * bpp);
+                memcpy((char*)&bufImg->data[(y + i + 1) * bltWidthBytes], (char*)bufImg->data + y * bltWidthBytes, bltWidthBytes);
             }
         }
 
     }
 
-    Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window, bufImg->data,
+    Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window, (char*)bufImg->data,
                                                 bltWidth, bltHeight, 0, 0, engine->config.depth);
-
     if(!pixmap)
     {
         fprintf(stderr, "\033[30;3;1mERROR: could not create pixmap.\033[0m\n");
@@ -311,5 +308,10 @@ void river2D_bltBuffer
 
     XFlush(engine->display);
 
+    if(bufImg->data && factor != 1)
+    {
+        free(bufImg->data);
+    }
     XFree(bufImg);
+    XFreePixmap(engine->display, pixmap);
 }
