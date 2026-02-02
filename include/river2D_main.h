@@ -120,10 +120,16 @@ River2D_Config;
 
 typedef struct River2D_Image
 {
+    char     *path;
     uint8_t  *data;
     uint8_t  channels;
     uint32_t width;
     uint32_t height;
+
+    #ifdef BUILD_LINUX
+    Pixmap   pixmap;
+    Picture  picture;
+    #endif
 }
 River2D_Image;
 
@@ -175,13 +181,14 @@ typedef struct River2D_ControlMap
 River2D_ControlMap;
 
 #ifdef BUILD_LINUX
-typedef struct Buffer
+typedef struct linuxBackbuffer
 {
     Pixmap   pixmap;
+    Picture  picture;
     uint32_t width;
     uint32_t height;
 }
-Buffer;
+LinuxBackbuffer;
 
 typedef struct PosixThreadpool
 {
@@ -224,11 +231,7 @@ typedef struct EngineData
     Visual             *visual;
     Window             window;
     GC                 context;
-    Buffer             backbuffer;
-    Buffer             compBuffer;
-    Picture            compSrcPict;
-    Picture            compDstPict;
-    Picture            blitSrcPict;
+    LinuxBackbuffer    backbuffer;
     Picture            blitDstPict;
     PosixThreadpool    pool;
 #endif
@@ -262,10 +265,19 @@ EngineData;
 
 extern void river2D_loadImage
 (
+    EngineData    *engine,
     const char    *path,
     River2D_Image *image,
     uint8_t       format,
     uint8_t       bitdepth
+);
+
+extern void river2D_createImage
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    uint32_t      width,
+    uint32_t      height
 );
 
 extern void river2D_destroyImage
