@@ -246,20 +246,20 @@ typedef struct EngineData
     HCURSOR            hCursor;
 #endif
 
-    void    (*river2D_init)           (struct EngineData *engine,    River2D_Image *planes);
-    int32_t (*river2D_shutdown)       (struct EngineData *engine);
-    void    (*river2D_bltBuffer)      (struct EngineData *engine);
+    void    (*init)           (struct EngineData *engine,    River2D_Image *planes);
+    int32_t (*shutdown)       (struct EngineData *engine);
+    void    (*bltBuffer)      (struct EngineData *engine);
 
-    void    (*river2D_loadText)       (struct EngineData *engine,    River2D_Image *image,
-                                       const  char       *text,      uint8_t       font,
-                                       uint16_t          charsize,   uint32_t      spacing,
-                                       uint32_t          offsetY,    uint32_t      offsetX);
+    void    (*loadText)       (struct EngineData *engine,    River2D_Image *image,
+                               const  char       *text,      uint8_t       font,
+                               uint16_t          charsize,   uint32_t      spacing,
+                               uint32_t          offsetY,    uint32_t      offsetX);
 
-    void    (*river2D_compositeImage) (struct EngineData *engine,
-                                       River2D_Image     *image,     uint8_t       pictop,
-                                       uint32_t          offsetDstX, uint32_t      offsetDstY,
-                                       uint32_t          offsetSrcX, uint32_t      offsetSrcY,
-                                       uint32_t          cropWidth,  uint32_t      cropHeight);
+    void    (*compositeImage) (struct EngineData *engine,
+                               River2D_Image     *image,     uint8_t       pictop,
+                               uint32_t          offsetDstX, uint32_t      offsetDstY,
+                               uint32_t          offsetSrcX, uint32_t      offsetSrcY,
+                               uint32_t          cropWidth,  uint32_t      cropHeight);
 }
 EngineData;
 
@@ -278,6 +278,12 @@ extern void river2D_createImage
     River2D_Image *image,
     uint32_t      width,
     uint32_t      height
+);
+
+extern void river2D_clearImage
+(
+    EngineData    *engine,
+    River2D_Image *image
 );
 
 extern void river2D_destroyImage

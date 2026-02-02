@@ -47,11 +47,11 @@ void river2D_resolveRenderer
             fprintf(stderr, "\033[0m\n");
         }
 
-        resolveFunction((void**)&engine->river2D_init,           software, "river2D_init",           &error);
-        resolveFunction((void**)&engine->river2D_shutdown,       software, "river2D_shutdown",       &error);
-        resolveFunction((void**)&engine->river2D_loadText,       software, "river2D_loadText",       &error);
-        resolveFunction((void**)&engine->river2D_bltBuffer,      software, "river2D_bltBuffer",      &error);
-        resolveFunction((void**)&engine->river2D_compositeImage, software, "river2D_compositeImage", &error);
+        resolveFunction((void**)&engine->init,           software, "river2D_init",           &error);
+        resolveFunction((void**)&engine->shutdown,       software, "river2D_shutdown",       &error);
+        resolveFunction((void**)&engine->loadText,       software, "river2D_loadText",       &error);
+        resolveFunction((void**)&engine->bltBuffer,      software, "river2D_bltBuffer",      &error);
+        resolveFunction((void**)&engine->compositeImage, software, "river2D_compositeImage", &error);
     }
     else if(renderer == RIVER2D_RENDERER_OPENGL)
     {
@@ -145,6 +145,23 @@ void river2D_createImage
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture.\n\033[0m");
     }
+}
+
+void river2D_clearImage
+(
+    EngineData    *engine,
+    River2D_Image *image
+){
+    for(uint64_t i = 0; i < image->width * image->height; ++i)
+    {
+        image->data[i] = 0;
+    }
+
+    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+
+    img->data = NULL;
+    XDestroyImage(img);
 }
 
 void river2D_destroyImage

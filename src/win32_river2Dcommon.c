@@ -36,11 +36,11 @@ void river2D_resolveRenderer
             return;
         }
 
-        resolveFunction((void**)&engine->river2D_init,           software, "river2D_init");
-        resolveFunction((void**)&engine->river2D_shutdown,       software, "river2D_shutdown");
-        resolveFunction((void**)&engine->river2D_loadText,       software, "river2D_loadText");
-        resolveFunction((void**)&engine->river2D_bltBuffer,      software, "river2D_bltBuffer");
-        resolveFunction((void**)&engine->river2D_compositeImage, software, "river2D_compositeImage");
+        resolveFunction((void**)&engine->init,           software, "river2D_init");
+        resolveFunction((void**)&engine->shutdown,       software, "river2D_shutdown");
+        resolveFunction((void**)&engine->loadText,       software, "river2D_loadText");
+        resolveFunction((void**)&engine->bltBuffer,      software, "river2D_bltBuffer");
+        resolveFunction((void**)&engine->compositeImage, software, "river2D_compositeImage");
     }
     else if(renderer == RIVER2D_RENDERER_OPENGL)
     {
