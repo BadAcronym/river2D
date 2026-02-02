@@ -19,6 +19,14 @@ extern void river2D_resizeBackbuffer
     uint32_t   height
 );
 
+extern void river2D_resizeXImage
+(
+    EngineData *engine,
+    XImage     *ximage,
+    uint32_t   width,
+    uint32_t   height
+);
+
 extern void river2D_init
 (
     EngineData *engine

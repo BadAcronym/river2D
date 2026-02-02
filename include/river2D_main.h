@@ -107,6 +107,8 @@ typedef struct EngineData
     Pixmap             backbuffer;
     Pixmap             compDestBuf;
     Pixmap             compSrcBuf;
+    XImage             *compDestImg;
+    XImage             *compSrcImg;
 #endif
 
 #ifdef BUILD_WINDOWS

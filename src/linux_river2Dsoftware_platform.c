@@ -2,6 +2,7 @@
 #include "linux_river2Dsoftware_platform.h"
 
 #include <stdio.h>
+#include <memory.h>
 #include <stdlib.h>
 
 #define __USE_POSIX199309
@@ -101,6 +102,22 @@ void river2D_init
     {
         river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
     }
+
+    engine->compDestImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
+                                      0, engine->width, engine->height,
+                                      RIVER2D_SCANLINE, 0);
+    if(!engine->compDestImg)
+    {
+        fprintf(stderr, "Failed to create compDestImg!\n");
+    }
+
+    engine->compSrcImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
+                                      0, engine->width, engine->height,
+                                      RIVER2D_SCANLINE, 0);
+    if(!engine->compSrcImg)
+    {
+        fprintf(stderr, "Failed to create compSrcImg!\n");
+    }
 }
 
 //TODO: not safely shutting down for some reason... why?
@@ -108,6 +125,13 @@ int32_t river2D_shutdown
 (
     EngineData *engine
 ){
+    XFreePixmap(engine->display, engine->backbuffer);
+    XFreePixmap(engine->display, engine->compDestBuf);
+    XFreePixmap(engine->display, engine->compSrcBuf);
+
+    XDestroyImage(engine->compDestImg);
+    XDestroyImage(engine->compSrcImg);
+
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
     XCloseDisplay(engine->display);
@@ -151,7 +175,7 @@ void river2D_drawFrame
     river2D_bltBuffer(engine);
 }
 
-//TODAY: move images & pictures to engineData, so no more allocating/freeing each frame
+//TODO: multi-thread some of this?
 void river2D_compositeImage
 (
     EngineData    *engine,
@@ -171,29 +195,22 @@ void river2D_compositeImage
 
     XRenderPictFormat *format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
 
-    XImage *destXImage = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
-                                      (char*)destImg->data, destImg->width, destImg->height,
-                                      RIVER2D_SCANLINE, 0);
-    if(!destXImage)
+    if(destImg->width != engine->width || destImg->height != engine->height)
     {
-        fprintf(stderr, "Could not create dstXImage to composite onto!\n");
-        return;
+        river2D_resizeXImage(engine, engine->compDestImg, destImg->width, destImg->height);
     }
+    memcpy(engine->compDestImg->data, destImg->data, destImg->width * destImg->height * RIVER2D_BPP);
 
-    XImage *srcXImage  = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
-                                      (char*)srcImg->data, srcImg->width, srcImg->height,
-                                      RIVER2D_SCANLINE, 0);
-    if(!srcXImage)
+    if(srcImg->width != engine->width || srcImg->height != engine->height)
     {
-        fprintf(stderr, "Could not create srcXImage to composite with!\n");
-        XDestroyImage(destXImage);
-        return;
+        river2D_resizeXImage(engine, engine->compSrcImg, srcImg->width, srcImg->height);
     }
+    memcpy(engine->compDestImg->data, srcImg->data, srcImg->width * srcImg->height * RIVER2D_BPP);
 
-    XPutImage(engine->display, engine->compDestBuf, engine->context, destXImage, 0, 0, 0, 0,
+    XPutImage(engine->display, engine->compDestBuf, engine->context, engine->compDestImg, 0, 0, 0, 0,
               destImg->width, destImg->height);
 
-    XPutImage(engine->display, engine->compSrcBuf, engine->context, srcXImage, 0, 0, 0, 0,
+    XPutImage(engine->display, engine->compSrcBuf, engine->context, engine->compSrcImg, 0, 0, 0, 0,
               srcImg->width, srcImg->height);
 
     Picture destPict = XRenderCreatePicture(engine->display, engine->compDestBuf, format, 0, 0);
@@ -206,10 +223,6 @@ void river2D_compositeImage
     XRenderFreePicture(engine->display, destPict);
     XRenderFreePicture(engine->display, srcPict);
     XRenderFreePicture(engine->display, compPict);
-
-    //FIXME: we crash here of all places... why?
-    XDestroyImage(destXImage);
-    XDestroyImage(srcXImage);
 }
 
 void river2D_resizeBackbuffer
@@ -229,7 +242,7 @@ void river2D_resizeBackbuffer
                                        RIVER2D_PIXDEPTH);
     if(!engine->backbuffer)
     {
-        fprintf(stderr, "Failed to create backbuffer Pixmap!\n");
+        fprintf(stderr, "Failed to resize backbuffer Pixmap!\n");
     }
 
     if(engine->compDestBuf)
@@ -240,7 +253,7 @@ void river2D_resizeBackbuffer
                                        RIVER2D_PIXDEPTH);
     if(!engine->compDestBuf)
     {
-        fprintf(stderr, "Failed to create compDestBuf Pixmap!\n");
+        fprintf(stderr, "Failed to resize compDestBuf Pixmap!\n");
     }
 
     if(engine->compSrcBuf)
@@ -251,7 +264,34 @@ void river2D_resizeBackbuffer
                                        RIVER2D_PIXDEPTH);
     if(!engine->compSrcBuf)
     {
-        fprintf(stderr, "Failed to create compSrcBuf Pixmap!\n");
+        fprintf(stderr, "Failed to resize compSrcBuf Pixmap!\n");
+    }
+}
+
+void river2D_resizeXImage
+(
+    EngineData *engine,
+    XImage     *ximage,
+    uint32_t   width,
+    uint32_t   height
+){
+    if(ximage)
+    {
+        XDestroyImage(ximage);
+    }
+
+    ximage = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap, 0,
+                          0, width, height, RIVER2D_SCANLINE, 0);
+    if(!ximage)
+    {
+        fprintf(stderr, "Failed to resize XImage!\n");
+    }
+
+    ximage->data = (char*)malloc(width * height * RIVER2D_BPP);
+
+    if(!ximage->data)
+    {
+        fprintf(stderr, "Failed to allocate resized XImage memory!\n");
     }
 }
 
