@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# BACKLOG: switch to CMake. it can natively export compile commands!
+
 if [[ ! -d "./obj/" ]]
 then
     mkdir ./obj/
@@ -15,57 +17,46 @@ then
     mkdir ./bin/
 fi
 
-compile_imgsurf()
-{
+if [[ $1 = "" ]]
+then
+    build="release"
+else
+    build=$1
+fi
+
+if [[ $build = "asan" ]] || [[ $build = "debug" ]] || [[ $build = "release" ]]
+then
+
     if [[ -f "./vendor/imgsurf/run" ]]
     then
         pushd ./vendor/imgsurf/ > /dev/null
-        ./run $1 --compile-only
+        ./run $build --compile-only
         if [[ $? != 0 ]]
         then
+            echo -e "\033[31m\nERROR: failed to compile imgsurf.\033[0m"
             exit -1
         fi
         popd > /dev/null
     else
-        echo -e "\033[31mERROR: can't find imgsurf's run script.\033[0m"
+        echo -e "\033[31m\nERROR: can't find imgsurf's run script.\033[0m"
     fi
-}
 
-compileprep()
-{
     echo ""
     echo -e "\033[36mcompiling river2D...\033[0m"
     echo ""
     premake5 ecc
     premake5 gmake
-}
 
-if [[ $1 = "debug" ]]
-then
-    compile_imgsurf $1
-    compileprep
     pushd ./build/ > /dev/null
-    make config=debug_linux
-elif [[ $1 = "release" ]]
-then
-    compile_imgsurf $1
-    compileprep
-    pushd ./build/ > /dev/null
-    make config=release_linux
-elif [[ $1 = "asan" ]]
-then
-    compile_imgsurf $1
-    compileprep
-    pushd ./build/ > /dev/null
-    make config=asan_linux
+    make config=$build\_linux
 else
-    echo -e "\033[31m\nERROR: invalid make config: $1.\033[0m"
+    echo -e "\033[31m\nERROR: invalid make config: $build.\033[0m"
     exit -2;
 fi
 
 if [[ $? != 0 ]]
 then
-    echo -e "\033[31m\nERROR: failed to compile.\n\033[0m"
+    echo -e "\033[31m\nERROR: failed to compile river2D.\n\033[0m"
     exit -1
 fi
 
