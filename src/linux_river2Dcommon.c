@@ -12,8 +12,8 @@ void river2D_queryTime
     struct timespec spec;
     clock_gettime(CLOCK_REALTIME, &spec);
 
-    time->s  = spec.tv_sec;
-    time->ns = spec.tv_nsec;
+    time->s  = (uint64_t)spec.tv_sec;
+    time->ns = (uint64_t)spec.tv_nsec;
 }
 
 uint8_t river2D_verifyPath

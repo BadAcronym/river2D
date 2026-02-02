@@ -10,6 +10,6 @@ extern void mapedit_update
 extern void mapedit_processControls
 (
     bool               isDown,
-    int32_t            key,
+    uint64_t           key,
     River2D_ControlMap *controls
 );

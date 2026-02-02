@@ -9,7 +9,7 @@ void mapedit_update
 void mapedit_processControls
 (
     bool               isDown,
-    int32_t            key,
+    uint64_t           key,
     River2D_ControlMap *controls
 ){
     switch(key)
@@ -22,7 +22,7 @@ void mapedit_processControls
             }
             else
             {
-                controls->keymap &= ~RIVER2D_BIT_UP;
+                controls->keymap &= (uint64_t)~RIVER2D_BIT_UP;
             }
             break;
         }
@@ -34,7 +34,7 @@ void mapedit_processControls
             }
             else
             {
-                controls->keymap &= ~RIVER2D_BIT_DOWN;
+                controls->keymap &= (uint64_t)~RIVER2D_BIT_DOWN;
             }
             break;
         }
@@ -46,7 +46,7 @@ void mapedit_processControls
             }
             else
             {
-                controls->keymap &= ~RIVER2D_BIT_LEFT;
+                controls->keymap &= (uint64_t)~RIVER2D_BIT_LEFT;
             }
             break;
         }
@@ -58,7 +58,7 @@ void mapedit_processControls
             }
             else
             {
-                controls->keymap &= ~RIVER2D_BIT_RIGHT;
+                controls->keymap &= (uint64_t)~RIVER2D_BIT_RIGHT;
             }
             break;
         }
@@ -70,7 +70,7 @@ void mapedit_processControls
             }
             else
             {
-                controls->keymap &= ~RIVER2D_BIT_TAB;
+                controls->keymap &= (uint64_t)~RIVER2D_BIT_TAB;
             }
             break;
         }
@@ -82,7 +82,7 @@ void mapedit_processControls
             }
             else
             {
-                controls->keymap &= ~RIVER2D_BIT_ESCAPE;
+                controls->keymap &= (uint64_t)~RIVER2D_BIT_ESCAPE;
             }
             break;
         }

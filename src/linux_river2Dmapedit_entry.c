@@ -93,7 +93,8 @@ int main()
                 {
                     if(!(engine.config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
                     {
-                        river2D_resizeBackbuffer(&engine, event.xconfigure.width, event.xconfigure.height);
+                        river2D_resizeBackbuffer(&engine, (uint32_t)event.xconfigure.width,
+                                                          (uint32_t)event.xconfigure.height);
                     }
                     break;
                 }
