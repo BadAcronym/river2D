@@ -134,6 +134,7 @@ void river2D_loadImage
 }
 
 //TODO: allow for hot reloading via menu if necessary, apply config
+//TODO: fuzz config file, make sure it can't crash the engine
 void river2D_loadConfig
 (
     River2D_Config *config
@@ -142,20 +143,30 @@ void river2D_loadConfig
 
     if(code == RIVER2D_TYPE_FILE)
     {
+        FILE *file = fopen(RIVER2D_CONFIG_PATH, "r");
+        if(!file)
+        {
+            fprintf(stderr, "\n\033[31;1;7mERROR: Could not open file %s\033[0m\n", RIVER2D_CONFIG_PATH);
+            return;
+        }
+
         //TODAY: parse config data and pass to *config
+
+        fclose(file);
         return;
     }
     else if(code == RIVER2D_TYPE_ERROR)
     {
-        fprintf(stderr, "Can't find the file '%s', default config loaded.\n", RIVER2D_CONFIG_PATH);
+        fprintf(stderr, "\nCan't find the file '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
     }
     else if(code == RIVER2D_TYPE_DIRECTORY)
     {
-        fprintf(stderr, "ERROR: '%s' is a Directory! Default config loaded.\n", RIVER2D_CONFIG_PATH);
+        fprintf(stderr, "\n\033[31;1;7mERROR: '%s' is a Directory! Default config loaded.\033[0m\n",
+                RIVER2D_CONFIG_PATH);
     }
     else if(code == RIVER2D_TYPE_OTHER)
     {
-        fprintf(stderr, "Unknown filetype for '%s', default config loaded.\n", RIVER2D_CONFIG_PATH);
+        fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
     }
 
     config->static_canvas_enable = false;
