@@ -284,10 +284,7 @@ void river2D_createButton
     uint16_t      charsize,
     uint32_t      spacing,
     Coordinates   point,
-    Rect          *rect,
-    void (*river2D_loadText)(EngineData *engine, River2D_Image *image, const char *text,
-                             uint8_t font, uint16_t charsize, uint32_t spacing,
-                             uint32_t offsetX, uint32_t offsetY)
+    Rect          *rect
 ){
     uint32_t length = 0;
 
@@ -307,5 +304,5 @@ void river2D_createButton
     rect->lowerRight.x = rect->upperLeft.x + floatWidth;
     rect->lowerRight.y = rect->upperLeft.y + floatHeight;
 
-    river2D_loadText(engine, img, text, font, charsize, spacing, offsetX, offsetY);
+    engine->river2D_loadText(engine, img, text, font, charsize, spacing, offsetX, offsetY);
 }

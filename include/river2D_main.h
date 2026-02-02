@@ -55,6 +55,11 @@
 // BACKLOG: (river2D #14) move max threads to some sort of detection function that polls the amount of cores
 #define RIVER2D_MAX_THREADS 8
 
+#define RIVER2D_RENDERER_SOFTWARE 0
+#define RIVER2D_RENDERER_OPENGL   1
+#define RIVER2D_RENDERER_VULKAN   2
+#define RIVER2D_RENDERER_DIRECTX  3
+
 #define RIVER2D_KEY_UP         0
 #define RIVER2D_KEY_LEFT       1
 #define RIVER2D_KEY_RIGHT      2
@@ -211,6 +216,8 @@ typedef struct EngineData
     River2D_ControlMap controls;
     River2D_Config     config;
     River2D_Image      *planes;
+    // JANKY: move the FPS code to river2D,
+    // the player* code to islescape.
     River2D_Time       lastFrametime;
     River2D_Time       lastFPStime;
     River2D_Time       playerAnimTime;
@@ -242,6 +249,21 @@ typedef struct EngineData
     HDC                context;
     Win32Backbuffer    backbuffer;
 #endif
+
+    void    (*river2D_init)           (struct EngineData *engine,    River2D_Image *planes);
+    int32_t (*river2D_shutdown)       (struct EngineData *engine);
+    void    (*river2D_bltBuffer)      (struct EngineData *engine);
+
+    void    (*river2D_loadText)       (struct EngineData *engine,    River2D_Image *image,
+                                       const  char       *text,      uint8_t       font,
+                                       uint16_t          charsize,   uint32_t      spacing,
+                                       uint32_t          offsetY,    uint32_t      offsetX);
+
+    void    (*river2D_compositeImage) (struct EngineData *engine,
+                                       River2D_Image     *image,     uint8_t       pictop,
+                                       uint32_t          offsetDstX, uint32_t      offsetDstY,
+                                       uint32_t          offsetSrcX, uint32_t      offsetSrcY,
+                                       uint32_t          cropWidth,  uint32_t      cropHeight);
 }
 EngineData;
 
@@ -266,6 +288,12 @@ extern River2D_Time river2D_queryTime
 extern River2D_Time river2D_deltaTime
 (
     const River2D_Time *time
+);
+
+extern void river2D_resolveRenderer
+(
+    EngineData *engine,
+    uint8_t    renderer
 );
 
 extern uint8_t river2D_verifyPath
@@ -326,8 +354,5 @@ extern void river2D_createButton
     uint16_t      charsize,
     uint32_t      spacing,
     Coordinates   point,
-    Rect          *rect,
-    void (*river2D_loadText)(EngineData *engine, River2D_Image *image, const char *text,
-                             uint8_t font, uint16_t charsize, uint32_t spacing,
-                             uint32_t offsetX, uint32_t offsetY)
+    Rect          *rect
 );
