@@ -78,7 +78,6 @@ void river2D_loadConfig
     }
     bool parsedWidth  = false;
     bool parsedHeight = false;
-    bool parsedFPS    = false;
 
     uint8_t code = river2D_verifyPath(RIVER2D_CONFIG_PATH);
 
@@ -97,7 +96,6 @@ void river2D_loadConfig
             const char* fpsloc = river2D_contains(buf, "showFPS");
             if(fpsloc && (fpsloc - buf) < bufsize)
             {
-                parsedFPS = true;
                 bool foundShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
                 if(!foundShowFps)
                 {
@@ -110,7 +108,6 @@ void river2D_loadConfig
         }
 
         fclose(file);
-        return;
     }
     else if(code == RIVER2D_TYPE_ERROR)
     {
