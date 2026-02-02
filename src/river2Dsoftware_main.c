@@ -37,7 +37,7 @@ void river2D_loadText
     if(!image->data)
     {
         image->height = charsize;
-        image->width  = (uint32_t)(image->height * charsize * strlen(text));
+        image->width  = (charsize * ((uint32_t)strlen(text) + 2));
 
         image->data = malloc(image->height * image->width * RIVER2D_BPP);
         memset(image->data, 0, image->height * image->width * RIVER2D_BPP);
