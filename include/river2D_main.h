@@ -13,6 +13,11 @@
 #ifdef BUILD_LINUX
     #include "X11/Xlib.h"
     #include "X11/Xutil.h"
+
+    #define __USE_POSIX199309
+    #include <time.h>
+
+    #include "pthread.h"
     #define  RIVER2D_SCANLINE  8
     #define  RIVER2D_CONFIG_PATH "./.river2Dconf"
 #endif
@@ -116,6 +121,19 @@ typedef struct River2D_ControlMap
 }
 River2D_ControlMap;
 
+typedef struct pictopData
+{
+    uint32_t x;
+    uint32_t y;
+    uint64_t copyWidth;
+    uint64_t bufWidth;
+    uint8_t  *src;
+    uint8_t  *dest;
+}
+pictopData;
+
+//TODAY: revise in favour of floats 0.0f - 1.0f
+//I think that's less prone to errors than absolute screen coords...
 typedef struct Coordinates
 {
     uint32_t x;
@@ -131,6 +149,26 @@ typedef struct X11Backbuffer
     uint32_t height;
 }
 X11Backbuffer;
+
+//TODO: think about a better way to structure these, maybe?
+typedef struct PosixThreadpool
+{
+    pthread_t thread1;
+    pthread_t thread2;
+    pthread_t thread3;
+    pthread_t thread4;
+    pthread_t thread5;
+    pthread_t thread6;
+    pthread_t thread7;
+    pthread_t thread8;
+    pthread_t thread9;
+    pthread_t thread11;
+    pthread_t thread12;
+    pthread_t thread13;
+    pthread_t thread14;
+    pthread_t thread15;
+}
+PosixThreadpool;
 #elif defined(BUILD_WINDOWS)
 typedef struct Win32Backbuffer
 {
@@ -161,6 +199,7 @@ typedef struct EngineData
     Window             window;
     GC                 context;
     X11Backbuffer      backbuffer;
+    PosixThreadpool    pool;
 #endif
 
 #ifdef BUILD_WINDOWS
