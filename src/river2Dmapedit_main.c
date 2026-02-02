@@ -86,8 +86,7 @@ void mapedit_processControls
             }
             break;
         }
-        //test keycodes
-        #if 0
+        #ifdef RIVER2D_TEST_KEYCODES
         default:
         {
             printf("keycode: %u\n", key);

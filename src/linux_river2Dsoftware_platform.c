@@ -266,9 +266,10 @@ void river2D_compositeImage
         skipHeight = 1;
     }
 
-    //PERFORMANCE: profiling, starting time
+    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
     River2D_Time time = {0};
     river2D_queryTime(&time);
+    #endif
 
     for(uint8_t i = 0; i < RIVER2D_MAX_THREADS && y < cropHeight; ++i)
     {
@@ -285,6 +286,7 @@ void river2D_compositeImage
         y += pictopData.threadHeight;
     }
 
+    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
     River2D_Time dispatchTime = {0};
     river2D_queryTime(&dispatchTime);
     int64_t deltaNSDispatch = dispatchTime.ns - time.ns;
@@ -299,6 +301,7 @@ void river2D_compositeImage
     }
 
     river2D_queryTime(&time);
+    #endif
 
     for(; y < cropHeight; ++y)
     {
@@ -316,6 +319,7 @@ void river2D_compositeImage
         }
     }
 
+    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
     River2D_Time singleTime = {0};
     river2D_queryTime(&singleTime);
     int64_t deltaNSSingle = singleTime.ns - time.ns;
@@ -330,6 +334,7 @@ void river2D_compositeImage
     }
 
     river2D_queryTime(&time);
+    #endif
 
     for(uint8_t i = 0; i < RIVER2D_MAX_THREADS; ++i)
     {
@@ -340,6 +345,7 @@ void river2D_compositeImage
         }
     }
 
+    #ifdef RIVER2D_PROFILING_COMPOSITE_CPU
     River2D_Time idleTime = {0};
     river2D_queryTime(&idleTime);
     int64_t deltaNSIdle = idleTime.ns - time.ns;
@@ -352,6 +358,7 @@ void river2D_compositeImage
         engine->idleTime.ns = 0;
         engine->idleTime.s++;
     }
+    #endif
 }
 
 void river2D_bltBuffer
