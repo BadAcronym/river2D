@@ -63,9 +63,15 @@ uint8_t river2D_interpretCharAsKey
         return numeric_table[inp - 0x30];
     }
 
-    if(inp < 123 && inp > 96)
+    if(inp > 0x60 && inp < 0x7A)
     {
-        return alphabetic_table[inp - 97];
+        return alphabetic_table[inp - 0x61];
+    }
+
+    // BACKLOG: translate not only escape (0x1b) but also the rest of the ascii keyboard codes here
+    if(inp == 0x1B)
+    {
+        return 0x09;
     }
 
     return 0;
