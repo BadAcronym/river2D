@@ -159,8 +159,6 @@ int CALLBACK WinMain
     LPSTR     cmdline,
     int       cmdShow
 ){
-    //silence MSVC, I just plain don't need these params but
-    //HAVE to specify them in order for WinMain to be called
     (void)cmdShow;
     (void)cmdline;
     (void)prevInstance;
