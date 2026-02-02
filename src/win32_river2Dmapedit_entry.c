@@ -1,15 +1,9 @@
 #include "river2D_main.h"
+#include "river2Dmapedit_main.h"
 
 #include <stdio.h>
 
 global bool running = true;
-
-#ifdef DEBUG
-int main()
-{
-    return WinMain(GetModuleHandleA(0), 0, GetCommandLineA(), 0);
-}
-#endif
 
 //TODAY: try just declaring signatures, will that work?
 clang_ignore_unused
@@ -214,3 +208,10 @@ int CALLBACK WinMain
 
     return river2D_shutdown(&engine);
 }
+
+#ifdef DEBUG
+int main()
+{
+    return WinMain(GetModuleHandleA(0), 0, GetCommandLineA(), 0);
+}
+#endif
