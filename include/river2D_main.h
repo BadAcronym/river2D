@@ -156,7 +156,8 @@ typedef struct EngineData
 #endif
 
 #ifdef BUILD_WINDOWS
-    ///
+    HINSTANCE          instance;
+    HWND               window;
 #endif
 }
 EngineData;

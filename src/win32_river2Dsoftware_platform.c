@@ -2,6 +2,8 @@
 
 #include "win32_river2Dsoftware_platform.h"
 
+#include <stdio.h>
+
 //TODO: move to win32 input
 // clang_ignore_unused
 //
@@ -43,6 +45,71 @@
 //         clang_diagnostic_pop
 //     }
 // }
+
+void river2D_openWindow
+(
+    EngineData *engine
+){
+    WNDCLASS wc = {0};
+
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = win32WindowCallback;
+    wc.hInstance = engine->instance;
+    wc.lpszClassName = "River2DClass";
+
+    if(!RegisterClassA(&wc))
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to register window class!\033[0m\n");
+    };
+
+    int x      = CW_USEDEFAULT;
+    int y      = CW_USEDEFAULT;
+    int width  = CW_USEDEFAULT;
+    int height = CW_USEDEFAULT;
+
+    engine->window = CreateWindowExA(0, wc.lpszClassName, "River2D",
+                                     WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+                                     x, y, width, height,
+                                     0, 0, instance, 0);
+}
+
+void river2D_init
+(
+    EngineData         *engine,
+    River2D_Image      *planes
+){
+    river2D_loadConfig(&engine->config);
+
+    engine->width  = engine->config.width;
+    engine->height = engine->config.height;
+
+    engine->planes   = planes;
+
+    engine->windowName = "river2D editor";
+
+    engine->window = river2D_openWindow(engine);
+    if(!engine->window)
+    {
+        fprintf(stderr, "Failed to create window!\n");
+    }
+
+    // engine->context = ;
+    // if(!engine->context)
+    // {
+    //     fprintf(stderr, "Failed to create Graphics Context!\n");
+    // }
+
+    if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
+    {
+        //TODO: get from config, worry about scaling
+        river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
+    }
+
+    River2D_Time time;
+    river2D_queryTime(&time);
+    engine->lastFrametime = time;
+    engine->lastFPStime = time;
+}
 
 void win32ResizeDIBSection
 (
