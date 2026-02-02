@@ -163,8 +163,6 @@ void river2D_init
 
     // TODO: verify if we need this
     engine->blitDstPict = XRenderCreatePicture(engine->display, engine->window, engine->format, 0, 0);
-
-    River2D_Time time = river2D_queryTime();
 }
 
 int32_t river2D_shutdown
