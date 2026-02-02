@@ -261,6 +261,9 @@ void river2D_completeRect
     Coordinates *upperLeft,
     Coordinates *lowerRight
 ){
+    area->upperLeft  = *upperLeft;
+    area->lowerRight = *lowerRight;
+
     area->upperRight.x = lowerRight->x;
     area->upperRight.y = upperLeft->y;
 
