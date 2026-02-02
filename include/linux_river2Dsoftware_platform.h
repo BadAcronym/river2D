@@ -13,3 +13,9 @@ extern void river2D_loadText
     uint32_t      offsetY,
     uint32_t      offsetX
 );
+
+extern void river2D_bltBuffer
+(
+    EngineData *engine,
+    uint8_t factor
+);

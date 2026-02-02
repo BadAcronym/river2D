@@ -359,7 +359,8 @@ void river2D_compositeImage
 
 void river2D_bltBuffer
 (
-    EngineData *engine
+    EngineData *engine,
+    uint8_t    factor
 ){
     //TODAY: (river2D #4) oh boy. now it's time to create a way to stretch this thing.
     //probably will have to treat each pixel in the backbuffer as a vertex.
@@ -370,9 +371,42 @@ void river2D_bltBuffer
     //is to say, that should probably be handled by some other downscaling function. for now,
     //let's upscale.
 
+    if(factor == 0)
+    {
+        fprintf(stderr, "\033[33;3;1m0 is an invalid factor.\033[0m\n");
+    }
+
     XImage *bufImg = XCreateImage(engine->display, engine->visual, RIVER2D_PIXDEPTH, ZPixmap,
-                                  0, (char*)engine->backbuffer.data, engine->config.width,
-                                  engine->config.height, RIVER2D_SCANLINE, 0);
+                                  0, 0,
+                                  engine->backbuffer.width  * factor,
+                                  engine->backbuffer.height * factor,
+                                  RIVER2D_SCANLINE, 0);
+
+    if(factor != 1)
+    {
+        uint32_t width  = engine->backbuffer.width  * factor;
+        uint32_t height = engine->backbuffer.height * factor;
+        bufImg->data = malloc(width * height * RIVER2D_BPP);
+
+        uint32_t *dest = (uint32_t*)bufImg->data;
+        uint32_t *src  = (uint32_t*)engine->backbuffer.data;
+
+        for(uint32_t y = 0; y < engine->backbuffer.height; ++y)
+        {
+            for(uint32_t x = 0; x < engine->backbuffer.width; ++x)
+            {
+                for(uint8_t i = 0; i < factor; ++i)
+                {
+                    *dest = *src;
+                    dest[width] = *src;
+
+                    dest++;
+                }
+                src++;
+            }
+            dest += width;
+        }
+    }
 
     Pixmap pixmap = XCreatePixmapFromBitmapData(engine->display, engine->window,
                                                 (char*)engine->backbuffer.data,
@@ -387,6 +421,7 @@ void river2D_bltBuffer
 
     XFlush(engine->display);
 
+    free(bufImg->data);
     XFree(bufImg);
     XFreePixmap(engine->display, pixmap);
 }
