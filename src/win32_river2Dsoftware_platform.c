@@ -91,12 +91,6 @@ void river2D_init
 
     engine->windowName = "unnamed river2D application";
 
-    engine->context = GetDC(engine->window);
-    if(!engine->context)
-    {
-        fprintf(stderr, "\n\033[31;1;7mERROR: Could not get DC!\033[0m\n");
-    }
-
     if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
     {
         river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
@@ -122,8 +116,12 @@ void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    StretchDIBits(engine->context, 0, 0, (int)engine->width, (int)engine->height,
-                  0, 0, (int)engine->backbuffer.width, (int)engine->backbuffer.height,
+    RECT clientRect;
+    GetClientRect(engine->window, &clientRect);
+    int width  = clientRect.right  - clientRect.left;
+    int height = clientRect.bottom - clientRect.top;
+
+    StretchDIBits(engine->context, 0, 0, width, height, 0, 0, (int)engine->width, (int)engine->height,
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
 
     river2D_queryTime(&engine->lastFrametime);
@@ -162,21 +160,22 @@ void river2D_compositeImage
 
     //TODO: verify that both images are actually RGBA (in other words, that there's enough space)
 
-    //TESTING: copy line by line
     uint8_t *dest = (uint8_t*)engine->backbuffer.data;
     uint64_t copyWidth = image->width * RIVER2D_BPP;
+    uint64_t bufWidth  = engine->width * RIVER2D_BPP;
 
     for(uint32_t y = 0; y < image->height; ++y)
     {
         for(uint32_t x = 0; x < copyWidth; x += RIVER2D_BPP)
         {
-            uint64_t index = y * copyWidth + x;
-            if(image->data[index + 3])
+            uint64_t srcIndex  = y * copyWidth + x;
+            uint64_t dstIndex  = ((image->height - y - 1) * bufWidth) + x;
+            if(image->data[srcIndex + 3])
             {
-                *dest++ = image->data[index];
-                *dest++ = image->data[index + 1];
-                *dest++ = image->data[index + 2];
-                *dest++ = image->data[index + 3];
+                dest[dstIndex]     = image->data[srcIndex];
+                dest[dstIndex + 1] = image->data[srcIndex + 1];
+                dest[dstIndex + 2] = image->data[srcIndex + 2];
+                dest[dstIndex + 3] = image->data[srcIndex + 3];
             }
         }
     }
