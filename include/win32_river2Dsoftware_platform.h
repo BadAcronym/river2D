@@ -4,4 +4,3 @@
 #include <Xinput.h>
 
 #include <stdint.h>
-#include <wdm.h>
