@@ -43,6 +43,60 @@ internal Visual* findVisual
     return visual;
 }
 
+Window river2D_openWindow
+(
+    EngineData *engine
+){
+    unsigned long valuemask = CWBackPixel | CWBorderPixel | CWColormap | CWOverrideRedirect;
+
+    XSetWindowAttributes attributes;
+    attributes.background_pixel  = BlackPixel(engine->display, DefaultScreen(engine->display));
+    attributes.border_pixel      = BlackPixel(engine->display, DefaultScreen(engine->display));
+    attributes.colormap          = XCreateColormap(engine->display, XDefaultRootWindow(engine->display),
+                                                   engine->visual, AllocNone);
+    attributes.override_redirect = false;
+
+    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display),
+                                  0, 0, engine->width, engine->height, 0, RIVER2D_PIXDEPTH,
+                                  InputOutput, engine->visual, valuemask, &attributes);
+
+    XStoreName(engine->display, window, engine->windowName);
+    XSelectInput(engine->display, window, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
+    XMapWindow(engine->display, window);
+
+    return window;
+}
+
+void river2D_resizeBackbuffer
+(
+    EngineData *engine,
+    uint32_t   width,
+    uint32_t   height
+){
+    if(engine->backbuffer)
+    {
+        XFreePixmap(engine->display, engine->backbuffer);
+    }
+    engine->backbuffer = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
+    if(!engine->backbuffer)
+    {
+        fprintf(stderr, "Failed to resize backbuffer Pixmap!\n");
+    }
+
+    if(engine->compBuffer)
+    {
+        XFreePixmap(engine->display, engine->compBuffer);
+    }
+    engine->compBuffer = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
+    if(!engine->compBuffer)
+    {
+        fprintf(stderr, "Failed to resize compSrcBuf Pixmap!\n");
+    }
+
+    engine->width  = width;
+    engine->height = height;
+}
+
 void river2D_init
 (
     EngineData         *engine,
@@ -140,30 +194,6 @@ int32_t river2D_shutdown
     }
 
     return 0;
-}
-
-Window river2D_openWindow
-(
-    EngineData *engine
-){
-    unsigned long valuemask = CWBackPixel | CWBorderPixel | CWColormap | CWOverrideRedirect;
-
-    XSetWindowAttributes attributes;
-    attributes.background_pixel  = BlackPixel(engine->display, DefaultScreen(engine->display));
-    attributes.border_pixel      = BlackPixel(engine->display, DefaultScreen(engine->display));
-    attributes.colormap          = XCreateColormap(engine->display, XDefaultRootWindow(engine->display),
-                                                   engine->visual, AllocNone);
-    attributes.override_redirect = false;
-
-    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display),
-                                  0, 0, engine->width, engine->height, 0, RIVER2D_PIXDEPTH,
-                                  InputOutput, engine->visual, valuemask, &attributes);
-
-    XStoreName(engine->display, window, engine->windowName);
-    XSelectInput(engine->display, window, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
-    XMapWindow(engine->display, window);
-
-    return window;
 }
 
 //TODO: allow for other font colours?
@@ -324,36 +354,6 @@ void river2D_compositeImage
     {
         XDestroyImage(compDestImg);
     }
-}
-
-void river2D_resizeBackbuffer
-(
-    EngineData *engine,
-    uint32_t   width,
-    uint32_t   height
-){
-    if(engine->backbuffer)
-    {
-        XFreePixmap(engine->display, engine->backbuffer);
-    }
-    engine->backbuffer = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
-    if(!engine->backbuffer)
-    {
-        fprintf(stderr, "Failed to resize backbuffer Pixmap!\n");
-    }
-
-    if(engine->compBuffer)
-    {
-        XFreePixmap(engine->display, engine->compBuffer);
-    }
-    engine->compBuffer = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
-    if(!engine->compBuffer)
-    {
-        fprintf(stderr, "Failed to resize compSrcBuf Pixmap!\n");
-    }
-
-    engine->width  = width;
-    engine->height = height;
 }
 
 void river2D_bltBuffer
