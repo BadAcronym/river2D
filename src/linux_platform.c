@@ -7,6 +7,16 @@
 #include <stdlib.h>
 #include <time.h>
 
+void X11loadConfig
+(
+    Config *config
+){
+    //TODO: parse & load from file
+    config->static_canvas_enable = false;
+    // config->static_canvas_width  = 1280;
+    // config->static_canvas_height = 720;
+}
+
 void X11init
 (
     EngineData *engine
@@ -23,7 +33,7 @@ void X11init
         fprintf(stderr, "Failed to get default screen!\n");
     }
 
-    engine->dimensions.width = WidthOfScreen(engine->screen);
+    engine->dimensions.width  = WidthOfScreen(engine->screen);
     engine->dimensions.height = HeightOfScreen(engine->screen);
 
     engine->windowName = "river2D editor";
@@ -39,17 +49,20 @@ void X11init
         fprintf(stderr, "Failed to create Graphics Context!\n");
     }
 
-    river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
-    engine->running = true;
-
-    //TODAY: load all the UI images and give their pointers to the array
-
     River2D_Image baseUI = {};
     river2D_loadImage("assets/image.png", &baseUI);
 
     engine->UI = XCreateImage(engine->display, DefaultVisual(engine->display, 0), 24,
                               ZPixmap, 0, (char*)baseUI.data, baseUI.dimensions.width,
                               baseUI.dimensions.height, 32, 0);
+
+    X11loadConfig(&engine->config);
+    engine->running = true;
+
+    if(!engine->config.static_canvas_enable)
+    {
+        river2D_resizeBackbuffer(engine, WidthOfScreen(engine->screen), HeightOfScreen(engine->screen));
+    }
 }
 
 int32_t X11shutdown
@@ -81,18 +94,10 @@ Window X11openWindow
     return window;
 }
 
-void X11drawFrame
+extern void X11drawFrame
 (
     EngineData *engine
 ){
-    //TODAY: move this to init, load premade UI to draw on top of
-
-    //TODAY: figure out how to draw on part of viewport
-
-    //TODAY: stretch it correctly (like with stretchDIBits)
-
-    XPutImage(engine->display, engine->pixmap, engine->context, engine->UI, 0, 0, 0, 0,
-              engine->UI->width, engine->UI->height);
 
     X11bltBuffer(engine);
 }

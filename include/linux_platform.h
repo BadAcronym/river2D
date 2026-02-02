@@ -27,7 +27,8 @@ typedef struct X11EngineData
     Pixmap            pixmap;
     Dimensions        dimensions;
     const char*       windowName;
-    XImage*           UI;
+    XImage            *UI;
+    Config            config;
 }
 X11EngineData;
 

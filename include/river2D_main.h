@@ -53,6 +53,16 @@ typedef struct PerformanceCounter
 }
 PerformanceCounter;
 
+typedef struct Config
+{
+    bool     static_canvas_enable;
+    uint32_t static_canvas_width;
+    uint32_t static_canvas_height;
+
+    //choose renderer here
+}
+Config;
+
 typedef struct Image
 {
     void*       data;
