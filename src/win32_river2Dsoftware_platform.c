@@ -60,6 +60,12 @@ void river2D_init
 
     engine->windowName = "river2D editor";
 
+    engine->context = GetDC(engine->window);
+    if(!engine->context)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: Could not get DC!\033[0m\n");
+    }
+
     if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
     {
         //TODO: get from config, worry about scaling
@@ -70,6 +76,16 @@ void river2D_init
     river2D_queryTime(&time);
     engine->lastFrametime = time;
     engine->lastFPStime = time;
+}
+
+int32_t river2D_shutdown
+(
+    EngineData *engine
+){
+    //TODO: does this not have to happen every update call?
+    ReleaseDC(engine->window, engine->context);
+
+    return 0;
 }
 
 // void win32ResizeDIBSection
