@@ -49,14 +49,14 @@ void river2D_loadText
         image->data = calloc(image->height * image->width * RIVER2D_BPP, 1);
     }
 
-    if(offsetY > image->height)
-    {
-        fprintf(stderr, "offsetY too large.\n");
-        return;
-    }
     if(offsetX > image->width)
     {
         fprintf(stderr, "offsetX too large.\n");
+        return;
+    }
+    if(offsetY > image->height)
+    {
+        fprintf(stderr, "offsetY too large.\n");
         return;
     }
     uint32_t fontImgWidth = engine->planes[font].width;
@@ -67,8 +67,9 @@ void river2D_loadText
         {
             continue;
         }
-        uint32_t  charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
+
         uint32_t  charBigX = (uint32_t)(text[i] - 0x21) * charsize % fontImgWidth;
+        uint32_t  charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
 
         uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
         uint64_t trueDestOffset = (offsetY * image->width + offsetX + i * (charsize + spacing)) * RIVER2D_BPP;
