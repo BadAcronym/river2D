@@ -17,6 +17,8 @@ void river2D_loadConfig
     config->backgrounds = 4;
     // config->static_canvas_width  = 1280;
     // config->static_canvas_height = 720;
+    config->width  = 2560;
+    config->height = 1440;
 }
 
 internal Visual* findVisual
@@ -61,6 +63,10 @@ void river2D_init
 (
     EngineData *engine
 ){
+    river2D_loadConfig(&engine->config);
+    engine->width = engine->config.width;
+    engine->height = engine->config.height;
+
     engine->display = XOpenDisplay(0);
     if(!engine->display)
     {
@@ -72,10 +78,6 @@ void river2D_init
     {
         fprintf(stderr, "Failed to get default screen!\n");
     }
-
-    //TODO: get this from config, worry about scaling
-    engine->width  = 1920;
-    engine->height = 1080;
 
     engine->visual = findVisual(engine->display);
     if(!engine->visual)
@@ -103,13 +105,11 @@ void river2D_init
         fprintf(stderr, "Failed to create Graphics Context!\n");
     }
 
-    river2D_loadConfig(&engine->config);
     engine->running = true;
-
     if(!engine->config.static_canvas_enable)
     {
         //TODO: get from config, worry about scaling
-        river2D_resizeBackbuffer(engine, 1920, 1080);
+        river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
 }
 
@@ -141,9 +141,9 @@ int32_t river2D_shutdown
     XDestroyWindow(engine->display, engine->window);
     XCloseDisplay(engine->display);
 
-    for(uint8_t i = 0; i < RIVER2D_MAX_BACKGROUNDS; ++i)
+    for(uint8_t i = 0; i < RIVER2D_MAX_PLANES; ++i)
     {
-        river2D_destroyImage(&engine->backgrounds[i]);
+        river2D_destroyImage(&engine->planes[i]);
     }
 
     return 0;
@@ -173,15 +173,21 @@ Window river2D_openWindow
     return window;
 }
 
-void river2D_drawFrame
+void river2D_loadText
 (
-    EngineData *engine
+    EngineData    *engine,
+    River2D_Image *image,
+    const char    *text,
+    uint8_t       font,
+    uint8_t       scale,
+    uint32_t      spacing,
+    uint32_t      offsetY,
+    uint32_t      offsetX
 ){
-    //TODO: remove test drawing
-    XDrawRectangle(engine->display, engine->backbuffer, engine->context,
-                   engine->width, engine->height, 0, 0);
-
-    river2D_bltBuffer(engine);
+    //TODAY:
+    //foreach char in text:
+    //get appropriate img cutout from pre-loaded font bitmap if char is available in it (just value check)
+    //append after i*spacing pixels to *image
 }
 
 //TODO: multi-thread some of this?

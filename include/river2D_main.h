@@ -28,9 +28,9 @@
 #define clang_diagnostic_pop\
     _Pragma("clang diagnostic pop")\
 
-#define RIVER2D_BPP       4
-#define RIVER2D_PIXDEPTH  32
-#define RIVER2D_MAX_BACKGROUNDS 16
+#define RIVER2D_BPP        4
+#define RIVER2D_PIXDEPTH   32
+#define RIVER2D_MAX_PLANES 64
 
 //X keycodes
 //TODO: read from config file and translate to X, Win32 or whatever
@@ -56,6 +56,9 @@
 #define RIVER2D_CHANNELS_RGB  2
 #define RIVER2D_CHANNELS_BGR  3
 #define RIVER2D_CHANNELS_MAX  3
+
+#define RIVER2D_FONT_DEFAULT 0
+#define RIVER2D_FONT_MAX     0
 
 //probably only needed for Xrender
 #define RIVER2D_PICTOP_CLEAR			0
@@ -83,9 +86,11 @@ PerformanceCounter;
 
 typedef struct River2D_Config
 {
+    uint32_t width;
+    uint32_t height;
     bool     static_canvas_enable;
-    uint32_t static_canvas_width;
-    uint32_t static_canvas_height;
+    // uint32_t static_canvas_width;
+    // uint32_t static_canvas_height;
 
     uint8_t  backgrounds;
 
@@ -120,7 +125,8 @@ typedef struct EngineData
     uint32_t           height;
     const char*        windowName;
     River2D_Config     config;
-    River2D_Image      backgrounds[RIVER2D_MAX_BACKGROUNDS];
+    River2D_Image      planes[RIVER2D_MAX_PLANES];
+    uint64_t           lastframetime;
 
 #ifdef BUILD_LINUX
     Display            *display;
@@ -168,6 +174,18 @@ extern void river2D_compositeImage
     EngineData    *engine,
     River2D_Image *image,
     uint8_t       pictop
+);
+
+extern void river2D_loadText
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    const char    *text,
+    uint8_t       font,
+    uint8_t       scale,
+    uint32_t      spacing,
+    uint32_t      offsetY,
+    uint32_t      offsetX
 );
 
 extern uint64_t river2D_queryTime

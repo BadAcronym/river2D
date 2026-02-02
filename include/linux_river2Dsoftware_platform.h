@@ -7,11 +7,6 @@ extern Window river2D_openWindow
     EngineData *engine
 );
 
-extern void river2D_drawFrame
-(
-    EngineData *engine
-);
-
 extern void river2D_resizeBackbuffer
 (
     EngineData *engine,

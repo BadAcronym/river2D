@@ -50,8 +50,8 @@ int main()
                 //TODO: handle ColormapNotify?
             }
         }
-        river2D_updateEditor();
-        river2D_drawFrame(&engine);
+        // mapedit_update();
+        // mapedit_drawFrame();
     }
 
     return river2D_shutdown(&engine);
