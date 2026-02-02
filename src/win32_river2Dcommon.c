@@ -2,17 +2,28 @@
 
 #include <sys/stat.h>
 
-//TEST: verify if time outputs correctly
+//WIP: debug
+#include <stdio.h>
+#include <inttypes.h>
+
+//TESTING: find out what unit of measurement I even get here
+//my assumption is that if the division result is 1, that was an entire second.
 void river2D_queryTime
 (
     River2D_Time *time
 ){
     LARGE_INTEGER t1;
+    LARGE_INTEGER freq;
 
-    KeQuerySystemTimePrecise(&time);
+    QueryPerformanceCounter(&t1);
+    QueryPerformanceFrequency(&freq);
 
-    time->s = t1.QuadPart / 10000000;
-    time->ns = t1.QuadPart * 100;
+    time->s  = t1.QuadPart / freq.QuadPart;
+    time->ns = t1.QuadPart * 1000000000 / freq.QuadPart;
+
+    //WIP: debug
+    fprintf(stderr, "%" PRIu64, time->s);
+    fprintf(stderr, "%" PRIu64, time->ns);
 }
 
 uint8_t river2D_verifyPath
