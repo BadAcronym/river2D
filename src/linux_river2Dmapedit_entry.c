@@ -123,6 +123,5 @@ int main
         river2D_bltBuffer(&engine);
     }
 
-    dlclose(software);
     return river2D_shutdown(&engine);
 }
