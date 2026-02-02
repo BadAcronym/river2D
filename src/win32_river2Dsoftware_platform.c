@@ -52,24 +52,29 @@ void river2D_resizeBackbuffer
     uint32_t   width,
     uint32_t   height
 ){
-    Win32Backbuffer buf = engine->backbuffer;
-
-    if(buf.data)
+    if(engine->backbuffer.data)
     {
-        VirtualFree(buf.data, 0, MEM_RELEASE);
+        VirtualFree(engine->backbuffer.data, 0, MEM_RELEASE);
     }
 
-    buf.width  = width;
-    buf.height = height;
+    engine->backbuffer.width  = width;
+    engine->backbuffer.height = height;
 
-    buf.info.bmiHeader.biSize   = sizeof(buf.info.bmiHeader);
-    buf.info.bmiHeader.biWidth  = (long)buf.width;
-    buf.info.bmiHeader.biHeight = (long)buf.height;
-    buf.info.bmiHeader.biPlanes = 1;
-    buf.info.bmiHeader.biBitCount = 32;
-    buf.info.bmiHeader.biCompression = BI_RGB;
+    engine->backbuffer.info.bmiHeader.biSize   = sizeof(engine->backbuffer.info.bmiHeader);
+    engine->backbuffer.info.bmiHeader.biWidth  = (long)engine->backbuffer.width;
+    engine->backbuffer.info.bmiHeader.biHeight = (long)engine->backbuffer.height;
+    engine->backbuffer.info.bmiHeader.biPlanes = 1;
+    engine->backbuffer.info.bmiHeader.biBitCount = 32;
+    engine->backbuffer.info.bmiHeader.biCompression = BI_RGB;
 
-    buf.data = VirtualAlloc(0, width * height * RIVER2D_BPP, MEM_COMMIT, PAGE_READWRITE);
+    engine->backbuffer.data = VirtualAlloc(0, width * height * RIVER2D_BPP, MEM_COMMIT, PAGE_READWRITE);
+    if(!engine->backbuffer.data)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer\033[0m");
+    }
+
+    engine->width  = width;
+    engine->height = height;
 }
 
 void river2D_init
@@ -84,7 +89,7 @@ void river2D_init
 
     engine->planes = planes;
 
-    engine->windowName = "river2D editor";
+    engine->windowName = "unnamed river2D application";
 
     engine->context = GetDC(engine->window);
     if(!engine->context)
@@ -94,7 +99,6 @@ void river2D_init
 
     if(!(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT))
     {
-        //TODO: get from config, worry about scaling
         river2D_resizeBackbuffer(engine, engine->config.width, engine->config.height);
     }
 
@@ -109,7 +113,7 @@ int32_t river2D_shutdown
     EngineData *engine
 ){
     //TODO: does this not have to happen every update call?
-    ReleaseDC(engine->window, engine->context);
+    // ReleaseDC(engine->window, engine->context);
 
     return 0;
 }
@@ -118,19 +122,62 @@ void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    Win32Backbuffer buf = engine->backbuffer;
-
     StretchDIBits(engine->context, 0, 0, (int)engine->width, (int)engine->height,
-                  0, 0, (int)buf.width, (int)buf.height, buf.data, &buf.info, DIB_RGB_COLORS, SRCCOPY);
+                  0, 0, (int)engine->backbuffer.width, (int)engine->backbuffer.height,
+                  engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
 
     river2D_queryTime(&engine->lastFrametime);
 }
 
-//TODAY: composite on win32
+//TODAY: add graceful handling of buffer size
 void river2D_compositeImage
 (
     EngineData    *engine,
     River2D_Image *image,
     uint8_t       pictop
 ){
+    //TODO: deal with alpha and actual compositing instead of just overlaying/copying
+    if(pictop != RIVER2D_PICTOP_OVER)
+    {
+        fprintf(stderr, "\033[33;1;7mSORRY: only RIVER2D_PICTOP_OVER implemented for now. :/\033[0m\n");
+        return;
+    }
+
+    if(!image)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
+        return;
+    }
+    if(!image->data)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: image->data is nullptr.\033[0m\n");
+        return;
+    }
+
+    if(!engine->backbuffer.data)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: no image to composite onto.\033[0m\n");
+        return;
+    }
+
+    //TODO: verify that both images are actually RGBA (in other words, that there's enough space)
+
+    //TESTING: copy line by line
+    uint8_t *dest = (uint8_t*)engine->backbuffer.data;
+    uint64_t copyWidth = image->width * RIVER2D_BPP;
+
+    for(uint32_t y = 0; y < image->height; ++y)
+    {
+        for(uint32_t x = 0; x < copyWidth; x += RIVER2D_BPP)
+        {
+            uint64_t index = y * copyWidth + x;
+            if(image->data[index + 3])
+            {
+                *dest++ = image->data[index];
+                *dest++ = image->data[index + 1];
+                *dest++ = image->data[index + 2];
+                *dest++ = image->data[index + 3];
+            }
+        }
+    }
 }
