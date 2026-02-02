@@ -161,7 +161,7 @@ project("river2D software renderer")
                "./include/river2Dsoftware*" })
         includedirs({"./include/", "./vendor/imgsurf/include"})
         libdirs({"./vendor/imgsurf/bin/**"})
-        links("imgsurf:static")
+        links("imgsurf.lib")
         ignoredefaultlibraries({ "MSVCRT" })
 
     filter("platforms:Linux")
