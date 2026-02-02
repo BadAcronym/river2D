@@ -6,11 +6,8 @@ param
 
 Write-Host "Building $build...`n"
 
-$Platforms = "Win64", "Linux"
-$Configurations = "debug", "release"
-$libnames = "river2Dsoftware"
+$solution = "river2D"
 $targetname = "river2Dmapedit"
-$targetlist = $libnames, $targetname
 $target = ""
 
 if(-Not(Test-Path "./obj/"))
@@ -63,9 +60,9 @@ elseIf($IsWindows)
 {
     &premake5 vs2022
 
-    &MSBuild ./build/$targetname.sln -p:Configuration=$build
+    &MSBuild ./build/$solution.sln -p:platform=windows -p:Configuration=$build
 
-    $target = "./bin/Win64" + "_$build/$targetname.exe"
+    $target = "./bin/$targetname" + "_win64/$build/$targetname.exe"
 }
 
 if($isWindows -and 0 -eq $LASTEXITCODE -and $build -eq "debug")
