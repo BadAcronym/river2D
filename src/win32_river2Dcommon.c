@@ -129,10 +129,11 @@ Dimensions river2D_getWindowSize
     return dim;
 }
 
-// TODO: do hCursor shenanigans
+// TODAY: do hCursor shenanigans
 void river2D_changeCursor
 (
     EngineData *engine,
     River2D_Image *image
 ){
+
 }
