@@ -1,7 +1,5 @@
-#include "main.h"
-#ifdef _WIN32
-    #include "platform_win32.h"
-#endif
+#include "river2D_main.h"
+#include "win32_river2D_platform.h"
 
 #ifdef DEBUG
 int main()

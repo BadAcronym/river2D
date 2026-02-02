@@ -1,6 +1,6 @@
-#include "main.h"
+#include "river2D_main.h"
 
-#include "platform_win32.h"
+#include "win32_river2D_platform.h"
 
 clang_ignore_unused
 

@@ -1,5 +1,5 @@
 #include "river2D_main.h"
-#include "linux_platform.h"
+#include "linux_river2D_platform.h"
 
 #include "X11/Xlib.h"
 

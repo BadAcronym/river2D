@@ -8,6 +8,9 @@ Write-Host "Building $build...`n"
 
 $Platforms = "Win64", "Linux"
 $Configurations = "debug", "release"
+$libnames = "river2Dsoftware"
+$targetname = "river2Dmapedit"
+$targetlist = $libnames, $targetname
 $target = ""
 
 if(-Not(Test-Path "./obj/"))
@@ -25,13 +28,12 @@ foreach($platform in $Platforms)
     foreach($config in $Configurations)
     {
         $objPath = "./obj/$platform" + "_$config"
-        $binPath = "./bin/$platform" + "_$config"
-
         if(-Not(Test-Path $objPath))
         {
             &mkdir $objPath
         }
 
+        $binPath = "./bin/$platform" + "_$config"
         if(-Not(Test-Path $binPath))
         {
             &mkdir $binPath

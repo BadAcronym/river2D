@@ -1,5 +1,5 @@
 #include "river2D_main.h"
-#include "linux_platform.h"
+#include "linux_river2D_platform.h"
 
 //TODO: future renderers
 //river2D_vulkan.dll / libriver2D_vulkan.so
