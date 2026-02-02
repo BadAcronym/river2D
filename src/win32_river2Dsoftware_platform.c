@@ -89,10 +89,10 @@ void river2D_queryTime
 (
     River2D_Time *time
 ){
-    LARGE_INTEGER time;
+    LARGE_INTEGER t1;
 
     KeQuerySystemTimePrecise(&time);
 
-    time->s = time.QuadPart / 10000000;
-    time->ns = time.QuadPart * 100;
+    time->s = t1.QuadPart / 10000000;
+    time->ns = t1.QuadPart * 100;
 }
