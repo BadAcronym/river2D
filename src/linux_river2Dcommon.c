@@ -92,7 +92,7 @@ void river2D_loadImage
     uint8_t       format,
     uint8_t       bitdepth
 ){
-    image->data = imgsurf_load(path, &image->width, &image->height, format, bitdepth);
+    image->data = imgsurf_load_file(path, &image->width, &image->height, format, bitdepth);
     image->path = path;
 
     if(!image->data)
