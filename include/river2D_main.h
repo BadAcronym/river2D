@@ -259,12 +259,21 @@ typedef struct EngineData
 }
 EngineData;
 
-extern void river2D_loadImage
+extern void river2D_load_image_file
 (
     EngineData    *engine,
     char          *path,
     River2D_Image *image,
-    uint8_t       format,
+    uint8_t       channels,
+    uint8_t       bitdepth
+);
+
+extern void river2D_load_image_ptr
+(
+    EngineData    *engine,
+    FILE          *file,
+    River2D_Image *image,
+    uint8_t       channels,
     uint8_t       bitdepth
 );
 
