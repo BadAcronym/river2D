@@ -84,7 +84,7 @@ internal void writeMissingTexture
     }
 }
 
-void river2D_load_image_file
+void river2D_loadImage_file
 (
     EngineData    *engine,
     char          *path,
@@ -121,7 +121,7 @@ void river2D_load_image_file
 }
 
 // TODO: error checking
-void river2D_load_image_ptr
+void river2D_loadImage_ptr
 (
     EngineData    *engine,
     FILE          *file,
@@ -130,7 +130,7 @@ void river2D_load_image_ptr
     uint8_t       bitdepth
 ){
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width, &image->height, channels, bitdepth);
-    image->path = "river2D_load_image_ptr";
+    image->path = "river2D_loadImage_ptr";
 
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display), image->width, image->height, 32);
     XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
