@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# BACKLOG: switch to CMake and bash with custom compile command exporter
-
 if [[ ! -d "./obj/" ]]
 then
     mkdir ./obj/
