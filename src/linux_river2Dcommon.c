@@ -166,7 +166,8 @@ void river2D_createImage
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display), image->width, image->height, 32);
     XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
 
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+    // I don't think we need this here, but still I'm gonna leave it for posterity's sake, maybe it fixes a bug down the line?
+    // XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
@@ -176,6 +177,18 @@ void river2D_createImage
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture.\n\033[0m");
     }
+}
+
+void river2D_refreshImage
+(
+    EngineData    *engine,
+    River2D_Image *image
+){
+    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+
+    img->data = NULL;
+    XDestroyImage(img);
 }
 
 void river2D_clearImage

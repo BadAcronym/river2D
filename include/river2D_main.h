@@ -285,6 +285,12 @@ extern void river2D_createImage
     uint32_t      height
 );
 
+extern void river2D_refreshImage
+(
+    EngineData    *engine,
+    River2D_Image *image
+);
+
 extern void river2D_clearImage
 (
     EngineData    *engine,
