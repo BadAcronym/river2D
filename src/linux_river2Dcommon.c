@@ -326,6 +326,7 @@ uint8_t river2D_interpretCharAsKey
     }
 
     // BACKLOG: translate not only escape (0x1b) but also the rest of the ascii keyboard codes here
+    // maybe just interpret ascii codes in general? might not be best.
     if(inp == 0x1B)
     {
         return 0x09;
