@@ -145,17 +145,13 @@ void river2D_init
 
     if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_resizeBackbuffer(engine, engine->config.canvas_width, engine->config.canvas_height);
+        river2D_createImage(engine, &engine->backbuffer, engine->config.canvas_width, engine->config.canvas_height);
     }
     else
     {
-        river2D_resizeBackbuffer(engine, engine->config.window_width, engine->config.window_height);
+        river2D_createImage(engine, &engine->backbuffer, engine->config.window_width, engine->config.window_height);
     }
 
-    engine->backbuffer.pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
-                                              engine->backbuffer.width, engine->backbuffer.height, 32);
-
-    engine->backbuffer.picture = XRenderCreatePicture(engine->display, engine->backbuffer.pixmap, engine->format, 0, 0);
     if(!engine->backbuffer.picture)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture for backbuffer.\n\033[0m");
