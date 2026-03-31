@@ -219,6 +219,8 @@ void river2D_compositeImage
         return;
     }
 
+    // TODAY: (river2D #5) verify that both images are actually RGBA
+
     if(!src->picture)
     {
         fprintf(stderr, "\033[31;1;7mERROR: src was created incorrectly.\033[0m\n");

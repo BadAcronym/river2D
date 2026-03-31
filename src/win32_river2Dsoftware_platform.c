@@ -69,7 +69,8 @@ int32_t river2D_shutdown
 void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *image,
+    River2D_Image *src,
+    River2D_Image *dst,
     uint8_t       pictop,
     uint32_t      offsetDstX,
     uint32_t      offsetDstY,
@@ -84,27 +85,32 @@ void river2D_compositeImage
         return;
     }
 
-    if(!image)
+    if(!src)
     {
         fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
         return;
     }
-    if(!image->data)
+    if(!src->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: image->data is nullptr.\033[0m\n");
+        fprintf(stderr, "\033[31;1;7mERROR: src->data is nullptr.\033[0m\n");
         return;
     }
 
-    if(!engine->backbuffer.data)
+    if(!dst)
     {
         fprintf(stderr, "\033[31;1;7mERROR: no image to composite onto.\033[0m\n");
+        return;
+    }
+    if(!dst->data)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: dst->data is nullptr.\033[0m\n");
         return;
     }
 
     // TODAY: (river2D #5) verify that both images are actually RGBA
 
-    uint64_t copyWidth  = image->width * RIVER2D_BPP;
-    uint64_t bufWidth   = engine->backbuffer.width * RIVER2D_BPP;
+    uint64_t copyWidth = image->width * RIVER2D_BPP;
+    uint64_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;
 
     if(offsetDstX + cropWidth > engine->backbuffer.width)
     {
