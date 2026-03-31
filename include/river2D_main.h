@@ -186,22 +186,13 @@ typedef struct River2D_ControlMap
 River2D_ControlMap;
 
 #ifdef BUILD_LINUX
-typedef struct linuxBackbuffer
-{
-    Pixmap   pixmap;
-    Picture  picture;
-    uint32_t width;
-    uint32_t height;
-}
-LinuxBackbuffer;
-
-typedef struct PosixThreadpool
-{
-    pthread_t  threads[RIVER2D_MAX_THREADS];
-}
-PosixThreadpool;
+// typedef struct PosixThreadpool
+// {
+//     pthread_t  threads[RIVER2D_MAX_THREADS];
+// }
+// PosixThreadpool;
 #elif defined(BUILD_WINDOWS)
-typedef struct Buffer
+typedef struct Win32Backbuffer
 {
     BITMAPINFO info;
     void       *data;
@@ -227,9 +218,10 @@ typedef struct EngineData
     Visual             *visual;
     Window             window;
     GC                 context;
-    LinuxBackbuffer    backbuffer;
+    River2D_Image      backbuffer;
     Picture            blitDstPict;
-    PosixThreadpool    pool;
+    // BACKLOG: multithread...
+    // PosixThreadpool    pool;
 #endif
 
 #ifdef BUILD_WINDOWS
