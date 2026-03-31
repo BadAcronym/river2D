@@ -187,7 +187,8 @@ int32_t river2D_shutdown
 void river2D_compositeImage
 (
     EngineData    *engine,
-    River2D_Image *image,
+    River2D_Image *src,
+    River2D_Image *dst,
     uint8_t       pictop,
     uint32_t      offsetDstX,
     uint32_t      offsetDstY,
@@ -196,35 +197,48 @@ void river2D_compositeImage
     uint32_t      cropWidth,
     uint32_t      cropHeight
 ){
-    if(!image)
+    if(!src)
     {
         fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
         return;
     }
-
-    if(!image->data)
+    if(!src->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: image->data is nullptr.\033[0m\n");
+        fprintf(stderr, "\033[31;1;7mERROR: src->data is nullptr.\033[0m\n");
         return;
     }
 
-    if(!engine->backbuffer.pixmap)
+    if(!dst)
     {
         fprintf(stderr, "\033[31;1;7mERROR: no image to composite onto.\033[0m\n");
         return;
     }
-
-    if(!image->picture)
+    if(!dst->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: image was created incorrectly.\033[0m\n");
-        fprintf(stderr, "image->path: %s\n",     image->path);
-        fprintf(stderr, "image->picture: %lu\n", image->picture);
-        fprintf(stderr, "image->width: %u\n",    image->width);
-        fprintf(stderr, "image->height: %u\n",   image->height);
+        fprintf(stderr, "\033[31;1;7mERROR: dst->data is nullptr.\033[0m\n");
+        return;
+    }
+
+    if(!src->picture)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: src was created incorrectly.\033[0m\n");
+        fprintf(stderr, "image->path: %s\n",     src->path);
+        fprintf(stderr, "image->picture: %lu\n", src->picture);
+        fprintf(stderr, "image->width: %u\n",    src->width);
+        fprintf(stderr, "image->height: %u\n",   src->height);
+        abort();
+    }
+    if(!dst->picture)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: dst was created incorrectly.\033[0m\n");
+        fprintf(stderr, "image->path: %s\n",     dst->path);
+        fprintf(stderr, "image->picture: %lu\n", dst->picture);
+        fprintf(stderr, "image->width: %u\n",    dst->width);
+        fprintf(stderr, "image->height: %u\n",   dst->height);
         abort();
     }
 
-    XRenderComposite(engine->display, pictop, image->picture, None, engine->backbuffer.picture, offsetSrcX, offsetSrcY,
+    XRenderComposite(engine->display, pictop, src->picture, None, dst->picture, offsetSrcX, offsetSrcY,
                      0, 0, offsetDstX, offsetDstY, cropWidth, cropHeight);
 }
 
