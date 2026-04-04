@@ -40,62 +40,63 @@
     #define RIVER2D_MOUSE3 0x10
 #endif
 
-#define RIVER2D_BPP         4
-#define RIVER2D_PIXDEPTH    32
-#define RIVER2D_MAX_PLANES  64
+#define RIVER2D_BPP                      4
+#define RIVER2D_PIXDEPTH                 32
+#define RIVER2D_MAX_PLANES               64
 // BACKLOG: (river2D #14) move max threads to some sort of detection function that polls the amount of cores
-#define RIVER2D_MAX_THREADS 8
+#define RIVER2D_MAX_THREADS              8
 
-#define RIVER2D_RENDERER_SOFTWARE 0
-#define RIVER2D_RENDERER_OPENGL   1
-#define RIVER2D_RENDERER_VULKAN   2
-#define RIVER2D_RENDERER_DIRECTX  3
+#define RIVER2D_RENDERER_SOFTWARE        0
+#define RIVER2D_RENDERER_OPENGL          1
+#define RIVER2D_RENDERER_VULKAN          2
+#define RIVER2D_RENDERER_DIRECTX         3
 
-#define RIVER2D_KEY_UP         0
-#define RIVER2D_KEY_LEFT       1
-#define RIVER2D_KEY_RIGHT      2
-#define RIVER2D_KEY_DOWN       3
-#define RIVER2D_KEY_TAB        4
-#define RIVER2D_KEY_ESCAPE     5
+#define RIVER2D_ASCII_LSHIFT             0x0E
+#define RIVER2D_ASCII_RSHIFT             0x0F
+#define RIVER2D_ASCII_LCTRL              0x11
+#define RIVER2D_ASCII_RCTRL              0x12
+#define RIVER2D_ASCII_ESCAPE             0x1B
+#define RIVER2D_ASCII_MINUS              0x2D
+#define RIVER2D_ASCII_EQUALS             0x3D
 
-#define RIVER2D_BIT_UP         1
-#define RIVER2D_BIT_DOWN       2
-#define RIVER2D_BIT_LEFT       4
-#define RIVER2D_BIT_RIGHT      8
-#define RIVER2D_BIT_TAB        16
-#define RIVER2D_BIT_ESCAPE     32
+#define RIVER2D_BIT_UP                   1
+#define RIVER2D_BIT_DOWN                 2
+#define RIVER2D_BIT_LEFT                 4
+#define RIVER2D_BIT_RIGHT                8
+#define RIVER2D_BIT_TAB                  16
+#define RIVER2D_BIT_ESCAPE               32
 
-#define RIVER2D_CHANNELS_RGBA  0
-#define RIVER2D_CHANNELS_BGRA  1
-#define RIVER2D_CHANNELS_RGB   2
-#define RIVER2D_CHANNELS_BGR   3
-#define RIVER2D_CHANNELS_MAX   3
+#define RIVER2D_CHANNELS_RGBA            0
+#define RIVER2D_CHANNELS_BGRA            1
+#define RIVER2D_CHANNELS_RGB             2
+#define RIVER2D_CHANNELS_BGR             3
+#define RIVER2D_CHANNELS_MAX             3
 
-#define RIVER2D_FONT_DEFAULT   0
-#define RIVER2D_FONT_MAX       0
+#define RIVER2D_FONT_DEFAULT             0
+#define RIVER2D_FONT_MAX                 0
 
-#define RIVER2D_TYPE_FILE      0
-#define RIVER2D_TYPE_DIRECTORY 1
-#define RIVER2D_TYPE_ERROR     2
-#define RIVER2D_TYPE_OTHER     3
-#define RIVER2D_TYPE_MAX       3
+#define RIVER2D_TYPE_FILE                0
+#define RIVER2D_TYPE_DIRECTORY           1
+#define RIVER2D_TYPE_ERROR               2
+#define RIVER2D_TYPE_OTHER               3
+#define RIVER2D_TYPE_MAX                 3
 
-#define RIVER2D_PICTOP_MINIMUM	   0
-#define RIVER2D_PICTOP_CLEAR	   0
-#define RIVER2D_PICTOP_SRC		   1
-#define RIVER2D_PICTOP_DST		   2
-#define RIVER2D_PICTOP_OVER		   3
-#define RIVER2D_PICTOP_OVERREVERSE 4
-#define RIVER2D_PICTOP_IN		   5
-#define RIVER2D_PICTOP_INREVERSE   6
-#define RIVER2D_PICTOP_OUT		   7
-#define RIVER2D_PICTOP_OUTREVERSE  8
-#define RIVER2D_PICTOP_ATOP		   9
-#define RIVER2D_PICTOP_ATOPREVERSE 10
-#define RIVER2D_PICTOP_XOR		   11
-#define RIVER2D_PICTOP_ADD		   12
-#define RIVER2D_PICTOP_SATURATE	   13
-#define RIVER2D_PICTOP_MAXIMUM	   13
+#define RIVER2D_PICTOP_MINIMUM	         0
+#define RIVER2D_PICTOP_CLEAR	         0
+#define RIVER2D_PICTOP_SRC		         1
+#define RIVER2D_PICTOP_DST		         2
+#define RIVER2D_PICTOP_OVER		         3
+#define RIVER2D_PICTOP_OVERREVERSE       4
+#define RIVER2D_PICTOP_IN		         5
+#define RIVER2D_PICTOP_INREVERSE         6
+#define RIVER2D_PICTOP_OUT		         7
+#define RIVER2D_PICTOP_OUTREVERSE        8
+#define RIVER2D_PICTOP_ATOP		         9
+#define RIVER2D_PICTOP_ATOPREVERSE       10
+#define RIVER2D_PICTOP_XOR		         11
+#define RIVER2D_PICTOP_ADD		         12
+#define RIVER2D_PICTOP_SATURATE	         13
+#define RIVER2D_PICTOP_MAXIMUM	         13
 
 #define RIVER2D_CHOICE_SHOW_FPS_BIT      1
 #define RIVER2D_CHOICE_STATIC_CANVAS_BIT 2

@@ -323,9 +323,9 @@ uint8_t river2D_interpretCharAsKey
 
     const uint8_t alphabetic_table[26] =
     {
-        38, 56, 54, 40, 26, 41, 42, 43, 31, 44,
-        45, 46, 58, 57, 32, 33, 24, 27, 39, 28,
-        30, 55, 25, 53, 29, 52,
+        0x26, 0x38, 0x36, 0x28, 0x1A, 0x29, 0x2A, 0x2B, 0x1F, 0x2C,
+        0x2D, 0x2E, 0x3A, 0x39, 0x20, 0x21, 0x18, 0x1B, 0x27, 0x1C,
+        0x1E, 0x37, 0x19, 0x35, 0x1D, 0x34,
     };
 
     if(inp > 0x2F && inp < 0x3A)
@@ -333,22 +333,28 @@ uint8_t river2D_interpretCharAsKey
         return numeric_table[inp - 0x30];
     }
 
-    if(inp > 0x60 && inp < 0x7A)
+    if(inp > 0x60 && inp < 0x7B)
     {
         return alphabetic_table[inp - 0x61];
     }
 
-    // BACKLOG: translate not only escape (0x1b) but also the rest of the ascii keyboard codes here
-    // maybe just interpret ascii codes in general? might not be best.
-    if(inp == 0x1B)
+    if(inp == RIVER2D_ASCII_LSHIFT)
+    {
+        return 0x32;
+    }
+    else if(inp == RIVER2D_ASCII_LCTRL)
+    {
+        return 0x25;
+    }
+    else if(inp == RIVER2D_ASCII_ESCAPE)
     {
         return 0x09;
     }
-    else if(inp == 0x2D)
+    else if(inp == RIVER2D_ASCII_MINUS)
     {
         return 0x14;
     }
-    else if(inp == 0x3D)
+    else if(inp == RIVER2D_ASCII_EQUALS)
     {
         return 0x15;
     }
