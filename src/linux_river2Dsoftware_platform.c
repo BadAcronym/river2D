@@ -170,8 +170,7 @@ int32_t river2D_shutdown
         river2D_destroyImage(&engine->planes[i]);
     }
 
-    XRenderFreePicture(engine->display, engine->backbuffer.picture);
-    XRenderFreePicture(engine->display, engine->blitDstPict);
+    river2D_destroyImage(&engine->backbuffer);
 
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
