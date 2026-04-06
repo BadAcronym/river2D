@@ -5,9 +5,11 @@ River2D_Time river2D_deltaTime
     const River2D_Time *smaller,
     const River2D_Time *bigger
 ){
-    if(!smaller || !smaller->s || !bigger || !bigger->s)
+    if(!smaller || !bigger)
     {
-        fprintf(stderr, "\033[33mWARNING: passed uninitialized timestamp.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
+        River2D_Time time = {-1, -1};
+        return time;
     }
 
     int64_t      deltaS  = 0;
@@ -15,7 +17,9 @@ River2D_Time river2D_deltaTime
 
     if(smaller->s > bigger->s || (smaller->ns > bigger->ns && smaller->s == bigger->s))
     {
-        fprintf(stderr, "\033[33mWARNING: delta time lies in the future.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
+        River2D_Time time = {-2, -2};
+        return time;
     }
 
     deltaS  = bigger->s  - smaller->s;
@@ -36,9 +40,10 @@ uint64_t river2D_deltaTime_ms
     const River2D_Time *smaller,
     const River2D_Time *bigger
 ){
-    if(!smaller || !smaller->s || !bigger || !bigger->s)
+    if(!smaller || !bigger)
     {
-        fprintf(stderr, "\033[33mWARNING: passed uninitialized timestamp.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
+        return -1;
     }
 
     int64_t      deltaS  = 0;
@@ -46,7 +51,9 @@ uint64_t river2D_deltaTime_ms
 
     if(smaller->s > bigger->s || (smaller->ns > bigger->ns && smaller->s == bigger->s))
     {
-        fprintf(stderr, "\033[33mWARNING: delta time lies in the future.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
+        River2D_Time time;
+        return -2;
     }
 
     deltaS  = bigger->s  - smaller->s;
@@ -67,7 +74,9 @@ River2D_Time river2D_deltaTime_now
 ){
     if(!time || !time->s)
     {
-        fprintf(stderr, "\033[33mWARNING: passed uninitialized timestamp.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
+        River2D_Time time = {-1, -1};
+        return time;
     }
 
     River2D_Time current = river2D_queryTime();
@@ -76,7 +85,9 @@ River2D_Time river2D_deltaTime_now
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        fprintf(stderr, "\033[33mWARNING: delta time lies in the future.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
+        River2D_Time time = {-2, -2};
+        return time;
     }
 
     deltaS  = current.s  - time->s;
@@ -96,9 +107,10 @@ uint64_t river2D_deltaTime_now_ms
 (
     const River2D_Time *time
 ){
-    if(!time || !time->s)
+    if(!time)
     {
-        fprintf(stderr, "\033[33mWARNING: passed uninitialized timestamp.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
+        return -1;
     }
 
     River2D_Time current = river2D_queryTime();
@@ -107,7 +119,8 @@ uint64_t river2D_deltaTime_now_ms
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        fprintf(stderr, "\033[33mWARNING: delta time lies in the future.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
+        return -2;
     }
 
     deltaS  = current.s  - time->s;
