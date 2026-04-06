@@ -65,7 +65,7 @@ float river2D_deltaTime_ms
         deltaNS += 1e9L;
     }
 
-    return (double)((double)deltaS * 1e3f + (double)deltaNS / 1e6f);
+    return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }
 
 River2D_Time river2D_deltaTime_now
@@ -132,5 +132,5 @@ float river2D_deltaTime_now_ms
         deltaNS += 1e9L;
     }
 
-    return (double)((double)deltaS * 1e3f + (double)deltaNS / 1e6f);
+    return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }
