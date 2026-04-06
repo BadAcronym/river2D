@@ -243,8 +243,8 @@ void river2D_bltBuffer
 (
     EngineData *engine
 ){
-    double x_s = (double)engine->backbuffer.width  / (double)engine->config.window_width;
-    double y_s = (double)engine->backbuffer.height / (double)engine->config.window_height;
+    float x_s = (float)engine->backbuffer.width  / (float)engine->config.window_width;
+    float y_s = (float)engine->backbuffer.height / (float)engine->config.window_height;
 
     XTransform transform =
     {{

@@ -145,8 +145,8 @@ River2D_Time;
 
 typedef struct Coordinates
 {
-    double x;
-    double y;
+    float x;
+    float y;
 }
 Coordinates;
 
@@ -306,7 +306,7 @@ extern River2D_Time river2D_deltaTime
     const River2D_Time *bigger
 );
 
-extern uint64_t river2D_deltaTime_ms
+extern float river2D_deltaTime_ms
 (
     const River2D_Time *smaller,
     const River2D_Time *bigger
@@ -317,7 +317,7 @@ extern River2D_Time river2D_deltaTime_now
     const River2D_Time *time
 );
 
-extern uint64_t river2D_deltaTime_now_ms
+extern float river2D_deltaTime_now_ms
 (
     const River2D_Time *time
 );

@@ -35,7 +35,7 @@ River2D_Time river2D_deltaTime
     return delta;
 }
 
-uint64_t river2D_deltaTime_ms
+float river2D_deltaTime_ms
 (
     const River2D_Time *smaller,
     const River2D_Time *bigger
@@ -65,7 +65,7 @@ uint64_t river2D_deltaTime_ms
         deltaNS += 1e9L;
     }
 
-    return ((double)deltaS * 1e3f + (double)deltaNS / 1e6f);
+    return (double)((double)deltaS * 1e3f + (double)deltaNS / 1e6f);
 }
 
 River2D_Time river2D_deltaTime_now
@@ -103,7 +103,7 @@ River2D_Time river2D_deltaTime_now
     return delta;
 }
 
-uint64_t river2D_deltaTime_now_ms
+float river2D_deltaTime_now_ms
 (
     const River2D_Time *time
 ){
@@ -132,5 +132,5 @@ uint64_t river2D_deltaTime_now_ms
         deltaNS += 1e9L;
     }
 
-    return ((double)deltaS * 1e3f + (double)deltaNS / 1e6f);
+    return (double)((double)deltaS * 1e3f + (double)deltaNS / 1e6f);
 }

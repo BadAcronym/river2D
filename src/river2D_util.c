@@ -262,14 +262,14 @@ void river2D_createButton
         ++length;
     }
 
-    double floatWidth  = (double)length * (charsize + spacing) / (double)engine->backbuffer.width;
-    double floatHeight = (double)charsize / (double)engine->backbuffer.height;
+    float floatWidth  = (float)length * (charsize + spacing) / (float)engine->backbuffer.width;
+    float floatHeight = (float)charsize / (float)engine->backbuffer.height;
 
     uint32_t offsetX   = (point.x - floatWidth  / 2.0f) * engine->backbuffer.width;
     uint32_t offsetY   = (point.y - floatHeight / 2.0f) * engine->backbuffer.height;
 
-    rect->upperLeft.x  = (double)offsetX / (double)engine->backbuffer.width;
-    rect->upperLeft.y  = (double)offsetY / (double)engine->backbuffer.height;
+    rect->upperLeft.x  = (float)offsetX / (float)engine->backbuffer.width;
+    rect->upperLeft.y  = (float)offsetY / (float)engine->backbuffer.height;
     rect->lowerRight.x = rect->upperLeft.x + floatWidth;
     rect->lowerRight.y = rect->upperLeft.y + floatHeight;
 
