@@ -107,7 +107,7 @@ void river2D_compositeImage
         return;
     }
 
-    // TODAY: (river2D #5) verify that both images are actually RGBA
+    // TODO: (river2D #5) verify that both images are actually RGBA
 
     uint64_t copyWidth = image->width * RIVER2D_BPP;
     uint64_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;

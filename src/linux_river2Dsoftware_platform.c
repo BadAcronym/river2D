@@ -214,7 +214,7 @@ void river2D_compositeImage
         return;
     }
 
-    // TODAY: (river2D #5) verify that both images are actually RGBA
+    // TODO: (river2D #5) verify that both images are actually RGBA
 
     if(!src->picture)
     {
