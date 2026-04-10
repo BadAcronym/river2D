@@ -314,12 +314,24 @@ extern float river2D_deltaTime_ms
     const River2D_Time *time2
 );
 
+// delta is taken from time2 - time1.
+extern int64_t river2D_deltaTime_ns
+(
+    const River2D_Time *time1,
+    const River2D_Time *time2
+);
+
 extern River2D_Time river2D_deltaTime_now
 (
     const River2D_Time *time
 );
 
 extern float river2D_deltaTime_now_ms
+(
+    const River2D_Time *time
+);
+
+extern uint64_t river2D_deltaTime_now_ns
 (
     const River2D_Time *time
 );

@@ -9,6 +9,7 @@ internal void calcDelta
 ){
     *deltaS  = time2->s  - time1->s;
     *deltaNS = time2->ns - time1->ns;
+
     if(*deltaNS < 0)
     {
         *deltaS  -= 1;
@@ -52,6 +53,24 @@ float river2D_deltaTime_ms
     calcDelta(time1, time2, &deltaS, &deltaNS);
 
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
+}
+
+extern int64_t river2D_deltaTime_ns
+(
+    const River2D_Time *time1,
+    const River2D_Time *time2
+){
+    if(!time1 || !time2)
+    {
+        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
+        return -1;
+    }
+
+    int64_t deltaS  = 0;
+    int64_t deltaNS = 0;
+    calcDelta(time1, time2, &deltaS, &deltaNS);
+
+    return (deltaS * 1e9f + deltaNS);
 }
 
 River2D_Time river2D_deltaTime_now
@@ -105,4 +124,29 @@ float river2D_deltaTime_now_ms
     calcDelta(time, &current, &deltaS, &deltaNS);
 
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
+}
+
+extern uint64_t river2D_deltaTime_now_ns
+(
+    const River2D_Time *time
+){
+    if(!time)
+    {
+        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
+        return -1;
+    }
+
+    River2D_Time current = river2D_queryTime();
+    int64_t      deltaS  = 0;
+    int64_t      deltaNS = 0;
+
+    if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
+    {
+        fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
+        return -2;
+    }
+
+    calcDelta(time, &current, &deltaS, &deltaNS);
+
+    return (deltaS * 1e9f + deltaNS);
 }
