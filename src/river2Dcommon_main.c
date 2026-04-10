@@ -1,35 +1,36 @@
 #include "river2D_main.h"
 
+internal void calcDelta
+(
+    const River2D_Time *time1,
+    const River2D_Time *time2,
+    int64_t      *deltaS,
+    int64_t      *deltaNS
+){
+    *deltaS  = time2->s  - time1->s;
+    *deltaNS = time2->ns - time1->ns;
+    if(*deltaNS < 0)
+    {
+        *deltaS  -= 1;
+        *deltaNS += 1e9L;
+    }
+}
+
 River2D_Time river2D_deltaTime
 (
-    const River2D_Time *smaller,
-    const River2D_Time *bigger
+    const River2D_Time *time1,
+    const River2D_Time *time2
 ){
-    if(!smaller || !bigger)
+    if(!time1 || !time2)
     {
         fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        River2D_Time time = {-1, -1};
+        River2D_Time time = {0, 0};
         return time;
     }
 
-    int64_t      deltaS  = 0;
-    int64_t      deltaNS = 0;
-
-    if(smaller->s > bigger->s || (smaller->ns > bigger->ns && smaller->s == bigger->s))
-    {
-        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
-        River2D_Time time = {-2, -2};
-        return time;
-    }
-
-    deltaS  = bigger->s  - smaller->s;
-    deltaNS = bigger->ns - smaller->ns;
-
-    if(deltaNS < 0)
-    {
-        deltaS  -= 1;
-        deltaNS += 1e9L;
-    }
+    int64_t deltaS  = 0;
+    int64_t deltaNS = 0;
+    calcDelta(time1, time2, &deltaS, &deltaNS);
 
     River2D_Time delta = {deltaS, deltaNS};
     return delta;
@@ -37,33 +38,18 @@ River2D_Time river2D_deltaTime
 
 float river2D_deltaTime_ms
 (
-    const River2D_Time *smaller,
-    const River2D_Time *bigger
+    const River2D_Time *time1,
+    const River2D_Time *time2
 ){
-    if(!smaller || !bigger)
+    if(!time1 || !time2)
     {
         fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
         return -1;
     }
 
-    int64_t      deltaS  = 0;
-    int64_t      deltaNS = 0;
-
-    if(smaller->s > bigger->s || (smaller->ns > bigger->ns && smaller->s == bigger->s))
-    {
-        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
-        River2D_Time time;
-        return -2;
-    }
-
-    deltaS  = bigger->s  - smaller->s;
-    deltaNS = bigger->ns - smaller->ns;
-
-    if(deltaNS < 0)
-    {
-        deltaS  -= 1;
-        deltaNS += 1e9L;
-    }
+    int64_t deltaS  = 0;
+    int64_t deltaNS = 0;
+    calcDelta(time1, time2, &deltaS, &deltaNS);
 
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }
@@ -85,19 +71,12 @@ River2D_Time river2D_deltaTime_now
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
-        River2D_Time time = {-2, -2};
+        fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
+        River2D_Time time = {0, 0};
         return time;
     }
 
-    deltaS  = current.s  - time->s;
-    deltaNS = current.ns - time->ns;
-
-    if(deltaNS < 0)
-    {
-        deltaS  -= 1;
-        deltaNS += 1e9L;
-    }
+    calcDelta(time, &current, &deltaS, &deltaNS);
 
     River2D_Time delta = {deltaS, deltaNS};
     return delta;
@@ -119,18 +98,11 @@ float river2D_deltaTime_now_ms
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        fprintf(stderr, "\033[31mERROR: delta time lies in the future.\033[0m\n");
+        fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
         return -2;
     }
 
-    deltaS  = current.s  - time->s;
-    deltaNS = current.ns - time->ns;
-
-    if(deltaNS < 0)
-    {
-        deltaS  -= 1;
-        deltaNS += 1e9L;
-    }
+    calcDelta(time, &current, &deltaS, &deltaNS);
 
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }

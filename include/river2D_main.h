@@ -138,8 +138,8 @@ River2D_Image;
 
 typedef struct River2D_Time
 {
-    uint64_t s;
-    uint64_t ns;
+    int64_t s;
+    int64_t ns;
 }
 River2D_Time;
 
@@ -300,16 +300,18 @@ extern River2D_Time river2D_queryTime
     void
 );
 
+// delta is taken from time2 - time1.
 extern River2D_Time river2D_deltaTime
 (
-    const River2D_Time *smaller,
-    const River2D_Time *bigger
+    const River2D_Time *time1,
+    const River2D_Time *time2
 );
 
+// delta is taken from time2 - time1.
 extern float river2D_deltaTime_ms
 (
-    const River2D_Time *smaller,
-    const River2D_Time *bigger
+    const River2D_Time *time1,
+    const River2D_Time *time2
 );
 
 extern River2D_Time river2D_deltaTime_now
