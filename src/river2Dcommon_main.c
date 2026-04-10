@@ -7,6 +7,15 @@ internal void calcDelta
     int64_t      *deltaS,
     int64_t      *deltaNS
 ){
+    if(time1->ns > 1e9L)
+    {
+        fprintf(stderr, "\033[31mERROR: timestamp 0 is malformed.\033[0m\n");
+    }
+    if(time2->ns > 1e9L)
+    {
+        fprintf(stderr, "\033[31mERROR: timestamp 1 is malformed.\033[0m\n");
+    }
+
     *deltaS  = time2->s  - time1->s;
     *deltaNS = time2->ns - time1->ns;
 
@@ -14,6 +23,11 @@ internal void calcDelta
     {
         *deltaS  -= 1;
         *deltaNS += 1e9L;
+    }
+    else if(*deltaNS > 1e9L)
+    {
+        *deltaS  += 1;
+        *deltaNS -= 1e9L;
     }
 }
 
