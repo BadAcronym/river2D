@@ -164,3 +164,20 @@ extern uint64_t river2D_deltaTime_now_ns
 
     return (deltaS * 1e9f + deltaNS);
 }
+
+void river2D_destroyImage
+(
+    River2D_Image *image
+){
+    if(!image)
+    {
+        fprintf(stderr, "No image to be freed.\n");
+        return;
+    }
+
+    if(image->data)
+    {
+        free(image->data);
+        image->data = 0;
+    }
+}

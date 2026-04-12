@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdio.h>
 
 #define bool  _Bool
 #define true  1
@@ -133,6 +134,10 @@ typedef struct River2D_Image
     Pixmap   pixmap;
     Picture  picture;
     #endif
+
+    #ifdef BUILD_WINDOWS
+    BITMAPINFO info;
+    #endif
 }
 River2D_Image;
 
@@ -192,15 +197,6 @@ River2D_ControlMap;
 //     pthread_t  threads[RIVER2D_MAX_THREADS];
 // }
 // PosixThreadpool;
-#elif defined(BUILD_WINDOWS)
-typedef struct Win32Backbuffer
-{
-    BITMAPINFO info;
-    void       *data;
-    uint32_t   width;
-    uint32_t   height;
-}
-Win32Backbuffer;
 #endif
 
 typedef struct EngineData
@@ -208,6 +204,7 @@ typedef struct EngineData
     const char         *windowName;
     River2D_ControlMap controls;
     River2D_Config     config;
+    River2D_Image      backbuffer;
     River2D_Image      *planes;
     River2D_Image      *currentCursor;
     bool               running;
@@ -219,7 +216,6 @@ typedef struct EngineData
     Visual             *visual;
     Window             window;
     GC                 context;
-    River2D_Image      backbuffer;
     Picture            blitDstPict;
     // BACKLOG: multithread...
     // PosixThreadpool    pool;
@@ -229,7 +225,6 @@ typedef struct EngineData
     HINSTANCE          instance;
     HWND               window;
     HDC                context;
-    Win32Backbuffer    backbuffer;
     HBITMAP            cursorBitmap;
     HBITMAP            cursorMask;
     HCURSOR            hCursor;

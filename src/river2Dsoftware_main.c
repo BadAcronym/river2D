@@ -1,6 +1,5 @@
 #include "river2D_main.h"
 
-#include <stdio.h>
 #include <string.h>
 
 // TODO: (river2D #7) allow for other font colours
@@ -77,9 +76,11 @@ void river2D_loadText
         }
     }
 
+#ifdef BUILD_LINUX
     XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
     XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
+#endif
 }

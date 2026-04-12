@@ -60,7 +60,20 @@ void river2D_resolveRenderer
     }
 }
 
-void river2D_loadImage
+internal void writeMissingTexture
+(
+    River2D_Image *image
+){
+    for(uint32_t y = 0; y < image->height; ++y)
+    {
+        for(uint32_t x = 0; x < image->width; ++x)
+        {
+            ((uint32_t*)image->data)[x * y * RIVER2D_BPP] = 0xC64FACFF;
+        }
+    }
+}
+
+void river2D_loadImage_file
 (
     EngineData    *engine,
     char          *path,
@@ -76,6 +89,31 @@ void river2D_loadImage
         fprintf(stderr, "Failed to load image from file: %s\n", path);
         writeMissingTexture(image);
     }
+}
+
+void river2D_loadImage_ptr
+(
+    EngineData    *engine,
+    void          *file,
+    River2D_Image *image,
+    uint8_t       channels,
+    uint8_t       bitdepth
+){
+    image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width, &image->height, channels, bitdepth);
+    image->path = "river2D_loadImage_ptr";
+}
+
+void river2D_createImage
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    uint32_t      width,
+    uint32_t      height
+){
+    image->path   = "river2D_createImage";
+    image->data   = calloc(width * height * RIVER2D_BPP, 1);
+    image->width  = width;
+    image->height = height;
 }
 
 River2D_Time river2D_queryTime

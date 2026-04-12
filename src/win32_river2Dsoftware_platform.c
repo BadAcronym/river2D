@@ -109,8 +109,8 @@ void river2D_compositeImage
 
     // TODO: (river2D #5) verify that both images are actually RGBA
 
-    uint64_t copyWidth = image->width * RIVER2D_BPP;
-    uint64_t bufWidth  = engine->backbuffer.width * RIVER2D_BPP;
+    uint64_t copyWidth = src->width * RIVER2D_BPP;
+    uint64_t bufWidth  = dst->width * RIVER2D_BPP;
 
     if(offsetDstX + cropWidth > engine->backbuffer.width)
     {
@@ -122,8 +122,8 @@ void river2D_compositeImage
         cropHeight = engine->backbuffer.height - offsetDstY;
     }
 
-    uint8_t *dst = (uint8_t*)engine->backbuffer.data + offsetDstY * bufWidth + offsetDstX * RIVER2D_BPP;
-    uint8_t *src = image->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
+    uint8_t *dst_data = (uint8_t*)dst->data + offsetDstY * bufWidth + offsetDstX * RIVER2D_BPP;
+    uint8_t *src_data = src->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
 
     cropWidth *= RIVER2D_BPP;
     for(uint32_t y = 0; y < cropHeight; ++y)
@@ -132,12 +132,12 @@ void river2D_compositeImage
         {
             uint64_t srcIndex = y * copyWidth + x;
             uint64_t dstIndex = y * bufWidth + x;
-            if(src[srcIndex + 3])
+            if(src_data[srcIndex + 3])
             {
-                dst[dstIndex]     = src[srcIndex];
-                dst[dstIndex + 1] = src[srcIndex + 1];
-                dst[dstIndex + 2] = src[srcIndex + 2];
-                dst[dstIndex + 3] = src[srcIndex + 3];
+                dst_data[dstIndex]     = src_data[srcIndex];
+                dst_data[dstIndex + 1] = src_data[srcIndex + 1];
+                dst_data[dstIndex + 2] = src_data[srcIndex + 2];
+                dst_data[dstIndex + 3] = src_data[srcIndex + 3];
             }
         }
     }

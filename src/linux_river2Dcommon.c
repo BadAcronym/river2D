@@ -208,23 +208,6 @@ void river2D_clearImage
     XDestroyImage(img);
 }
 
-void river2D_destroyImage
-(
-    River2D_Image *image
-){
-    if(!image)
-    {
-        fprintf(stderr, "No image to be freed.\n");
-        return;
-    }
-
-    if(image->data)
-    {
-        free(image->data);
-        image->data = 0;
-    }
-}
-
 River2D_Time river2D_queryTime
 (
     void
