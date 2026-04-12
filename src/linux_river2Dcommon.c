@@ -124,7 +124,7 @@ void river2D_loadImage_file
 void river2D_loadImage_ptr
 (
     EngineData    *engine,
-    FILE          *file,
+    void          *file,
     River2D_Image *image,
     uint8_t       channels,
     uint8_t       bitdepth
