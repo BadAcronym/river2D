@@ -21,9 +21,11 @@ internal void resolveFunction
         fputs(*error, stderr);
         fprintf(stderr, "\033[0m\n");
     }
-
     #ifdef DEBUG
-    fprintf(stderr, "Loaded symbol: %s\n", name);
+    else
+    {
+        fprintf(stderr, "Loaded symbol: %s at 0x%x\n", name, *fptr);
+    }
     #endif
 }
 
@@ -316,9 +318,9 @@ uint8_t river2D_interpretCharAsKey
         return numeric_table[inp - 0x30];
     }
 
-    if(inp > 0x60 && inp < 0x7B)
+    if(inp >= RIVER2D_ASCII_A && inp <= RIVER2D_ASCII_Z)
     {
-        return alphabetic_table[inp - 0x61];
+        return alphabetic_table[inp - RIVER2D_ASCII_A];
     }
 
     if(inp == RIVER2D_ASCII_LSHIFT)

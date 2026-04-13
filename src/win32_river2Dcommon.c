@@ -11,10 +11,16 @@ internal void resolveFunction
     const char *name
 ){
     *fptr = GetProcAddress(renderer, name);
-    if(!fptr)
+    if(!(*fptr))
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load symbol %s!\033[0m\n", name);
+        fprintf(stderr, "\033[31;1;7mERROR: Unable to load symbol %s!\033[0m\n", name);
     }
+    #ifdef DEBUG
+    else
+    {
+        fprintf(stderr, "Loaded symbol: %s at 0x%x\n", name, *fptr);
+    }
+    #endif
 }
 
 void river2D_resolveRenderer
@@ -114,6 +120,13 @@ void river2D_createImage
     image->data   = calloc(width * height * RIVER2D_BPP, 1);
     image->width  = width;
     image->height = height;
+
+    image->info.bmiHeader.biSize        = sizeof(image->info.bmiHeader);
+    image->info.bmiHeader.biWidth       =  (long)width;
+    image->info.bmiHeader.biHeight      = -(long)height;
+    image->info.bmiHeader.biPlanes      = 1;
+    image->info.bmiHeader.biBitCount    = 32;
+    image->info.bmiHeader.biCompression = BI_RGB;
 }
 
 River2D_Time river2D_queryTime
@@ -219,9 +232,22 @@ uint8_t river2D_interpretCharAsKey
 (
     char inp
 ){
-    if(inp > 0x60 && inp < 0x7A)
+    if(inp >= RIVER2D_ASCII_A && inp <= RIVER2D_ASCII_Z)
     {
-        return inp - 32;
+        return inp - 0x20;
+    }
+
+    if(inp == RIVER2D_ASCII_LSHIFT)
+    {
+        return 0x10;
+    }
+    else if(inp == RIVER2D_ASCII_MINUS)
+    {
+        return 0xC0;
+    }
+    else if(inp == RIVER2D_ASCII_EQUALS)
+    {
+        return 0xBB;
     }
 
     return inp;
