@@ -47,11 +47,11 @@ void river2D_init
 
     if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_resizeBackbuffer(engine, engine->config.canvas_width, engine->config.canvas_height);
+        river2D_createImage(engine, &engine->backbuffer, engine->config.canvas_width, engine->config.canvas_height);
     }
     else
     {
-        river2D_resizeBackbuffer(engine, engine->config.window_width, engine->config.window_height);
+        river2D_createImage(engine, &engine->backbuffer, engine->config.window_width, engine->config.window_height);
     }
 }
 
@@ -154,4 +154,77 @@ void river2D_bltBuffer
     StretchDIBits(engine->context, 0, 0, dim.width, dim.height, 0, 0,
                   (int)engine->backbuffer.width, (int)engine->backbuffer.height,
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
+}
+
+void river2D_loadText
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    const char    *text,
+    uint8_t       font,
+    uint16_t      charsize,
+    uint32_t      spacing,
+    uint32_t      offsetX,
+    uint32_t      offsetY
+){
+    if(!engine->planes[font].data)
+    {
+        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes.\033[0m\n");
+        return;
+    }
+
+    if(!image)
+    {
+        fprintf(stderr, "\033[31;3;1mERROR: Destination image is null.\033[0m\n");
+        return;
+    }
+
+    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)strlen(text);
+
+    if(image->width < minTextWidth || image->height < charsize)
+    {
+        river2D_destroyImage(image);
+    }
+
+    if(!image->data)
+    {
+        river2D_createImage(engine, image, minTextWidth, charsize);
+    }
+
+    if(offsetX > image->width)
+    {
+        fprintf(stderr, "offsetX too large.\n");
+        return;
+    }
+    if(offsetY > image->height)
+    {
+        fprintf(stderr, "offsetY too large.\n");
+        return;
+    }
+    uint32_t fontImgWidth = engine->planes[font].width;
+
+    for(uint32_t i = 0; text[i] != '\0'; ++i)
+    {
+        if(text[i] < 0x21 || text[i] > 0x7F)
+        {
+            continue;
+        }
+
+        uint32_t charBigX = (uint32_t)(text[i] - 0x21) * charsize % fontImgWidth;
+        uint32_t charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
+
+        uint64_t trueSrcOffset  = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
+        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i * (charsize + spacing)) * RIVER2D_BPP;
+
+        uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
+        uint8_t* destloc = image->data + trueDestOffset;
+
+        for(uint32_t j = 0; j < charsize; ++j)
+        {
+            uint8_t* charlineLoc = charloc + j * fontImgWidth * RIVER2D_BPP;
+            uint8_t* destlineLoc = destloc + j * image->width * RIVER2D_BPP;
+
+            memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
+        }
+    }
 }
