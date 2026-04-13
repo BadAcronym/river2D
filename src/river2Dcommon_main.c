@@ -1,4 +1,5 @@
 #include "river2D_main.h"
+#include <stdlib.h>
 
 internal void calcDelta
 (

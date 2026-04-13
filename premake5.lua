@@ -44,7 +44,7 @@ project("river2D common functions")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*"})
         links("imgsurf:static")
-        buildoptions({"-Wextra", "-Wall", "-Wpedantic"})
+        buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion"})
         linkoptions({"-lX11", "-fuse-ld=mold"})
         toolset("clang")
 
@@ -115,7 +115,7 @@ project("river2D software renderer")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         links({"imgsurf:static", "river2Dcommon:static"})
-        buildoptions({"-Wextra", "-Wall", "-Wpedantic"})
+        buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion"})
         linkoptions({"-lX11", "-lXrender", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
         toolset("clang")
 
