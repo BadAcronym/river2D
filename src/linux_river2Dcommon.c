@@ -210,13 +210,12 @@ void river2D_clearImage
     XDestroyImage(img);
 }
 
-// TODO: use clock mononotic?
 River2D_Time river2D_queryTime
 (
     void
 ){
     struct timespec spec;
-    clock_gettime(CLOCK_REALTIME, &spec);
+    clock_gettime(CLOCK_MONOTONIC, &spec);
 
     River2D_Time time =
     {
