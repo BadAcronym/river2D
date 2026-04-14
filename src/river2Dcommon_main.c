@@ -1,6 +1,8 @@
 #include "river2D_main.h"
 #include <stdlib.h>
 
+#define BILLION 1000000000
+
 internal void calcDelta
 (
     const River2D_Time *time1,
@@ -8,11 +10,11 @@ internal void calcDelta
     int64_t      *deltaS,
     int64_t      *deltaNS
 ){
-    if(time1->ns > 1e9L)
+    if(time1->ns > BILLION)
     {
         fprintf(stderr, "\033[31mERROR: timestamp 0 is malformed.\033[0m\n");
     }
-    if(time2->ns > 1e9L)
+    if(time2->ns > BILLION)
     {
         fprintf(stderr, "\033[31mERROR: timestamp 1 is malformed.\033[0m\n");
     }
@@ -23,12 +25,7 @@ internal void calcDelta
     if(*deltaNS < 0)
     {
         *deltaS  -= 1;
-        *deltaNS += 1e9L;
-    }
-    else if(*deltaNS > 1e9L)
-    {
-        *deltaS  += 1;
-        *deltaNS -= 1e9L;
+        *deltaNS += BILLION;
     }
 }
 

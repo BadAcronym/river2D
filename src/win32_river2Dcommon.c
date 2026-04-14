@@ -133,15 +133,26 @@ River2D_Time river2D_queryTime
 (
     void
 ){
-    LARGE_INTEGER t1;
-    LARGE_INTEGER freq;
+    static LARGE_INTEGER freq;
+    static int initialized = 0;
 
-    QueryPerformanceCounter(&t1);
-    QueryPerformanceFrequency(&freq);
+    if (!initialized)
+    {
+        QueryPerformanceFrequency(&freq);
+        initialized = 1;
+    }
+
+    LARGE_INTEGER counter;
+    QueryPerformanceCounter(&counter);
+
+    uint64_t seconds = counter.QuadPart / freq.QuadPart;
+    uint64_t remainder = counter.QuadPart % freq.QuadPart;
+
+    uint64_t nanoseconds = (remainder * 1000000000ULL) / freq.QuadPart;
 
     River2D_Time time;
-    time.s  = (uint64_t)(t1.QuadPart / freq.QuadPart);
-    time.ns = (uint64_t)(1000000 * t1.QuadPart / freq.QuadPart) / 1000;
+    time.s  = seconds;
+    time.ns = nanoseconds;
 
     return time;
 }
