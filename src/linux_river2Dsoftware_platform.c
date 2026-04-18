@@ -326,17 +326,25 @@ void river2D_loadText
         fprintf(stderr, "offsetY too large.\n");
         return;
     }
-    uint32_t fontImgWidth = engine->planes[font].width;
 
-    for(uint32_t i = 0; i < sv->size; ++i)
+    uint32_t fontImgWidth = engine->planes[font].width;
+    uint32_t imageChars = (image->width) / ((charsize + spacing));
+
+    for(uint32_t i = 0; i < imageChars; ++i)
     {
-        if(sv->data[i] < 0x21 || sv->data[i] > 0x7F)
+        char character = 0x7F;
+        if(i < sv->size)
+        {
+            character = sv->data[i];
+        }
+
+        if(character < 0x21 || character > 0x7F)
         {
             continue;
         }
 
-        uint32_t charBigX = (uint32_t)(sv->data[i] - 0x21) * charsize % fontImgWidth;
-        uint32_t charBigY = (uint32_t)(sv->data[i] - 0x21) * charsize / fontImgWidth;
+        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
+        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
 
         uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
                                  RIVER2D_BPP;

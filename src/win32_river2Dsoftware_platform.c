@@ -156,12 +156,11 @@ void river2D_bltBuffer
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
 }
 
-// URGENT: use stringviews
 void river2D_loadText
 (
     EngineData    *engine,
     River2D_Image *image,
-    const char    *text,
+    StringView    *sv,
     uint8_t       font,
     uint16_t      charsize,
     uint32_t      spacing,
@@ -170,7 +169,8 @@ void river2D_loadText
 ){
     if(!engine->planes[font].data)
     {
-        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes.\033[0m\n");
+        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes."
+                "\033[0m\n");
         return;
     }
 
@@ -180,7 +180,7 @@ void river2D_loadText
         return;
     }
 
-    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)strlen(text);
+    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)sv->size;
 
     if(image->width < minTextWidth || image->height < charsize)
     {
@@ -202,20 +202,30 @@ void river2D_loadText
         fprintf(stderr, "offsetY too large.\n");
         return;
     }
-    uint32_t fontImgWidth = engine->planes[font].width;
 
-    for(uint32_t i = 0; text[i] != '\0'; ++i)
+    uint32_t fontImgWidth = engine->planes[font].width;
+    uint32_t imageChars = (image->width) / ((charsize + spacing));
+
+    for(uint32_t i = 0; i < imageChars; ++i)
     {
-        if(text[i] < 0x21 || text[i] > 0x7F)
+        char character = 0x7F;
+        if(i < sv->size)
+        {
+            character = sv->data[i];
+        }
+
+        if(character < 0x21 || character > 0x7F)
         {
             continue;
         }
 
-        uint32_t charBigX = (uint32_t)(text[i] - 0x21) * charsize % fontImgWidth;
-        uint32_t charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
+        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
+        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
 
-        uint64_t trueSrcOffset  = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
-        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i * (charsize + spacing)) * RIVER2D_BPP;
+        uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
+                                 RIVER2D_BPP;
+        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i *
+                                  (charsize + spacing)) * RIVER2D_BPP;
 
         uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
         uint8_t* destloc = image->data + trueDestOffset;
