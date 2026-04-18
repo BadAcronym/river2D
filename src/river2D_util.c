@@ -263,10 +263,10 @@ void river2D_createButton
                        (float)engine->backbuffer.width;
     float floatHeight = (float)charsize / (float)engine->backbuffer.height;
 
-    uint32_t offsetX = (uint32_t)(point.x - floatWidth / 2.0f) *
-                       engine->backbuffer.width;
-    uint32_t offsetY = (uint32_t)(point.y - floatHeight / 2.0f) *
-                       engine->backbuffer.height;
+    uint32_t offsetX = (uint32_t)((point.x - floatWidth / 2.0f) *
+                       (float)engine->backbuffer.width);
+    uint32_t offsetY = (uint32_t)((point.y - floatHeight / 2.0f) *
+                       (float)engine->backbuffer.height);
 
     button->area.upLeft.x   = (float)offsetX / (float)engine->backbuffer.width;
     button->area.upLeft.y   = (float)offsetY / (float)engine->backbuffer.height;
