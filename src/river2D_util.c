@@ -257,7 +257,7 @@ void river2D_createButton
     uint16_t      charsize,
     uint32_t      spacing,
     Coordinates   point,
-    Rect          *rect
+    Button        *button
 ){
     float floatWidth = (float)sv->size * (float)(charsize + spacing) /
                        (float)engine->backbuffer.width;
@@ -268,10 +268,10 @@ void river2D_createButton
     uint32_t offsetY = (uint32_t)(point.y - floatHeight / 2.0f) *
                        engine->backbuffer.height;
 
-    rect->upLeft.x   = (float)offsetX / (float)engine->backbuffer.width;
-    rect->upLeft.y   = (float)offsetY / (float)engine->backbuffer.height;
-    rect->lowRight.x = rect->upLeft.x + floatWidth;
-    rect->lowRight.y = rect->upLeft.y + floatHeight;
+    button->area.upLeft.x   = (float)offsetX / (float)engine->backbuffer.width;
+    button->area.upLeft.y   = (float)offsetY / (float)engine->backbuffer.height;
+    button->area.lowRight.x = button->area.upLeft.x + floatWidth;
+    button->area.lowRight.y = button->area.upLeft.y + floatHeight;
 
-    engine->loadText(engine, img, sv->data, font, charsize, spacing, offsetX, offsetY);
+    engine->loadText(engine, img, sv, font, charsize, spacing, offsetX, offsetY);
 }

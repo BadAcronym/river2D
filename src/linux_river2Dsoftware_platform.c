@@ -170,7 +170,8 @@ void river2D_init
 
     if(!engine->backbuffer.picture)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture for backbuffer.\n\033[0m");
+        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture "
+                "for backbuffer.\n\033[0m");
     }
 
     // TODO: verify if we need this
@@ -283,7 +284,7 @@ void river2D_loadText
 (
     EngineData    *engine,
     River2D_Image *image,
-    const char    *text,
+    StringView    *sv,
     uint8_t       font,
     uint16_t      charsize,
     uint32_t      spacing,
@@ -292,7 +293,8 @@ void river2D_loadText
 ){
     if(!engine->planes[font].data)
     {
-        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes.\033[0m\n");
+        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes."
+                "\033[0m\n");
         return;
     }
 
@@ -302,7 +304,7 @@ void river2D_loadText
         return;
     }
 
-    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)strlen(text);
+    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)sv->size;
 
     if(image->width < minTextWidth || image->height < charsize)
     {
@@ -326,18 +328,20 @@ void river2D_loadText
     }
     uint32_t fontImgWidth = engine->planes[font].width;
 
-    for(uint32_t i = 0; text[i] != '\0'; ++i)
+    for(uint32_t i = 0; i < sv->size; ++i)
     {
-        if(text[i] < 0x21 || text[i] > 0x7F)
+        if(sv->data[i] < 0x21 || sv->data[i] > 0x7F)
         {
             continue;
         }
 
-        uint32_t charBigX = (uint32_t)(text[i] - 0x21) * charsize % fontImgWidth;
-        uint32_t charBigY = (uint32_t)(text[i] - 0x21) * charsize / fontImgWidth;
+        uint32_t charBigX = (uint32_t)(sv->data[i] - 0x21) * charsize % fontImgWidth;
+        uint32_t charBigY = (uint32_t)(sv->data[i] - 0x21) * charsize / fontImgWidth;
 
-        uint64_t trueSrcOffset  = (charBigY * charsize * fontImgWidth + charBigX) * RIVER2D_BPP;
-        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i * (charsize + spacing)) * RIVER2D_BPP;
+        uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
+                                 RIVER2D_BPP;
+        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i *
+                                  (charsize + spacing)) * RIVER2D_BPP;
 
         uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
         uint8_t* destloc = image->data + trueDestOffset;
@@ -351,8 +355,10 @@ void river2D_loadText
         }
     }
 
-    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                               (char*)image->data, image->width, image->height, 32, 0);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+              image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);

@@ -92,8 +92,8 @@ River2D_Time river2D_deltaTime_now
     if(!time || !time->s)
     {
         fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        River2D_Time time = {-1, -1};
-        return time;
+        River2D_Time result = {-1, -1};
+        return result;
     }
 
     River2D_Time current = river2D_queryTime();
@@ -103,8 +103,8 @@ River2D_Time river2D_deltaTime_now
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
         fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
-        River2D_Time time = {0, 0};
-        return time;
+        River2D_Time result = {0, 0};
+        return result;
     }
 
     calcDelta(time, &current, &deltaS, &deltaNS);
