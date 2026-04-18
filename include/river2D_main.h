@@ -175,6 +175,13 @@ typedef struct Rect
 }
 Rect;
 
+typedef struct Button
+{
+    StringView name;
+    Rect       area;
+}
+Button;
+
 typedef struct Dimensions
 {
     uint32_t width;
@@ -239,7 +246,7 @@ typedef struct EngineData
     void    (*bltBuffer)      (struct EngineData *engine);
 
     void    (*loadText)       (struct EngineData *engine,    River2D_Image *image,
-                               const  char       *text,      uint8_t       font,
+                               StringView        *sv,        uint8_t       font,
                                uint16_t          charsize,   uint32_t      spacing,
                                uint32_t          offsetY,    uint32_t      offsetX);
 
@@ -400,5 +407,5 @@ extern void river2D_createButton
     uint16_t      charsize,
     uint32_t      spacing,
     Coordinates   point,
-    Rect          *rect
+    Button        *button
 );
