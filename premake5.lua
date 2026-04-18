@@ -13,7 +13,10 @@ project("river2D common functions")
     kind("StaticLib")
     targetname("river2Dcommon")
     libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/"})
-    includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
+    includedirs({"./include/",
+                 "/usr/include/",
+                 "./vendor/puddle/include/",
+                 "./vendor/imgsurf/include/"})
 
     filter("configurations:asan")
         defines{"ASAN"}
@@ -44,7 +47,8 @@ project("river2D common functions")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*"})
         links("imgsurf:static")
-        buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow", "-Wsign-compare"})
+        buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow",
+                      "-Wsign-compare"})
         linkoptions({"-lX11", "-fuse-ld=mold"})
         toolset("clang")
 
@@ -86,7 +90,10 @@ project("river2D software renderer")
     kind("SharedLib")
     targetname("river2Dsoftware")
     libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/", "./bin/%{cfg.buildcfg}/"})
-    includedirs({"./include/", "/usr/include/", "./vendor/imgsurf/include/"})
+    includedirs({"./include/",
+                 "/usr/include/",
+                 "./vendor/puddle/include/",
+                 "./vendor/imgsurf/include/"})
 
     filter("configurations:asan")
         defines{"ASAN"}
@@ -115,7 +122,8 @@ project("river2D software renderer")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
         links({"imgsurf:static", "river2Dcommon:static"})
-        buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow", "-Wsign-compare"})
+        buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow",
+                      "-Wsign-compare"})
         linkoptions({"-lX11", "-lXrender", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
         toolset("clang")
 

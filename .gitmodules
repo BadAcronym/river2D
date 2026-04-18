@@ -1,3 +1,6 @@
 [submodule "vendor/imgsurf"]
 	path = vendor/imgsurf
     url = git@github.com:BadAcronym/imgsurf
+[submodule "vendor/puddle"]
+	path = vendor/puddle
+	url = git@github.com:badacronym/puddle

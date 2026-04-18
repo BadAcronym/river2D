@@ -252,33 +252,26 @@ void river2D_createButton
 (
     EngineData    *engine,
     River2D_Image *img,
-    const char    *text,
+    StringView    *sv,
     uint8_t       font,
     uint16_t      charsize,
     uint32_t      spacing,
     Coordinates   point,
     Rect          *rect
 ){
-    uint32_t length = 0;
-
-    for(uint32_t i = 0; text[i] != '\0'; ++i)
-    {
-        ++length;
-    }
-
-    float floatWidth  = (float)length * (float)(charsize + spacing) /
-                        (float)engine->backbuffer.width;
+    float floatWidth = (float)sv->size * (float)(charsize + spacing) /
+                       (float)engine->backbuffer.width;
     float floatHeight = (float)charsize / (float)engine->backbuffer.height;
 
-    uint32_t offsetX   = (uint32_t)(point.x - floatWidth  / 2.0f) *
-                         engine->backbuffer.width;
-    uint32_t offsetY   = (uint32_t)(point.y - floatHeight / 2.0f) *
-                         engine->backbuffer.height;
+    uint32_t offsetX = (uint32_t)(point.x - floatWidth / 2.0f) *
+                       engine->backbuffer.width;
+    uint32_t offsetY = (uint32_t)(point.y - floatHeight / 2.0f) *
+                       engine->backbuffer.height;
 
-    rect->upLeft.x  = (float)offsetX / (float)engine->backbuffer.width;
-    rect->upLeft.y  = (float)offsetY / (float)engine->backbuffer.height;
+    rect->upLeft.x   = (float)offsetX / (float)engine->backbuffer.width;
+    rect->upLeft.y   = (float)offsetY / (float)engine->backbuffer.height;
     rect->lowRight.x = rect->upLeft.x + floatWidth;
     rect->lowRight.y = rect->upLeft.y + floatHeight;
 
-    engine->loadText(engine, img, text, font, charsize, spacing, offsetX, offsetY);
+    engine->loadText(engine, img, sv->data, font, charsize, spacing, offsetX, offsetY);
 }

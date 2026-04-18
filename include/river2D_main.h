@@ -1,5 +1,7 @@
 #pragma once
 
+#include "string_view.h"
+
 #include <stdint.h>
 #include <stdio.h>
 
@@ -393,7 +395,7 @@ extern void river2D_createButton
 (
     EngineData    *engine,
     River2D_Image *img,
-    const char    *text,
+    StringView    *sv,
     uint8_t       font,
     uint16_t      charsize,
     uint32_t      spacing,
