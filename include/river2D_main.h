@@ -159,17 +159,17 @@ Coordinates;
 
 typedef struct Area
 {
-    Coordinates upperLeft;
-    Coordinates upperRight;
-    Coordinates lowerLeft;
-    Coordinates lowerRight;
+    Coordinates upLeft;
+    Coordinates upRight;
+    Coordinates lowLeft;
+    Coordinates lowRight;
 }
 Area;
 
 typedef struct Rect
 {
-    Coordinates upperLeft;
-    Coordinates lowerRight;
+    Coordinates upLeft;
+    Coordinates lowRight;
 }
 Rect;
 
