@@ -82,7 +82,7 @@ extern int64_t river2D_deltaTime_ns
     int64_t deltaNS = 0;
     calcDelta(time1, time2, &deltaS, &deltaNS);
 
-    return (deltaS * 1e9f + deltaNS);
+    return (deltaS * BILLION + deltaNS);
 }
 
 River2D_Time river2D_deltaTime_now
@@ -145,7 +145,7 @@ extern uint64_t river2D_deltaTime_now_ns
     if(!time)
     {
         fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        return -1;
+        return BILLION + 1;
     }
 
     River2D_Time current = river2D_queryTime();
@@ -155,12 +155,12 @@ extern uint64_t river2D_deltaTime_now_ns
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
         fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
-        return -2;
+        return BILLION + 2;
     }
 
     calcDelta(time, &current, &deltaS, &deltaNS);
 
-    return (deltaS * 1e9f + deltaNS);
+    return(uint64_t)(deltaS * BILLION + deltaNS);
 }
 
 void river2D_destroyImage
