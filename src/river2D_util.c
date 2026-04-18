@@ -1,9 +1,10 @@
+#include "river2D_main.h"
+
 #include <stdint.h>
 #include <string.h>
-
-#include "river2D_main.h"
 #include <stdio.h>
 
+// URGENT: deprecate this in favour of string_view.h
 const char* river2D_contains
 (
     const char *bigStr,
@@ -58,7 +59,8 @@ void river2D_loadConfig
         FILE *file = fopen(RIVER2D_CONFIG_PATH, "r");
         if(!file)
         {
-            fprintf(stderr, "\n\033[31;1;7mERROR: Could not open file %s\033[0m\n", RIVER2D_CONFIG_PATH);
+            fprintf(stderr, "\n\033[31;1;7mERROR: Could not open file %s\033[0m\n",
+                    RIVER2D_CONFIG_PATH);
             return;
         }
 
@@ -96,7 +98,7 @@ void river2D_loadConfig
                         break;
                     }
                     parsedWidth_canvas *= 10;
-                    parsedWidth_canvas += (digit - 0x30);
+                    parsedWidth_canvas += (uint32_t)(digit - 0x30);
                 }
 
                 #ifdef DEBUG
@@ -123,7 +125,7 @@ void river2D_loadConfig
                         break;
                     }
                     parsedHeight_canvas *= 10;
-                    parsedHeight_canvas += (digit - 0x30);
+                    parsedHeight_canvas += (uint32_t)(digit - 0x30);
                 }
 
                 #ifdef DEBUG
@@ -150,7 +152,7 @@ void river2D_loadConfig
                         break;
                     }
                     parsedWidth_window *= 10;
-                    parsedWidth_window += (digit - 0x30);
+                    parsedWidth_window += (uint32_t)(digit - 0x30);
                 }
 
                 #ifdef DEBUG
@@ -177,7 +179,7 @@ void river2D_loadConfig
                         break;
                     }
                     parsedHeight_window *= 10;
-                    parsedHeight_window += (digit - 0x30);
+                    parsedHeight_window += (uint32_t)(digit - 0x30);
                 }
 
                 #ifdef DEBUG
@@ -193,16 +195,18 @@ void river2D_loadConfig
     }
     else if(code == RIVER2D_TYPE_ERROR)
     {
-        fprintf(stderr, "\nCan't find the file '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
+        fprintf(stderr, "\nCan't find the file '%s', default config loaded.\n\n",
+                RIVER2D_CONFIG_PATH);
     }
     else if(code == RIVER2D_TYPE_DIRECTORY)
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: '%s' is a Directory! Default config loaded.\033[0m\n",
-                RIVER2D_CONFIG_PATH);
+        fprintf(stderr, "\n\033[31;1;7mERROR: '%s' is a Directory! "
+                "Default config loaded.\033[0m\n", RIVER2D_CONFIG_PATH);
     }
     else if(code == RIVER2D_TYPE_OTHER)
     {
-        fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n", RIVER2D_CONFIG_PATH);
+        fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n",
+                RIVER2D_CONFIG_PATH);
     }
 
     if(!parsedWidth_canvas)
@@ -229,10 +233,10 @@ bool river2D_insideArea
     Area        *area
 ){
     // TODO: in the future, handle non parallel cases.
-    // if(area->upperLeft.x == area->lowerLeft.x && area->upperRight.x && ...)
+    // if(area->upLeft.x == area->lowLeft.x && area->upRight.x && ...)
 
-    return(point->x > area->upperLeft.x && point->x < area->upperRight.x &&
-           point->y > area->upperLeft.y && point->y < area->lowerRight.y);
+    return(point->x > area->upLeft.x && point->x < area->upRight.x &&
+           point->y > area->upLeft.y && point->y < area->lowRight.y);
 }
 
 bool river2D_insideRect
@@ -240,8 +244,8 @@ bool river2D_insideRect
     Coordinates *point,
     Rect        *rect
 ){
-    return(point->x > rect->upperLeft.x && point->x < rect->lowerRight.x &&
-           point->y > rect->upperLeft.y && point->y < rect->lowerRight.y);
+    return(point->x > rect->upLeft.x && point->x < rect->lowRight.x &&
+           point->y > rect->upLeft.y && point->y < rect->lowRight.y);
 }
 
 void river2D_createButton
@@ -262,16 +266,19 @@ void river2D_createButton
         ++length;
     }
 
-    float floatWidth  = (float)length * (charsize + spacing) / (float)engine->backbuffer.width;
+    float floatWidth  = (float)length * (float)(charsize + spacing) /
+                        (float)engine->backbuffer.width;
     float floatHeight = (float)charsize / (float)engine->backbuffer.height;
 
-    uint32_t offsetX   = (point.x - floatWidth  / 2.0f) * engine->backbuffer.width;
-    uint32_t offsetY   = (point.y - floatHeight / 2.0f) * engine->backbuffer.height;
+    uint32_t offsetX   = (uint32_t)(point.x - floatWidth  / 2.0f) *
+                         engine->backbuffer.width;
+    uint32_t offsetY   = (uint32_t)(point.y - floatHeight / 2.0f) *
+                         engine->backbuffer.height;
 
-    rect->upperLeft.x  = (float)offsetX / (float)engine->backbuffer.width;
-    rect->upperLeft.y  = (float)offsetY / (float)engine->backbuffer.height;
-    rect->lowerRight.x = rect->upperLeft.x + floatWidth;
-    rect->lowerRight.y = rect->upperLeft.y + floatHeight;
+    rect->upLeft.x  = (float)offsetX / (float)engine->backbuffer.width;
+    rect->upLeft.y  = (float)offsetY / (float)engine->backbuffer.height;
+    rect->lowRight.x = rect->upLeft.x + floatWidth;
+    rect->lowRight.y = rect->upLeft.y + floatHeight;
 
     engine->loadText(engine, img, text, font, charsize, spacing, offsetX, offsetY);
 }

@@ -21,10 +21,10 @@ internal void resolveFunction
         fputs(*error, stderr);
         fprintf(stderr, "\033[0m\n");
     }
-    #ifdef DEBUG
+    #ifndef DEBUG
     else
     {
-        fprintf(stderr, "Loaded symbol: %s at 0x%x\n", name, *fptr);
+        fprintf(stderr, "Loaded symbol: %s at %p\n", name, *fptr);
     }
     #endif
 }
@@ -44,32 +44,42 @@ void river2D_resolveRenderer
         void *software = dlopen(so, RTLD_NOW);
         if(!software)
         {
-            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded from specified folder: %s\n", libpath);
-            fputs(dlerror(), stderr);
-            fprintf(stderr, "\033[0m\n");
+            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded "
+                    "from specified folder: %s\n", libpath);
+          fputs(dlerror(), stderr);
+          fprintf(stderr, "\033[0m\n");
         }
 
-        resolveFunction((void**)&engine->init,           software, "river2D_init",           &error);
-        resolveFunction((void**)&engine->shutdown,       software, "river2D_shutdown",       &error);
-        resolveFunction((void**)&engine->loadText,       software, "river2D_loadText",       &error);
-        resolveFunction((void**)&engine->bltBuffer,      software, "river2D_bltBuffer",      &error);
-        resolveFunction((void**)&engine->compositeImage, software, "river2D_compositeImage", &error);
+        resolveFunction((void**)&engine->init,
+                        software, "river2D_init", &error);
+        resolveFunction((void**)&engine->shutdown,
+                        software, "river2D_shutdown", &error);
+        resolveFunction((void**)&engine->loadText,
+                        software, "river2D_loadText", &error);
+        resolveFunction((void**)&engine->bltBuffer,
+                        software, "river2D_bltBuffer", &error);
+        resolveFunction((void**)&engine->compositeImage,
+                        software, "river2D_compositeImage", &error);
     }
     else if(renderer == RIVER2D_RENDERER_OPENGL)
     {
-        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for river2D.\033[0m");
+        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for river2D."
+                "\033[0m");
     }
     else if(renderer == RIVER2D_RENDERER_VULKAN)
     {
-        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for river2D.\033[0m");
+        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for river2D."
+                "\033[0m");
     }
     else if(renderer == RIVER2D_RENDERER_DIRECTX)
     {
-        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for river2D.\033[0m");
+        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for river2D."
+                "\033[0m");
     }
     else
     {
-        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in river2D_resolveRenderer.\033[0m");
+        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified "
+                "in river2D_resolveRenderer.\033[0m");
     }
 }
 
@@ -94,7 +104,8 @@ void river2D_loadImage_file
     uint8_t       channels,
     uint8_t       bitdepth
 ){
-    image->data = imgsurf_load_file(path, &image->width, &image->height, channels, bitdepth);
+    image->data = imgsurf_load_file(path, &image->width, &image->height,
+                                    channels, bitdepth);
     image->path = path;
 
     if(!image->data)
@@ -103,22 +114,29 @@ void river2D_loadImage_file
         writeMissingTexture(image);
     }
 
-    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display), image->width, image->height, 32);
-    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
+    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
+                                  image->width, image->height, 32);
+    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                                 (char*)image->data, image->width, image->height,
+                                 32, 0);
     if(!img)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XImage from file: %s!.\n\033[0m", path);
+        fprintf(stderr, "\033[31m\nERROR: failed to create XImage from file: %s!."
+                "\n\033[0m", path);
     }
 
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+              image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
 
-    image->picture = XRenderCreatePicture(engine->display, image->pixmap, engine->format, 0, 0);
+    image->picture = XRenderCreatePicture(engine->display, image->pixmap,
+                                          engine->format, 0, 0);
     if(!image->picture)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from file: %s!.\n\033[0m", path);
+        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from file: "
+                "%s!.\n\033[0m", path);
     }
 }
 
@@ -131,25 +149,33 @@ void river2D_loadImage_ptr
     uint8_t       channels,
     uint8_t       bitdepth
 ){
-    image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width, &image->height, channels, bitdepth);
+    image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI,
+                                   &image->width, &image->height, channels, bitdepth);
     image->path = "river2D_loadImage_ptr";
 
-    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display), image->width, image->height, 32);
-    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
+    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
+                                  image->width, image->height, 32);
+    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                                 (char*)image->data, image->width, image->height,
+                                 32, 0);
     if(!img)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XImage from pointer.\n\033[0m");
+        fprintf(stderr, "\033[31m\nERROR: failed to create XImage from pointer."
+                "\n\033[0m");
     }
 
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+              image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
 
-    image->picture = XRenderCreatePicture(engine->display, image->pixmap, engine->format, 0, 0);
+    image->picture = XRenderCreatePicture(engine->display, image->pixmap,
+                                          engine->format, 0, 0);
     if(!image->picture)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from pointer.\n\033[0m");
+        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from pointer."
+                "\n\033[0m");
     }
 }
 
@@ -165,16 +191,23 @@ void river2D_createImage
     image->width  = width;
     image->height = height;
 
-    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display), image->width, image->height, 32);
-    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
+    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
+                                  image->width, image->height, 32);
+    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                                 (char*)image->data, image->width, image->height,
+                                 32, 0);
 
-    // I don't think we need this here, but still I'm gonna leave it for posterity's sake, maybe it fixes a bug down the line?
-    // XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+    // I don't think we need this here, but still I'm gonna leave it for
+    // posterity's sake, maybe it fixes a bug down the line?
+    // XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0,
+    // 0, image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
 
-    image->picture = XRenderCreatePicture(engine->display, image->pixmap, engine->format, 0, 0);
+    image->picture = XRenderCreatePicture(engine->display, image->pixmap,
+                                          engine->format, 0, 0);
+
     if(!image->picture)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture.\n\033[0m");
@@ -186,8 +219,10 @@ void river2D_refreshImage
     EngineData    *engine,
     River2D_Image *image
 ){
-    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                               (char*)image->data, image->width, image->height, 32, 0);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+              image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
@@ -203,8 +238,10 @@ void river2D_clearImage
         image->data[i] = 0;
     }
 
-    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0, (char*)image->data, image->width, image->height, 32, 0);
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0, image->width, image->height);
+    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                               (char*)image->data, image->width, image->height, 32, 0);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+              image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
@@ -219,8 +256,8 @@ River2D_Time river2D_queryTime
 
     River2D_Time time =
     {
-        .s  = (uint64_t)spec.tv_sec,
-        .ns = (uint64_t)spec.tv_nsec
+        .s  = (int64_t)spec.tv_sec,
+        .ns = (int64_t)spec.tv_nsec
     };
 
     return time;
@@ -354,7 +391,11 @@ Dimensions river2D_getWindowSize
     XWindowAttributes attr;
     XGetWindowAttributes(engine->display, engine->window, &attr);
 
-    Dimensions dim = {attr.width, attr.height};
+    Dimensions dim =
+    {
+        (uint32_t)attr.width,
+        (uint32_t)attr.height
+    };
 
     return dim;
 }

@@ -18,11 +18,14 @@ internal Visual* findVisual
     visualInfo.depth  = depth;
 
     int numVisuals;
-    XVisualInfo *foundVisuals = XGetVisualInfo(display, VisualScreenMask | VisualDepthMask, &visualInfo, &numVisuals);
+    XVisualInfo *foundVisuals = XGetVisualInfo(display,
+                                               VisualScreenMask | VisualDepthMask,
+                                               &visualInfo, &numVisuals);
     if(!foundVisuals)
     {
-        fprintf(stderr, "No valid visuals could be found for the desired depth of %i.\n", visualInfo.depth);
-        return 0;
+        fprintf(stderr, "No valid visuals could be found "
+                "for the desired depth of %i.\n", visualInfo.depth);
+      return 0;
     }
 
     XWindowAttributes rootAttributes = {0};
@@ -51,21 +54,29 @@ Window river2D_openWindow
                               CWColormap  | CWOverrideRedirect;
 
     XSetWindowAttributes attributes;
-    attributes.background_pixel  = BlackPixel(engine->display, DefaultScreen(engine->display));
+    attributes.background_pixel  = BlackPixel(engine->display,
+                                              DefaultScreen(engine->display));
     attributes.background_pixmap = 0;
-    attributes.border_pixel      = BlackPixel(engine->display, DefaultScreen(engine->display));
+    attributes.border_pixel      = BlackPixel(engine->display,
+                                              DefaultScreen(engine->display));
     attributes.border_pixmap     = 0;
-    attributes.colormap          = XCreateColormap(engine->display, XDefaultRootWindow(engine->display),
-                                          engine->visual, AllocNone);
+    attributes.colormap          = XCreateColormap(engine->display,
+                                                   XDefaultRootWindow(engine->display),
+                                                   engine->visual, AllocNone);
     attributes.override_redirect = false;
 
-    Window window = XCreateWindow(engine->display, XDefaultRootWindow(engine->display), 0, 0,
-                                  engine->config.window_width, engine->config.window_height,
-                                  0, RIVER2D_PIXDEPTH, InputOutput, engine->visual, valuemask, &attributes);
+    Window window = XCreateWindow(engine->display,
+                                  XDefaultRootWindow(engine->display), 0, 0,
+                                  engine->config.window_width,
+                                  engine->config.window_height,
+                                  0, RIVER2D_PIXDEPTH, InputOutput,
+                                  engine->visual, valuemask, &attributes);
 
     XStoreName(engine->display, window, engine->windowName);
-    XSelectInput(engine->display, window, KeyPressMask    | KeyReleaseMask    | PointerMotionMask |
-                                          ButtonPressMask | ButtonReleaseMask | ButtonMotionMask  | StructureNotifyMask);
+    XSelectInput(engine->display, window,
+                 KeyPressMask    | KeyReleaseMask    | PointerMotionMask |
+                 ButtonPressMask | ButtonReleaseMask | ButtonMotionMask  |
+                 StructureNotifyMask);
     XMapWindow(engine->display, window);
 
     return window;
@@ -81,7 +92,8 @@ void river2D_resizeBackbuffer
     {
         XFreePixmap(engine->display, engine->backbuffer.pixmap);
     }
-    engine->backbuffer.pixmap = XCreatePixmap(engine->display, engine->window, width, height, RIVER2D_PIXDEPTH);
+    engine->backbuffer.pixmap = XCreatePixmap(engine->display, engine->window,
+                                              width, height, RIVER2D_PIXDEPTH);
     engine->backbuffer.width  = width;
     engine->backbuffer.height = height;
 }
@@ -112,7 +124,8 @@ void river2D_init
         fprintf(stderr, "No matching visual could be found.\n");
     }
 
-    // NOTE: do we even need this anymore. dividing constants... when is it ever gonna be 24bpp?
+    // NOTE: do we even need this anymore. dividing constants... when is it ever
+    // gonna be 24bpp?
     if(RIVER2D_PIXDEPTH / 8 == 4)
     {
         engine->format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
@@ -145,11 +158,14 @@ void river2D_init
 
     if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_createImage(engine, &engine->backbuffer, engine->config.canvas_width, engine->config.canvas_height);
+        river2D_createImage(engine, &engine->backbuffer,
+                            engine->config.canvas_width,
+                            engine->config.canvas_height);
     }
     else
     {
-        river2D_createImage(engine, &engine->backbuffer, engine->config.window_width, engine->config.window_height);
+        river2D_createImage(engine, &engine->backbuffer, engine->config.window_width,
+                            engine->config.window_height);
     }
 
     if(!engine->backbuffer.picture)
@@ -158,7 +174,8 @@ void river2D_init
     }
 
     // TODO: verify if we need this
-    engine->blitDstPict = XRenderCreatePicture(engine->display, engine->window, engine->format, 0, 0);
+    engine->blitDstPict = XRenderCreatePicture(engine->display, engine->window,
+                                               engine->format, 0, 0);
 }
 
 int32_t river2D_shutdown
@@ -235,8 +252,9 @@ void river2D_compositeImage
         abort();
     }
 
-    XRenderComposite(engine->display, pictop, src->picture, None, dst->picture, offsetSrcX, offsetSrcY,
-                     0, 0, offsetDstX, offsetDstY, cropWidth, cropHeight);
+    XRenderComposite(engine->display, pictop, src->picture, None, dst->picture,
+                     (int)offsetSrcX, (int)offsetSrcY, 0, 0,
+                     (int)offsetDstX, (int)offsetDstY, cropWidth, cropHeight);
 }
 
 void river2D_bltBuffer
@@ -253,10 +271,12 @@ void river2D_bltBuffer
         {                  0,                   0, XDoubleToFixed(1.0)}
     }};
     XRenderSetPictureTransform(engine->display, engine->backbuffer.picture, &transform);
-    XRenderSetPictureFilter(engine->display, engine->backbuffer.picture, FilterNearest, 0, 0);
+    XRenderSetPictureFilter(engine->display, engine->backbuffer.picture,
+                            FilterNearest, 0, 0);
 
-    XRenderComposite(engine->display, PictOpSrc, engine->backbuffer.picture, 0, engine->blitDstPict,
-                     0, 0, 0, 0, 0, 0, engine->config.window_width, engine->config.window_height);
+    XRenderComposite(engine->display, PictOpSrc, engine->backbuffer.picture, 0,
+                     engine->blitDstPict, 0, 0, 0, 0, 0, 0,
+                     engine->config.window_width, engine->config.window_height);
 }
 
 void river2D_loadText
