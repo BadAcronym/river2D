@@ -239,7 +239,7 @@ const char* river2D_listFiles
     return list;
 }
 
-uint8_t river2D_interpretCharAsKey
+uint8_t river2D_charToKey
 (
     char inp
 ){

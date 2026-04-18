@@ -334,7 +334,7 @@ const char* river2D_listFiles
     return list;
 }
 
-uint8_t river2D_interpretCharAsKey
+uint8_t river2D_charToKey
 (
     char inp
 ){
@@ -360,7 +360,11 @@ uint8_t river2D_interpretCharAsKey
         return alphabetic_table[inp - RIVER2D_ASCII_A];
     }
 
-    if(inp == RIVER2D_ASCII_LSHIFT)
+    if(inp == RIVER2D_ASCII_BACKSPACE)
+    {
+        return 0x16;
+    }
+    else if(inp == RIVER2D_ASCII_LSHIFT)
     {
         return 0x32;
     }

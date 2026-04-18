@@ -54,6 +54,7 @@
 #define RIVER2D_RENDERER_VULKAN          2
 #define RIVER2D_RENDERER_DIRECTX         3
 
+#define RIVER2D_ASCII_BACKSPACE          0x08
 #define RIVER2D_ASCII_LSHIFT             0x0E
 #define RIVER2D_ASCII_RSHIFT             0x0F
 #define RIVER2D_ASCII_LCTRL              0x11
@@ -359,7 +360,7 @@ extern const char* river2D_listFiles
     const char *path
 );
 
-extern uint8_t river2D_interpretCharAsKey
+extern uint8_t river2D_charToKey
 (
     char inp
 );
