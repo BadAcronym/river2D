@@ -9,13 +9,14 @@
 #define true  1
 #define false 0
 
-#define persistent  static
-#define global      static
-#define internal    static
+#define v_persistent  static
+#define v_global      static
+#define f_internal    static
 
 #ifdef BUILD_LINUX
     #include "X11/Xlib.h"
     #include "X11/Xutil.h"
+    #include "X11/XKBlib.h"
     #include "X11/Xcursor/Xcursor.h"
     #include "X11/extensions/Xrender.h"
 

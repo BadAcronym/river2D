@@ -7,7 +7,7 @@
 #include <dlfcn.h>
 #include <stdio.h>
 
-internal void resolveFunction
+f_internal void resolveFunction
 (
     void       **fptr,
     void       *renderer,
@@ -83,7 +83,7 @@ void river2D_resolveRenderer
     }
 }
 
-internal void writeMissingTexture
+f_internal void writeMissingTexture
 (
     River2D_Image *image
 ){
@@ -334,10 +334,14 @@ const char* river2D_listFiles
     return list;
 }
 
+// TODO: translate it better than this. I need to know what keyboard map I'm on...
+// else it won't poll colemak.
+// CURRENT: use XKeycodeToKeysym
 uint8_t river2D_charToKey
 (
-    char inp
+    char       inp
 ){
+    uint8_t out;
     const uint8_t numeric_table[10] =
     {
         0x13, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12
@@ -352,37 +356,37 @@ uint8_t river2D_charToKey
 
     if(inp > 0x2F && inp < 0x3A)
     {
-        return numeric_table[inp - 0x30];
+        out = numeric_table[inp - 0x30];
     }
 
     if(inp >= RIVER2D_ASCII_A && inp <= RIVER2D_ASCII_Z)
     {
-        return alphabetic_table[inp - RIVER2D_ASCII_A];
+        out = alphabetic_table[inp - RIVER2D_ASCII_A];
     }
 
     if(inp == RIVER2D_ASCII_BACKSPACE)
     {
-        return 0x16;
+        out = 0x16;
     }
     else if(inp == RIVER2D_ASCII_LSHIFT)
     {
-        return 0x32;
+        out = 0x32;
     }
     else if(inp == RIVER2D_ASCII_LCTRL)
     {
-        return 0x25;
+        out = 0x25;
     }
     else if(inp == RIVER2D_ASCII_ESCAPE)
     {
-        return 0x09;
+        out = 0x09;
     }
     else if(inp == RIVER2D_ASCII_MINUS)
     {
-        return 0x14;
+        out = 0x14;
     }
     else if(inp == RIVER2D_ASCII_EQUALS)
     {
-        return 0x15;
+        out = 0x15;
     }
 
     return 0;

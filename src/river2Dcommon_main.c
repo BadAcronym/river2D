@@ -3,7 +3,7 @@
 
 #define BILLION 1000000000
 
-internal void calcDelta
+f_internal void calcDelta
 (
     const River2D_Time *time1,
     const River2D_Time *time2,

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-internal Visual* findVisual
+f_internal Visual* findVisual
 (
     Display *display,
     uint8_t depth

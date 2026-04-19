@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-internal void resolveFunction
+f_internal void resolveFunction
 (
     void       **fptr,
     HMODULE    renderer,
@@ -66,7 +66,7 @@ void river2D_resolveRenderer
     }
 }
 
-internal void writeMissingTexture
+f_internal void writeMissingTexture
 (
     River2D_Image *image
 ){
