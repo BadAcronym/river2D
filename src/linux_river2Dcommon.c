@@ -1,6 +1,9 @@
 #include "river2D_main.h"
 #include "imgsurf_main.h"
 
+#define STRING_VIEW_IMPL
+#include "string_view.h"
+
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -334,61 +337,102 @@ const char* river2D_listFiles
     return list;
 }
 
-// TODO: translate it better than this. I need to know what keyboard map I'm on...
-// else it won't poll colemak.
-// CURRENT: use XKeycodeToKeysym
-uint8_t river2D_charToKey
+uint8_t xkeyToAscii
 (
-    char       inp
+    EngineData *engine,
+    XEvent     *event
 ){
-    uint8_t out;
-    const uint8_t numeric_table[10] =
-    {
-        0x13, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12
-    };
+    KeySym sym = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode, 0,
+                                    event->xkey.state & ShiftMask);
+    char *codeString = XKeysymToString(sym);
+    StringView sv;
 
-    const uint8_t alphabetic_table[26] =
+    if(codeString)
     {
-        0x26, 0x38, 0x36, 0x28, 0x1A, 0x29, 0x2A, 0x2B, 0x1F, 0x2C,
-        0x2D, 0x2E, 0x3A, 0x39, 0x20, 0x21, 0x18, 0x1B, 0x27, 0x1C,
-        0x1E, 0x37, 0x19, 0x35, 0x1D, 0x34,
-    };
-
-    if(inp > 0x2F && inp < 0x3A)
-    {
-        out = numeric_table[inp - 0x30];
+        sv = cstr_sv(codeString);
     }
 
-    if(inp >= RIVER2D_ASCII_A && inp <= RIVER2D_ASCII_Z)
+    if(sv.size == 1)
     {
-        out = alphabetic_table[inp - RIVER2D_ASCII_A];
+        return (uint8_t)sv.data[0];
     }
 
-    if(inp == RIVER2D_ASCII_BACKSPACE)
+    StringView backspace = cstr_sv("Ba");
+    if(sv_comp(&sv, &backspace) == SV_LONGER_FIRST)
     {
-        out = 0x16;
-    }
-    else if(inp == RIVER2D_ASCII_LSHIFT)
-    {
-        out = 0x32;
-    }
-    else if(inp == RIVER2D_ASCII_LCTRL)
-    {
-        out = 0x25;
-    }
-    else if(inp == RIVER2D_ASCII_ESCAPE)
-    {
-        out = 0x09;
-    }
-    else if(inp == RIVER2D_ASCII_MINUS)
-    {
-        out = 0x14;
-    }
-    else if(inp == RIVER2D_ASCII_EQUALS)
-    {
-        out = 0x15;
+        return RIVER2D_ASCII_BACKSPACE;
     }
 
+    StringView less = cstr_sv("le");
+    if(sv_comp(&sv, &less) == SV_LONGER_FIRST)
+    {
+        return '<';
+    }
+    StringView greater = cstr_sv("gr");
+    if(sv_comp(&sv, &greater) == SV_LONGER_FIRST)
+    {
+        return '>';
+    }
+
+    StringView period = cstr_sv("pe");
+    if(sv_comp(&sv, &period) == SV_LONGER_FIRST)
+    {
+        return '.';
+    }
+    StringView comma = cstr_sv("co");
+    if(sv_comp(&sv, &comma) == SV_LONGER_FIRST)
+    {
+        return ',';
+    }
+
+    StringView minus = cstr_sv("mi");
+    if(sv_comp(&sv, &minus) == SV_LONGER_FIRST)
+    {
+        return '-';
+    }
+    StringView equal = cstr_sv("eq");
+    if(sv_comp(&sv, &equal) == SV_LONGER_FIRST)
+    {
+        return '=';
+    }
+
+    StringView lshift = cstr_sv("Shift_L");
+    if(sv_comp(&sv, &lshift) == SV_SAME)
+    {
+        return RIVER2D_ASCII_LSHIFT;
+    }
+    StringView rshift = cstr_sv("Shift_R");
+    if(sv_comp(&sv, &rshift) == SV_SAME)
+    {
+        return RIVER2D_ASCII_RSHIFT;
+    }
+
+    StringView lctrl = cstr_sv("Control_L");
+    if(sv_comp(&sv, &lctrl) == SV_SAME)
+    {
+        return RIVER2D_ASCII_LCTRL;
+    }
+    StringView rctrl = cstr_sv("Control_R");
+    if(sv_comp(&sv, &rctrl) == SV_SAME)
+    {
+        return RIVER2D_ASCII_RCTRL;
+    }
+
+    // StringView lalt = cstr_sv("Alt_L");
+    // if(sv_comp(&sv, &lalt) == SV_LONGER_FIRST)
+    // {
+    //     return RIVER2D_ASCII_LALT;
+    // }
+    // NOTE: ISO_Level3_Shift for ALT_GR, I think otherwise it'd just be ALT_L
+    // StringView ralt = cstr_sv("ISO_Level3_Shift");
+    // if(sv_comp(&sv, &ralt) == SV_LONGER_FIRST)
+    // {
+    //     return RIVER2D_ASCII_RALT;
+    // }
+
+#ifdef DEBUG
+    fprintf(stderr, PRI_SV"\n", ARG_SV(sv));
+#endif
     return 0;
 }
 

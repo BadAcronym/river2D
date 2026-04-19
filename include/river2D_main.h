@@ -128,6 +128,7 @@ typedef struct River2D_Config
 }
 River2D_Config;
 
+// URGENT: use stringViews
 typedef struct River2D_Image
 {
     char     *path;
@@ -361,10 +362,13 @@ extern const char* river2D_listFiles
     const char *path
 );
 
-extern uint8_t river2D_charToKey
+#ifdef BUILD_LINUX
+extern uint8_t xkeyToAscii
 (
-    char inp
+    EngineData *engine,
+    XEvent     *event
 );
+#endif
 
 extern void river2D_loadConfig
 (
