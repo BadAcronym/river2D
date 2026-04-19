@@ -56,13 +56,16 @@
 #define RIVER2D_RENDERER_DIRECTX         3
 
 #define RIVER2D_ASCII_BACKSPACE          0x08
+#define RIVER2D_ASCII_TAB                0x09
+#define RIVER2D_ASCII_ENTER              0x0A
 #define RIVER2D_ASCII_LSHIFT             0x0E
 #define RIVER2D_ASCII_RSHIFT             0x0F
 #define RIVER2D_ASCII_LCTRL              0x11
 #define RIVER2D_ASCII_RCTRL              0x12
 #define RIVER2D_ASCII_ESCAPE             0x1B
+#define RIVER2D_ASCII_SPACE              0x20
 #define RIVER2D_ASCII_MINUS              0x2D
-#define RIVER2D_ASCII_EQUALS             0x3D
+#define RIVER2D_ASCII_EQUAL              0x3D
 #define RIVER2D_ASCII_A                  0x61
 #define RIVER2D_ASCII_Z                  0x7A
 

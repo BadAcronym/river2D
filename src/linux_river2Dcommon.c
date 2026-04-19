@@ -352,48 +352,83 @@ uint8_t xkeyToAscii
         sv = cstr_sv(codeString);
     }
 
+    if(sv.size == 0)
+    {
+        return 0;
+    }
+
     if(sv.size == 1)
     {
+        // cast uppercase to lowercase
+        if(sv.data[0] > 0x40 && sv.data[0] < 0x5B)
+        {
+            return (uint8_t)(sv.data[0] + 0x21);
+        }
+
         return (uint8_t)sv.data[0];
     }
 
-    StringView backspace = cstr_sv("Ba");
+    StringView space = cstr_sv("s");
+    if(sv_comp(&sv, &space) == SV_LONGER_FIRST)
+    {
+        return RIVER2D_ASCII_SPACE;
+    }
+
+    StringView backspace = cstr_sv("B");
     if(sv_comp(&sv, &backspace) == SV_LONGER_FIRST)
     {
         return RIVER2D_ASCII_BACKSPACE;
     }
 
-    StringView less = cstr_sv("le");
+    StringView less = cstr_sv("l");
     if(sv_comp(&sv, &less) == SV_LONGER_FIRST)
     {
         return '<';
     }
-    StringView greater = cstr_sv("gr");
+    StringView greater = cstr_sv("g");
     if(sv_comp(&sv, &greater) == SV_LONGER_FIRST)
     {
         return '>';
     }
 
-    StringView period = cstr_sv("pe");
+    StringView period = cstr_sv("p");
     if(sv_comp(&sv, &period) == SV_LONGER_FIRST)
     {
         return '.';
     }
-    StringView comma = cstr_sv("co");
+    StringView comma = cstr_sv("c");
     if(sv_comp(&sv, &comma) == SV_LONGER_FIRST)
     {
         return ',';
     }
 
-    StringView minus = cstr_sv("mi");
+    StringView minus = cstr_sv("m");
     if(sv_comp(&sv, &minus) == SV_LONGER_FIRST)
     {
         return '-';
     }
-    StringView equal = cstr_sv("eq");
+    StringView equal = cstr_sv("e");
     if(sv_comp(&sv, &equal) == SV_LONGER_FIRST)
     {
         return '=';
+    }
+
+    StringView escape = cstr_sv("E");
+    if(sv_comp(&sv, &escape) == SV_LONGER_FIRST)
+    {
+        return RIVER2D_ASCII_ESCAPE;
+    }
+
+    StringView enter = cstr_sv("R");
+    if(sv_comp(&sv, &enter) == SV_LONGER_FIRST)
+    {
+        return RIVER2D_ASCII_ENTER;
+    }
+
+    StringView tab = cstr_sv("T");
+    if(sv_comp(&sv, &tab) == SV_LONGER_FIRST)
+    {
+        return RIVER2D_ASCII_TAB;
     }
 
     StringView lshift = cstr_sv("Shift_L");
