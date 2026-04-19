@@ -10,7 +10,7 @@
 #define false 0
 
 #define v_persistent  static
-#define v_global      static
+#define s_global      static
 #define f_internal    static
 
 #ifdef BUILD_LINUX
