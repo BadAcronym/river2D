@@ -349,7 +349,7 @@ uint8_t xkeyToAscii
 
     if(codeString)
     {
-        sv = cstr_sv(codeString);
+        sv = puddle_cstr_sv(codeString);
     }
 
     if(sv.size == 0)
@@ -368,99 +368,99 @@ uint8_t xkeyToAscii
         return (uint8_t)sv.data[0];
     }
 
-    StringView space = cstr_sv("s");
-    if(sv_comp(&sv, &space) == SV_LONGER_FIRST)
+    StringView space = puddle_cstr_sv("s");
+    if(puddle_sv_comp(&sv, &space) == SV_LONGER_FIRST)
     {
         return RIVER2D_ASCII_SPACE;
     }
 
-    StringView backspace = cstr_sv("B");
-    if(sv_comp(&sv, &backspace) == SV_LONGER_FIRST)
+    StringView backspace = puddle_cstr_sv("B");
+    if(puddle_sv_comp(&sv, &backspace) == SV_LONGER_FIRST)
     {
         return RIVER2D_ASCII_BACKSPACE;
     }
 
-    StringView less = cstr_sv("l");
-    if(sv_comp(&sv, &less) == SV_LONGER_FIRST)
+    StringView less = puddle_cstr_sv("l");
+    if(puddle_sv_comp(&sv, &less) == SV_LONGER_FIRST)
     {
         return '<';
     }
-    StringView greater = cstr_sv("g");
-    if(sv_comp(&sv, &greater) == SV_LONGER_FIRST)
+    StringView greater = puddle_cstr_sv("g");
+    if(puddle_sv_comp(&sv, &greater) == SV_LONGER_FIRST)
     {
         return '>';
     }
 
-    StringView period = cstr_sv("p");
-    if(sv_comp(&sv, &period) == SV_LONGER_FIRST)
+    StringView period = puddle_cstr_sv("p");
+    if(puddle_sv_comp(&sv, &period) == SV_LONGER_FIRST)
     {
         return '.';
     }
-    StringView comma = cstr_sv("c");
-    if(sv_comp(&sv, &comma) == SV_LONGER_FIRST)
+    StringView comma = puddle_cstr_sv("c");
+    if(puddle_sv_comp(&sv, &comma) == SV_LONGER_FIRST)
     {
         return ',';
     }
 
-    StringView minus = cstr_sv("m");
-    if(sv_comp(&sv, &minus) == SV_LONGER_FIRST)
+    StringView minus = puddle_cstr_sv("m");
+    if(puddle_sv_comp(&sv, &minus) == SV_LONGER_FIRST)
     {
         return '-';
     }
-    StringView equal = cstr_sv("e");
-    if(sv_comp(&sv, &equal) == SV_LONGER_FIRST)
+    StringView equal = puddle_cstr_sv("e");
+    if(puddle_sv_comp(&sv, &equal) == SV_LONGER_FIRST)
     {
         return '=';
     }
 
-    StringView escape = cstr_sv("E");
-    if(sv_comp(&sv, &escape) == SV_LONGER_FIRST)
+    StringView escape = puddle_cstr_sv("E");
+    if(puddle_sv_comp(&sv, &escape) == SV_LONGER_FIRST)
     {
         return RIVER2D_ASCII_ESCAPE;
     }
 
-    StringView enter = cstr_sv("R");
-    if(sv_comp(&sv, &enter) == SV_LONGER_FIRST)
+    StringView enter = puddle_cstr_sv("R");
+    if(puddle_sv_comp(&sv, &enter) == SV_LONGER_FIRST)
     {
         return RIVER2D_ASCII_ENTER;
     }
 
-    StringView tab = cstr_sv("T");
-    if(sv_comp(&sv, &tab) == SV_LONGER_FIRST)
+    StringView tab = puddle_cstr_sv("T");
+    if(puddle_sv_comp(&sv, &tab) == SV_LONGER_FIRST)
     {
         return RIVER2D_ASCII_TAB;
     }
 
-    StringView lshift = cstr_sv("Shift_L");
-    if(sv_comp(&sv, &lshift) == SV_SAME)
+    StringView lshift = puddle_cstr_sv("Shift_L");
+    if(puddle_sv_comp(&sv, &lshift) == SV_SAME)
     {
         return RIVER2D_ASCII_LSHIFT;
     }
-    StringView rshift = cstr_sv("Shift_R");
-    if(sv_comp(&sv, &rshift) == SV_SAME)
+    StringView rshift = puddle_cstr_sv("Shift_R");
+    if(puddle_sv_comp(&sv, &rshift) == SV_SAME)
     {
         return RIVER2D_ASCII_RSHIFT;
     }
 
-    StringView lctrl = cstr_sv("Control_L");
-    if(sv_comp(&sv, &lctrl) == SV_SAME)
+    StringView lctrl = puddle_cstr_sv("Control_L");
+    if(puddle_sv_comp(&sv, &lctrl) == SV_SAME)
     {
         return RIVER2D_ASCII_LCTRL;
     }
-    StringView rctrl = cstr_sv("Control_R");
-    if(sv_comp(&sv, &rctrl) == SV_SAME)
+    StringView rctrl = puddle_cstr_sv("Control_R");
+    if(puddle_sv_comp(&sv, &rctrl) == SV_SAME)
     {
         return RIVER2D_ASCII_RCTRL;
     }
 
-    // StringView lalt = cstr_sv("Alt_L");
-    // if(sv_comp(&sv, &lalt) == SV_LONGER_FIRST)
+    // StringView lalt = puddle_cstr_sv("Alt_L");
+    // if(puddle_sv_comp(&sv, &lalt) == SV_LONGER_FIRST)
     // {
     //     return RIVER2D_ASCII_LALT;
     // }
     // NOTE: ISO_Level3_Shift for ALT_GR, I think otherwise it'd just be ALT_L
-    // StringView ralt = cstr_sv("ISO_Level3_Shift");
-    // if(sv_comp(&sv, &ralt) == SV_LONGER_FIRST)
+    // StringView ralt = puddle_cstr_sv("ISO_Level3_Shift");
+    // if(puddle_sv_comp(&sv, &ralt) == SV_LONGER_FIRST)
     // {
     //     return RIVER2D_ASCII_RALT;
     // }
