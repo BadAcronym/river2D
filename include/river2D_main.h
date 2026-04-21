@@ -254,7 +254,7 @@ typedef struct EngineData
     void    (*loadText)       (struct EngineData *engine,    River2D_Image *image,
                                StringView        *sv,        uint8_t       font,
                                uint16_t          charsize,   uint32_t      spacing,
-                               uint32_t          offsetY,    uint32_t      offsetX);
+                               uint32_t          offsetX,    uint32_t      offsetY);
 
     void    (*compositeImage) (struct EngineData *engine,    River2D_Image *src,
                                River2D_Image     *dst,       uint8_t       pictop,
@@ -419,22 +419,29 @@ extern void river2D_createButton
     Button        *button
 );
 
+// initializes the engine and all needed resources.
 extern void river2D_init
 (
     EngineData    *engine,
     River2D_Image *planes
 );
 
+// shuts down the engine and safely frees all used resources.
 extern int32_t river2D_shutdown
 (
     EngineData *engine
 );
 
+// takes whatever is in `engine->backbuffer` and blts it to the window, performing
+// scaling, if necessary.
 extern void river2D_bltBuffer
 (
     EngineData *engine
 );
 
+// reads the text from `sv`, creates an image with the wanted text,
+// taking the font image from `engine->planes[font]`.
+// Needs you to specify `charsize` and the `offsetX`, `offsetY`.
 extern void river2D_loadText
 (
     EngineData    *engine,
@@ -443,10 +450,12 @@ extern void river2D_loadText
     uint8_t       font,
     uint16_t      charsize,
     uint32_t      spacing,
-    uint32_t      offsetY,
-    uint32_t      offsetX
+    uint32_t      offsetX,
+    uint32_t      offsetY
 );
 
+// Takes `src` at offsets `offsetSrcX` and `offsetSrcY`.
+// Composites `src` onto `dst`, at `offsetDstX`, `offsetDstY`, given `pictop`.
 extern void river2D_compositeImage
 (
     EngineData    *engine,
