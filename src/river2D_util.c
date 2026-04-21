@@ -273,5 +273,5 @@ void river2D_createButton
     button->area.lowRight.x = button->area.upLeft.x + floatWidth;
     button->area.lowRight.y = button->area.upLeft.y + floatHeight;
 
-    engine->loadText(engine, img, sv, font, charsize, spacing, offsetX, offsetY);
+    river2D_loadText(engine, img, sv, font, charsize, spacing, offsetX, offsetY);
 }
