@@ -53,16 +53,12 @@ void river2D_resolveRenderer
           fprintf(stderr, "\033[0m\n");
         }
 
-        resolveFunction((void**)&engine->init,
-                        software, "river2D_init", &error);
-        resolveFunction((void**)&engine->shutdown,
-                        software, "river2D_shutdown", &error);
-        resolveFunction((void**)&engine->loadText,
-                        software, "river2D_loadText", &error);
-        resolveFunction((void**)&engine->bltBuffer,
-                        software, "river2D_bltBuffer", &error);
+        resolveFunction((void**)&engine->init,      software, "init",      &error);
+        resolveFunction((void**)&engine->shutdown,  software, "shutdown",  &error);
+        resolveFunction((void**)&engine->loadText,  software, "loadText",  &error);
+        resolveFunction((void**)&engine->bltBuffer, software, "bltBuffer", &error);
         resolveFunction((void**)&engine->compositeImage,
-                        software, "river2D_compositeImage", &error);
+                        software, "compositeImage", &error);
     }
     else if(renderer == RIVER2D_RENDERER_OPENGL)
     {
@@ -506,4 +502,58 @@ void river2D_changeCursor
 
     XDefineCursor(engine->display, engine->window, cursor);
     engine->currentCursor = image;
+}
+
+// to simplify access to renderer-agnostic function calls:
+void river2D_init
+(
+    EngineData    *engine,
+    River2D_Image *planes
+){
+    engine->init(engine, planes);
+}
+
+int32_t river2D_shutdown
+(
+    EngineData *engine
+){
+    return engine->shutdown(engine);
+}
+
+void river2D_bltBuffer
+(
+    EngineData *engine
+){
+    engine->bltBuffer(engine);
+}
+
+void river2D_loadText
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    StringView    *sv,
+    uint8_t       font,
+    uint16_t      charsize,
+    uint32_t      spacing,
+    uint32_t      offsetY,
+    uint32_t      offsetX
+){
+    engine->loadText(engine, image, sv, font, charsize, spacing, offsetY, offsetX);
+}
+
+void river2D_compositeImage
+(
+    EngineData    *engine,
+    River2D_Image *src,
+    River2D_Image *dst,
+    uint8_t       pictop,
+    uint32_t      offsetDstX,
+    uint32_t      offsetDstY,
+    uint32_t      offsetSrcX,
+    uint32_t      offsetSrcY,
+    uint32_t      cropWidth,
+    uint32_t      cropHeight
+){
+    engine->compositeImage(engine, src, dst, pictop, offsetDstX, offsetDstY,
+                           offsetSrcX, offsetSrcY, cropWidth, cropHeight);
 }

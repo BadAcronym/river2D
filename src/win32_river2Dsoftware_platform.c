@@ -32,7 +32,7 @@ void river2D_resizeBackbuffer
     }
 }
 
-void river2D_init
+void init
 (
     EngineData         *engine,
     River2D_Image      *planes
@@ -55,7 +55,7 @@ void river2D_init
     }
 }
 
-int32_t river2D_shutdown
+int32_t shutdown
 (
     EngineData *engine
 ){
@@ -66,7 +66,7 @@ int32_t river2D_shutdown
     return 0;
 }
 
-void river2D_compositeImage
+void compositeImage
 (
     EngineData    *engine,
     River2D_Image *src,
@@ -144,7 +144,7 @@ void river2D_compositeImage
 }
 
 // TODO: figure out some bilinear or lanzcos or something for this, currently it looks awful
-void river2D_bltBuffer
+void bltBuffer
 (
     EngineData *engine
 ){
@@ -156,7 +156,7 @@ void river2D_bltBuffer
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
 }
 
-void river2D_loadText
+void loadText
 (
     EngineData    *engine,
     River2D_Image *image,

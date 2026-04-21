@@ -98,7 +98,7 @@ void river2D_resizeBackbuffer
     engine->backbuffer.height = height;
 }
 
-void river2D_init
+void init
 (
     EngineData         *engine,
     River2D_Image      *planes
@@ -179,7 +179,7 @@ void river2D_init
                                                engine->format, 0, 0);
 }
 
-int32_t river2D_shutdown
+int32_t shutdown
 (
     EngineData *engine
 ){
@@ -197,7 +197,7 @@ int32_t river2D_shutdown
     return 0;
 }
 
-void river2D_compositeImage
+void compositeImage
 (
     EngineData    *engine,
     River2D_Image *src,
@@ -258,7 +258,7 @@ void river2D_compositeImage
                      (int)offsetDstX, (int)offsetDstY, cropWidth, cropHeight);
 }
 
-void river2D_bltBuffer
+void bltBuffer
 (
     EngineData *engine
 ){
@@ -280,7 +280,7 @@ void river2D_bltBuffer
                      engine->config.window_width, engine->config.window_height);
 }
 
-void river2D_loadText
+void loadText
 (
     EngineData    *engine,
     River2D_Image *image,

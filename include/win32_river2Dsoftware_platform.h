@@ -6,23 +6,23 @@
 
 #define EXPORT __declspec(dllexport)
 
-EXPORT void river2D_init
+EXPORT void init
 (
     EngineData         *engine,
     River2D_Image      *planes
 );
 
-EXPORT int32_t river2D_shutdown
+EXPORT int32_t shutdown
 (
     EngineData *engine
 );
 
-EXPORT void river2D_bltBuffer
+EXPORT void bltBuffer
 (
     EngineData *engine
 );
 
-EXPORT void river2D_compositeImage
+EXPORT void compositeImage
 (
     EngineData    *engine,
     River2D_Image *src,
@@ -36,7 +36,7 @@ EXPORT void river2D_compositeImage
     uint32_t      cropHeight
 );
 
-EXPORT void river2D_loadText
+EXPORT void loadText
 (
     EngineData    *engine,
     River2D_Image *image,
