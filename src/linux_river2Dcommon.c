@@ -24,7 +24,7 @@ f_internal void resolveFunction
         fputs(*error, stderr);
         fprintf(stderr, "\033[0m\n");
     }
-    #ifndef DEBUG
+    #ifdef DEBUG
     else
     {
         fprintf(stderr, "Loaded symbol: %s at %p\n", name, *fptr);
@@ -49,8 +49,8 @@ void river2D_resolveRenderer
         {
             fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded "
                     "from specified folder: %s\n", libpath);
-          fputs(dlerror(), stderr);
-          fprintf(stderr, "\033[0m\n");
+            fputs(dlerror(), stderr);
+            fprintf(stderr, "\033[0m\n");
         }
 
         resolveFunction((void**)&engine->init,      software, "init",      &error);
