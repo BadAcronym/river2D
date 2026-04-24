@@ -1,37 +1,7 @@
 #include "river2D_main.h"
 
 #include <stdint.h>
-#include <string.h>
 #include <stdio.h>
-
-// URGENT: deprecate this in favour of string_view.h
-const char* river2D_contains
-(
-    const char *bigStr,
-    const char *smallStr
-){
-    size_t smallsize = strlen(smallStr);
-    size_t bigsize   = strlen(bigStr);
-
-    for(size_t i = 0, j = 0; i < bigsize - smallsize; ++i)
-    {
-        if(bigStr[i] == smallStr[j])
-        {
-            for(; j < smallsize; ++j)
-            {
-                if(bigStr[i + j] != smallStr[j])
-                {
-                    goto retry;
-                }
-            }
-            return &bigStr[i];
-        }
-retry:
-        j = 0;
-    }
-
-    return 0;
-}
 
 // TODO: (river2D #8) allow for hot reloading via menu if necessary, apply config
 //fuzz config file, make sure it can't crash the engine
@@ -52,7 +22,8 @@ void river2D_loadConfig
     uint32_t parsedWidth_window  = 0;
     uint32_t parsedHeight_window = 0;
 
-    uint8_t code = river2D_verifyPath(RIVER2D_CONFIG_PATH);
+    StringView codePath = puddle_cstr_sv(RIVER2D_CONFIG_PATH);
+    uint8_t    code     = river2D_verifyPath(codePath);
 
     if(code == RIVER2D_TYPE_FILE)
     {
@@ -67,9 +38,15 @@ void river2D_loadConfig
         char buf[bufsize];
         while(fgets(buf, bufsize, file))
         {
-            const char* fpsloc = river2D_contains(buf, "showFPS");
-            if(fpsloc && (fpsloc + 9 - buf) < bufsize)
+            StringView buffer;
+            buffer.data = buf;
+            buffer.size = bufsize;
+
+            StringView FPS_sv  = puddle_cstr_sv("showFPS");
+            const char* fpsloc = puddle_sv_find(FPS_sv, buffer);
+            if(fpsloc)
             {
+                // TODO: I need to solidify this parsing more... xD
                 bool foundShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
                 if(!foundShowFps)
                 {
@@ -82,8 +59,11 @@ void river2D_loadConfig
                 continue;
             }
 
-            const char* cwidthloc = river2D_contains(buf, "canvas_width");
-            if(cwidthloc && (cwidthloc + 14 - buf) < bufsize)
+            // TODO: now, we want to check whether buf contains "true" or "false", but
+
+            StringView cwidth_sv  = puddle_cstr_sv("canvas_width");
+            const char* cwidthloc = puddle_sv_find(cwidth_sv, buffer);
+            if(cwidthloc)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
                 {
@@ -109,8 +89,9 @@ void river2D_loadConfig
                 continue;
             }
 
-            const char* cheightloc = river2D_contains(buf, "canvas_height");
-            if(cheightloc && (cheightloc + 15 - buf) < bufsize)
+            StringView cheight_sv  = puddle_cstr_sv("canvas_height");
+            const char* cheightloc = puddle_sv_find(cheight_sv, buffer);
+            if(cheightloc)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
                 {
@@ -136,7 +117,8 @@ void river2D_loadConfig
                 continue;
             }
 
-            const char* wwidthloc = river2D_contains(buf, "window_width");
+            StringView wwidth_sv  = puddle_cstr_sv("window_width");
+            const char* wwidthloc = puddle_sv_find(wwidth_sv, buffer);
             if(wwidthloc && (wwidthloc + 14 - buf) < bufsize)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -163,7 +145,8 @@ void river2D_loadConfig
                 continue;
             }
 
-            const char* wheightloc = river2D_contains(buf, "window_height");
+            StringView wheight_sv  = puddle_cstr_sv("window_height");
+            const char* wheightloc = puddle_sv_find(wheight_sv, buffer);
             if(wheightloc && (wheightloc + 15 - buf) < bufsize)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -229,8 +212,8 @@ void river2D_loadConfig
 
 bool river2D_insideArea
 (
-    Coordinates *point,
-    Area        *area
+    const Coordinates *point,
+    const Area        *area
 ){
     // TODO: in the future, handle non parallel cases.
     // if(area->upLeft.x == area->lowLeft.x && area->upRight.x && ...)
@@ -241,8 +224,8 @@ bool river2D_insideArea
 
 bool river2D_insideRect
 (
-    Coordinates *point,
-    Rect        *rect
+    const Coordinates *point,
+    const Rect        *rect
 ){
     return(point->x > rect->upLeft.x && point->x < rect->lowRight.x &&
            point->y > rect->upLeft.y && point->y < rect->lowRight.y);

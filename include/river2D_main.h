@@ -91,22 +91,22 @@
 #define RIVER2D_TYPE_OTHER               3
 #define RIVER2D_TYPE_MAX                 3
 
-#define RIVER2D_PICTOP_MINIMUM	         0
-#define RIVER2D_PICTOP_CLEAR	         0
-#define RIVER2D_PICTOP_SRC		         1
-#define RIVER2D_PICTOP_DST		         2
-#define RIVER2D_PICTOP_OVER		         3
+#define RIVER2D_PICTOP_MINIMUM           0
+#define RIVER2D_PICTOP_CLEAR             0
+#define RIVER2D_PICTOP_SRC               1
+#define RIVER2D_PICTOP_DST               2
+#define RIVER2D_PICTOP_OVER              3
 #define RIVER2D_PICTOP_OVERREVERSE       4
-#define RIVER2D_PICTOP_IN		         5
+#define RIVER2D_PICTOP_IN                5
 #define RIVER2D_PICTOP_INREVERSE         6
-#define RIVER2D_PICTOP_OUT		         7
+#define RIVER2D_PICTOP_OUT               7
 #define RIVER2D_PICTOP_OUTREVERSE        8
-#define RIVER2D_PICTOP_ATOP		         9
+#define RIVER2D_PICTOP_ATOP              9
 #define RIVER2D_PICTOP_ATOPREVERSE       10
-#define RIVER2D_PICTOP_XOR		         11
-#define RIVER2D_PICTOP_ADD		         12
-#define RIVER2D_PICTOP_SATURATE	         13
-#define RIVER2D_PICTOP_MAXIMUM	         13
+#define RIVER2D_PICTOP_XOR               11
+#define RIVER2D_PICTOP_ADD               12
+#define RIVER2D_PICTOP_SATURATE          13
+#define RIVER2D_PICTOP_MAXIMUM           13
 
 #define RIVER2D_CHOICE_SHOW_FPS_BIT      1
 #define RIVER2D_CHOICE_STATIC_CANVAS_BIT 2
@@ -351,18 +351,18 @@ extern uint64_t river2D_deltaTime_now_ns
 extern void river2D_resolveRenderer
 (
     EngineData *engine,
-    const char *libpath,
+    StringView libpath,
     uint8_t    renderer
 );
 
 extern uint8_t river2D_verifyPath
 (
-    const char *path
+    StringView path
 );
 
 extern const char* river2D_listFiles
 (
-    const char *path
+    StringView directory
 );
 
 #ifdef BUILD_LINUX
@@ -378,12 +378,6 @@ extern void river2D_loadConfig
     River2D_Config *config
 );
 
-extern const char* river2D_contains
-(
-    const char *bigStr,
-    const char *smallStr
-);
-
 extern Dimensions river2D_getWindowSize
 (
     EngineData *engine
@@ -397,14 +391,14 @@ extern void river2D_changeCursor
 
 extern bool river2D_insideArea
 (
-    Coordinates *point,
-    Area        *area
+    const Coordinates *point,
+    const Area        *area
 );
 
 extern bool river2D_insideRect
 (
-    Coordinates *point,
-    Rect        *rect
+    const Coordinates *point,
+    const Rect        *rect
 );
 
 extern void river2D_createButton

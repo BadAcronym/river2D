@@ -26,7 +26,7 @@ f_internal void resolveFunction
 void river2D_resolveRenderer
 (
     EngineData *engine,
-    const char *libpath,
+    StringView libpath,
     uint8_t    renderer
 ){
     SetDllDirectoryA(libpath);
@@ -290,8 +290,8 @@ void river2D_changeCursor
     }
 
     DestroyCursor(engine->hCursor);
-	DeleteObject(engine->cursorBitmap);
-	DeleteObject(engine->cursorMask);
+    DeleteObject(engine->cursorBitmap);
+    DeleteObject(engine->cursorMask);
 
     BITMAPINFO bmi              = {0};
     bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
@@ -302,27 +302,27 @@ void river2D_changeCursor
     bmi.bmiHeader.biSizeImage   = 0;
     bmi.bmiHeader.biCompression = BI_RGB;
 
-	uint32_t *data = 0;
-	engine->cursorBitmap = CreateDIBSection(0, &bmi, DIB_RGB_COLORS, (void**)&data, 0, 0);
+    uint32_t *data = 0;
+    engine->cursorBitmap = CreateDIBSection(0, &bmi, DIB_RGB_COLORS, (void**)&data, 0, 0);
 
     bool null_cursor = true;
 
-	for(uint32_t i = 0; i < image->height * image->width; ++i)
-	{
+    for(uint32_t i = 0; i < image->height * image->width; ++i)
+    {
         data[i] = ((uint32_t*)image->data)[i];
         if(data[i] & 0x000000FF)
         {
             null_cursor = false;
         }
-	}
+    }
 
     engine->cursorMask = CreateBitmap(image->width, image->height, 1, 1, 0);
 
-	ICONINFO iconInfo = {0};
-	iconInfo.hbmColor = engine->cursorBitmap;
+    ICONINFO iconInfo = {0};
+    iconInfo.hbmColor = engine->cursorBitmap;
     iconInfo.hbmMask  = engine->cursorMask;
 
-	engine->hCursor       = CreateIconIndirect(&iconInfo);
+    engine->hCursor       = CreateIconIndirect(&iconInfo);
     engine->currentCursor = image;
 
     if(null_cursor)

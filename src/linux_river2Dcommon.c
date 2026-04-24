@@ -35,20 +35,20 @@ f_internal void resolveFunction
 void river2D_resolveRenderer
 (
     EngineData *engine,
-    const char *libpath,
+    StringView libpath,
     uint8_t    renderer
 ){
     if(renderer == RIVER2D_RENDERER_SOFTWARE)
     {
         char so[256] = {'\0'};
-        sprintf(so, "%s/libriver2Dsoftware.so", libpath);
+        sprintf(so, PRI_SV"/libriver2Dsoftware.so", ARG_SV(libpath));
 
         char *error = 0;
         void *software = dlopen(so, RTLD_NOW);
         if(!software)
         {
             fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded "
-                    "from specified folder: %s\n", libpath);
+                    "from specified folder: "PRI_SV"\n", ARG_SV(libpath));
             fputs(dlerror(), stderr);
             fprintf(stderr, "\033[0m\n");
         }
@@ -264,11 +264,11 @@ River2D_Time river2D_queryTime
 
 uint8_t river2D_verifyPath
 (
-    const char *path
+    StringView path
 ){
     struct stat pathInfo;
 
-    if(stat(path, &pathInfo))
+    if(stat(puddle_sv_cstr(path), &pathInfo))
     {
         return RIVER2D_TYPE_ERROR;
     }
@@ -287,13 +287,15 @@ uint8_t river2D_verifyPath
 
 const char* river2D_listFiles
 (
-    const char *path
+    StringView path
 ){
     DIR           *dir;
     struct dirent *ent;
     uint32_t      listSize = 0;
 
-    if((dir = opendir(path)))
+    const char *directory = puddle_sv_cstr(path);
+
+    if((dir = opendir(directory)))
     {
         while((ent = readdir(dir)))
         {
@@ -314,7 +316,7 @@ const char* river2D_listFiles
     uint32_t offset = 0;
 
     free(dir);
-    dir = opendir(path);
+    dir = opendir(directory);
 
     while((ent = readdir(dir)))
     {
@@ -365,98 +367,98 @@ uint8_t xkeyToAscii
     }
 
     StringView space = puddle_cstr_sv("s");
-    if(puddle_sv_comp(&sv, &space) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, space) == space.data)
     {
         return RIVER2D_ASCII_SPACE;
     }
 
     StringView backspace = puddle_cstr_sv("B");
-    if(puddle_sv_comp(&sv, &backspace) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, backspace) == sv.data)
     {
         return RIVER2D_ASCII_BACKSPACE;
     }
 
     StringView less = puddle_cstr_sv("l");
-    if(puddle_sv_comp(&sv, &less) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, less) == sv.data)
     {
         return '<';
     }
     StringView greater = puddle_cstr_sv("g");
-    if(puddle_sv_comp(&sv, &greater) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, greater) == sv.data)
     {
         return '>';
     }
 
     StringView period = puddle_cstr_sv("p");
-    if(puddle_sv_comp(&sv, &period) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, period) == sv.data)
     {
         return '.';
     }
     StringView comma = puddle_cstr_sv("c");
-    if(puddle_sv_comp(&sv, &comma) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, comma) == sv.data)
     {
         return ',';
     }
 
     StringView minus = puddle_cstr_sv("m");
-    if(puddle_sv_comp(&sv, &minus) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, minus) == sv.data)
     {
         return '-';
     }
     StringView equal = puddle_cstr_sv("e");
-    if(puddle_sv_comp(&sv, &equal) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, equal) == sv.data)
     {
         return '=';
     }
 
     StringView escape = puddle_cstr_sv("E");
-    if(puddle_sv_comp(&sv, &escape) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, escape) == sv.data)
     {
         return RIVER2D_ASCII_ESCAPE;
     }
 
     StringView enter = puddle_cstr_sv("R");
-    if(puddle_sv_comp(&sv, &enter) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, enter) == sv.data)
     {
         return RIVER2D_ASCII_ENTER;
     }
 
     StringView tab = puddle_cstr_sv("T");
-    if(puddle_sv_comp(&sv, &tab) == SV_LONGER_FIRST)
+    if(puddle_sv_find(sv, tab) == sv.data)
     {
         return RIVER2D_ASCII_TAB;
     }
 
     StringView lshift = puddle_cstr_sv("Shift_L");
-    if(puddle_sv_comp(&sv, &lshift) == SV_SAME)
+    if(puddle_sv_same(sv, lshift))
     {
         return RIVER2D_ASCII_LSHIFT;
     }
     StringView rshift = puddle_cstr_sv("Shift_R");
-    if(puddle_sv_comp(&sv, &rshift) == SV_SAME)
+    if(puddle_sv_same(sv, rshift))
     {
         return RIVER2D_ASCII_RSHIFT;
     }
 
     StringView lctrl = puddle_cstr_sv("Control_L");
-    if(puddle_sv_comp(&sv, &lctrl) == SV_SAME)
+    if(puddle_sv_same(sv, lctrl))
     {
         return RIVER2D_ASCII_LCTRL;
     }
     StringView rctrl = puddle_cstr_sv("Control_R");
-    if(puddle_sv_comp(&sv, &rctrl) == SV_SAME)
+    if(puddle_sv_same(sv, rctrl))
     {
         return RIVER2D_ASCII_RCTRL;
     }
 
     // StringView lalt = puddle_cstr_sv("Alt_L");
-    // if(puddle_sv_comp(&sv, &lalt) == SV_LONGER_FIRST)
+    // if(puddle_sv_find(sv, lalt) == sv.data)
     // {
     //     return RIVER2D_ASCII_LALT;
     // }
     // NOTE: ISO_Level3_Shift for ALT_GR, I think otherwise it'd just be ALT_L
     // StringView ralt = puddle_cstr_sv("ISO_Level3_Shift");
-    // if(puddle_sv_comp(&sv, &ralt) == SV_LONGER_FIRST)
+    // if(puddle_sv_find(sv, ralt) == sv.data)
     // {
     //     return RIVER2D_ASCII_RALT;
     // }
