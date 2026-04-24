@@ -267,11 +267,15 @@ uint8_t river2D_verifyPath
     StringView path
 ){
     struct stat pathInfo;
+    const char *path_cstr = puddle_sv_cstr(path);
 
-    if(stat(puddle_sv_cstr(path), &pathInfo))
+    if(stat(path_cstr, &pathInfo))
     {
+        free((void*)path_cstr);
         return RIVER2D_TYPE_ERROR;
     }
+
+    free((void*)path_cstr);
 
     if(S_ISDIR(pathInfo.st_mode))
     {
