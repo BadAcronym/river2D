@@ -433,33 +433,46 @@ extern void river2D_bltBuffer
     EngineData *engine
 );
 
+typedef struct rvLoadTextSettings
+{
+    River2D_Image *image;
+    StringView    *sv;
+    uint8_t       font;
+    uint16_t      charsize;
+    uint32_t      spacing;
+    uint32_t      offsetX;
+    uint32_t      offsetY;
+}
+rvLoadTextSettings;
+
 // reads the text from `sv`, creates an image with the wanted text,
 // taking the font image from `engine->planes[font]`.
 // Needs you to specify `charsize` and the `offsetX`, `offsetY`.
 extern void river2D_loadText
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    StringView    *sv,
-    uint8_t       font,
-    uint16_t      charsize,
-    uint32_t      spacing,
-    uint32_t      offsetX,
-    uint32_t      offsetY
+    EngineData         *engine,
+    rvLoadTextSettings *settings
 );
+
+typedef struct rvCompositeSettings
+{
+    EngineData    *engine;
+    River2D_Image *src;
+    River2D_Image *dst;
+    uint8_t       pictop;
+    uint32_t      offsetDstX;
+    uint32_t      offsetDstY;
+    uint32_t      offsetSrcX;
+    uint32_t      offsetSrcY;
+    uint32_t      cropWidth;
+    uint32_t      cropHeight;
+}
+rvCompositeSettings;
 
 // Takes `src` at offsets `offsetSrcX` and `offsetSrcY`.
 // Composites `src` onto `dst`, at `offsetDstX`, `offsetDstY`, given `pictop`.
 extern void river2D_compositeImage
 (
-    EngineData    *engine,
-    River2D_Image *src,
-    River2D_Image *dst,
-    uint8_t       pictop,
-    uint32_t      offsetDstX,
-    uint32_t      offsetDstY,
-    uint32_t      offsetSrcX,
-    uint32_t      offsetSrcY,
-    uint32_t      cropWidth,
-    uint32_t      cropHeight
+    EngineData          *engine,
+    rvCompositeSettings *settings
 );

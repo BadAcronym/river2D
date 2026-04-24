@@ -531,31 +531,23 @@ void river2D_bltBuffer
 
 void river2D_loadText
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    StringView    *sv,
-    uint8_t       font,
-    uint16_t      charsize,
-    uint32_t      spacing,
-    uint32_t      offsetX,
-    uint32_t      offsetY
+    EngineData         *engine,
+    rvLoadTextSettings *settings
 ){
-    engine->loadText(engine, image, sv, font, charsize, spacing, offsetX, offsetY);
+    engine->loadText(engine,             settings->image,
+                     settings->sv,       settings->font,
+                     settings->charsize, settings->spacing,
+                     settings->offsetX,  settings->offsetY);
 }
 
 void river2D_compositeImage
 (
-    EngineData    *engine,
-    River2D_Image *src,
-    River2D_Image *dst,
-    uint8_t       pictop,
-    uint32_t      offsetDstX,
-    uint32_t      offsetDstY,
-    uint32_t      offsetSrcX,
-    uint32_t      offsetSrcY,
-    uint32_t      cropWidth,
-    uint32_t      cropHeight
+    EngineData          *engine,
+    rvCompositeSettings *settings
 ){
-    engine->compositeImage(engine, src, dst, pictop, offsetDstX, offsetDstY,
-                           offsetSrcX, offsetSrcY, cropWidth, cropHeight);
+    engine->compositeImage(engine,               settings->src,
+                           settings->dst,        settings->pictop,
+                           settings->offsetDstX, settings->offsetDstY,
+                           settings->offsetSrcX, settings->offsetSrcY,
+                           settings->cropWidth,  settings->cropHeight);
 }
