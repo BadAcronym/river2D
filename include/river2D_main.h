@@ -456,7 +456,6 @@ extern void river2D_loadText
 
 typedef struct rvCompositeSettings
 {
-    EngineData    *engine;
     River2D_Image *src;
     River2D_Image *dst;
     uint8_t       pictop;
