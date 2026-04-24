@@ -25,7 +25,8 @@ void river2D_resizeBackbuffer
     engine->backbuffer.info.bmiHeader.biBitCount    = 32;
     engine->backbuffer.info.bmiHeader.biCompression = BI_RGB;
 
-    engine->backbuffer.data = VirtualAlloc(0, width * height * RIVER2D_BPP, MEM_COMMIT, PAGE_READWRITE);
+    engine->backbuffer.data = VirtualAlloc(0, width * height * RIVER2D_BPP,
+                                           MEM_COMMIT, PAGE_READWRITE);
     if(!engine->backbuffer.data)
     {
         fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer.\033[0m");
@@ -47,11 +48,13 @@ void init
 
     if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_createImage(engine, &engine->backbuffer, engine->config.canvas_width, engine->config.canvas_height);
+        river2D_createImage(engine, &engine->backbuffer,
+                            engine->config.canvas_width, engine->config.canvas_height);
     }
     else
     {
-        river2D_createImage(engine, &engine->backbuffer, engine->config.window_width, engine->config.window_height);
+        river2D_createImage(engine, &engine->backbuffer,
+                            engine->config.window_width, engine->config.window_height);
     }
 }
 
@@ -122,7 +125,8 @@ void compositeImage
         cropHeight = engine->backbuffer.height - offsetDstY;
     }
 
-    uint8_t *dst_data = (uint8_t*)dst->data + offsetDstY * bufWidth + offsetDstX * RIVER2D_BPP;
+    uint8_t *dst_data = (uint8_t*)dst->data +
+                        offsetDstY * bufWidth + offsetDstX * RIVER2D_BPP;
     uint8_t *src_data = src->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
 
     cropWidth *= RIVER2D_BPP;
@@ -143,7 +147,8 @@ void compositeImage
     }
 }
 
-// TODO: figure out some bilinear or lanzcos or something for this, currently it looks awful
+// TODO: figure out some bilinear or lanzcos or something for this, currently it looks
+// awful
 void bltBuffer
 (
     EngineData *engine
@@ -153,8 +158,11 @@ void bltBuffer
 
     StretchDIBits(engine->context, 0, 0, dim.width, dim.height, 0, 0,
                   (int)engine->backbuffer.width, (int)engine->backbuffer.height,
-                  engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS, SRCCOPY);
+                  engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS,
+                  SRCCOPY);
 }
+
+// TODO: move these calls to river2D_compositeImage, like linux
 
 void loadText
 (
