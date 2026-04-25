@@ -551,7 +551,7 @@ void river2D_compositeImage
 ){
     engine->compositeImage(engine,               settings->src,
                            settings->dst,        settings->pictop,
-                           settings->offsetDstX, settings->offsetDstY,
                            settings->offsetSrcX, settings->offsetSrcY,
+                           settings->offsetDstX, settings->offsetDstY,
                            settings->cropWidth,  settings->cropHeight);
 }
