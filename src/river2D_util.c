@@ -256,7 +256,7 @@ void river2D_createButton
     button->area.lowRight.x = button->area.upLeft.x + floatWidth;
     button->area.lowRight.y = button->area.upLeft.y + floatHeight;
 
-    rvLoadTextSettings set;
+    rvLoadTextSettings set = {0};
     set.image    = img;
     set.sv       = sv;
     set.font     = font;
