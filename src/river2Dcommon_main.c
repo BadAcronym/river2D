@@ -19,8 +19,24 @@ f_internal void calcDelta
         fprintf(stderr, "\033[31mERROR: timestamp 1 is malformed.\033[0m\n");
     }
 
-    *deltaS  = time2->s  - time1->s;
-    *deltaNS = time2->ns - time1->ns;
+    // uninitialized times
+    if(time1->s == INT64_MIN && time2->s > 0)
+    {
+        *deltaS = time2->s;
+    }
+    else
+    {
+        *deltaS  = time2->s  - time1->s;
+    }
+
+    if(time1->ns == INT64_MIN && time2->ns > 0)
+    {
+        *deltaNS = time2->ns;
+    }
+    else
+    {
+        *deltaNS = time2->ns - time1->ns;
+    }
 
     if(*deltaNS < 0)
     {
