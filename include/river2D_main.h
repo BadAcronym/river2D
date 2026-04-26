@@ -134,11 +134,11 @@ River2D_Config;
 // URGENT: use stringViews
 typedef struct River2D_Image
 {
-    char     *path;
-    uint8_t  *data;
-    uint8_t  channels;
-    uint32_t width;
-    uint32_t height;
+    StringView path;
+    uint8_t    *data;
+    uint8_t    channels;
+    uint32_t   width;
+    uint32_t   height;
 
     #ifdef BUILD_LINUX
     Pixmap   pixmap;
@@ -267,7 +267,7 @@ EngineData;
 extern void river2D_loadImage_file
 (
     EngineData    *engine,
-    char          *path,
+    StringView    path,
     River2D_Image *image,
     uint8_t       channels,
     uint8_t       bitdepth

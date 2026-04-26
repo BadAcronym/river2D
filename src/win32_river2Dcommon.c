@@ -106,7 +106,7 @@ void river2D_loadImage_ptr
     uint8_t       bitdepth
 ){
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width, &image->height, channels, bitdepth);
-    image->path = "river2D_loadImage_ptr";
+    image->path = puddle_cstr_sv("river2D_loadImage_ptr");
 }
 
 void river2D_createImage
@@ -116,7 +116,7 @@ void river2D_createImage
     uint32_t      width,
     uint32_t      height
 ){
-    image->path   = "river2D_createImage";
+    image->path   = puddle_cstr_sv("river2D_createImage");
     image->data   = calloc(width * height * RIVER2D_BPP, 1);
     image->width  = width;
     image->height = height;

@@ -237,19 +237,19 @@ void compositeImage
     if(!src->picture)
     {
         fprintf(stderr, "\033[31;1;7mERROR: src was created incorrectly.\033[0m\n");
-        fprintf(stderr, "image->path: %s\n",     src->path);
-        fprintf(stderr, "image->picture: %lu\n", src->picture);
-        fprintf(stderr, "image->width: %u\n",    src->width);
-        fprintf(stderr, "image->height: %u\n",   src->height);
+        fprintf(stderr, "image->path: "PRI_SV"\n", ARG_SV(src->path));
+        fprintf(stderr, "image->picture: %lu\n",   src->picture);
+        fprintf(stderr, "image->width: %u\n",      src->width);
+        fprintf(stderr, "image->height: %u\n",     src->height);
         abort();
     }
     if(!dst->picture)
     {
         fprintf(stderr, "\033[31;1;7mERROR: dst was created incorrectly.\033[0m\n");
-        fprintf(stderr, "image->path: %s\n",     dst->path);
-        fprintf(stderr, "image->picture: %lu\n", dst->picture);
-        fprintf(stderr, "image->width: %u\n",    dst->width);
-        fprintf(stderr, "image->height: %u\n",   dst->height);
+        fprintf(stderr, "image->path: "PRI_SV"\n", ARG_SV(dst->path));
+        fprintf(stderr, "image->picture: %lu\n",   dst->picture);
+        fprintf(stderr, "image->width: %u\n",      dst->width);
+        fprintf(stderr, "image->height: %u\n",     dst->height);
         abort();
     }
 

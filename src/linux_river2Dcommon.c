@@ -98,18 +98,20 @@ f_internal void writeMissingTexture
 void river2D_loadImage_file
 (
     EngineData    *engine,
-    char          *path,
+    StringView    path,
     River2D_Image *image,
     uint8_t       channels,
     uint8_t       bitdepth
 ){
-    image->data = imgsurf_load_file(path, &image->width, &image->height,
+    const char *path_cstr = puddle_sv_cstr(path);
+
+    image->data = imgsurf_load_file(path_cstr, &image->width, &image->height,
                                     channels, bitdepth);
     image->path = path;
 
     if(!image->data)
     {
-        fprintf(stderr, "Failed to load image from file: %s\n", path);
+        fprintf(stderr, "Failed to load image from file: %s\n", path_cstr);
         writeMissingTexture(image);
     }
 
@@ -121,7 +123,7 @@ void river2D_loadImage_file
     if(!img)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XImage from file: %s!."
-                "\n\033[0m", path);
+                "\n\033[0m", path_cstr);
     }
 
     XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
@@ -135,8 +137,10 @@ void river2D_loadImage_file
     if(!image->picture)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from file: "
-                "%s!.\n\033[0m", path);
+                "%s!.\n\033[0m", path_cstr);
     }
+
+    free((void*)path_cstr);
 }
 
 // TODO: error checking
@@ -150,7 +154,8 @@ void river2D_loadImage_ptr
 ){
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI,
                                    &image->width, &image->height, channels, bitdepth);
-    image->path = "river2D_loadImage_ptr";
+
+    image->path = puddle_cstr_sv("river2D_loadImage_ptr");
 
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
@@ -185,7 +190,7 @@ void river2D_createImage
     uint32_t      width,
     uint32_t      height
 ){
-    image->path   = "river2D_createImage";
+    image->path   = puddle_cstr_sv("river2D_createImage");
     image->data   = calloc(width * height * RIVER2D_BPP, 1);
     image->width  = width;
     image->height = height;
