@@ -416,47 +416,47 @@ uint8_t xkeyToAscii
     }
 
     StringView escape = puddle_cstr_sv("E");
-    if(puddle_sv_find(sv, escape) == sv.data)
+    if(puddle_sv_find(escape, sv) == sv.data)
     {
         return RIVER2D_ASCII_ESCAPE;
     }
 
     StringView enter = puddle_cstr_sv("R");
-    if(puddle_sv_find(sv, enter) == sv.data)
+    if(puddle_sv_find(enter, sv) == sv.data)
     {
         return RIVER2D_ASCII_ENTER;
     }
 
     StringView tab = puddle_cstr_sv("T");
-    if(puddle_sv_find(sv, tab) == sv.data)
+    if(puddle_sv_find(tab, sv) == sv.data)
     {
         return RIVER2D_ASCII_TAB;
     }
 
     StringView lshift = puddle_cstr_sv("Shift_L");
-    if(puddle_sv_same(sv, lshift))
+    if(puddle_sv_same(lshift, sv))
     {
         return RIVER2D_ASCII_LSHIFT;
     }
     StringView rshift = puddle_cstr_sv("Shift_R");
-    if(puddle_sv_same(sv, rshift))
+    if(puddle_sv_same(rshift, sv))
     {
         return RIVER2D_ASCII_RSHIFT;
     }
 
     StringView lctrl = puddle_cstr_sv("Control_L");
-    if(puddle_sv_same(sv, lctrl))
+    if(puddle_sv_same(lctrl, sv))
     {
         return RIVER2D_ASCII_LCTRL;
     }
     StringView rctrl = puddle_cstr_sv("Control_R");
-    if(puddle_sv_same(sv, rctrl))
+    if(puddle_sv_same(rctrl, sv))
     {
         return RIVER2D_ASCII_RCTRL;
     }
 
     // StringView lalt = puddle_cstr_sv("Alt_L");
-    // if(puddle_sv_find(sv, lalt) == sv.data)
+    // if(puddle_sv_find(lalt, sv) == sv.data)
     // {
     //     return RIVER2D_ASCII_LALT;
     // }
