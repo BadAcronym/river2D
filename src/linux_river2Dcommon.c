@@ -294,17 +294,17 @@ uint8_t river2D_verifyPath
     return RIVER2D_TYPE_OTHER;
 }
 
-const char* river2D_listFiles
+StringView river2D_listFiles
 (
-    StringView path
+    StringView directory
 ){
     DIR           *dir;
     struct dirent *ent;
     uint32_t      listSize = 0;
 
-    const char *directory = puddle_sv_cstr(path);
+    const char *path = puddle_sv_cstr(directory);
 
-    if((dir = opendir(directory)))
+    if((dir = opendir(path)))
     {
         while((ent = readdir(dir)))
         {
@@ -317,31 +317,37 @@ const char* river2D_listFiles
     }
     else
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: failed to open cwd.\033[0m\n");
-        return 0;
+        fprintf(stderr, "\n\033[31;1;7mERROR: failed to open directory.\033[0m\n");
+        return(StringView){0};
     }
 
     char     *list  = (char*)malloc(listSize + 1);
     uint32_t offset = 0;
 
     free(dir);
-    dir = opendir(directory);
+    dir = opendir(path);
 
     while((ent = readdir(dir)))
     {
-        uint8_t length = 0;
-        for(; length < 255 && ent->d_name[length] != '\0'; ++length)
+        uint8_t curr_length = 0;
+        for(; curr_length > 0 && ent->d_name[curr_length] != '\0'; ++curr_length)
         {
-            list[offset + length] = ent->d_name[length];
+            list[offset + curr_length] = ent->d_name[curr_length];
         }
-        list[offset + length] = ';';
-        offset += length + 1;
+        list[offset + curr_length] = ';';
+        offset += curr_length + 1;
     }
 
     list[offset] = '\0';
 
     free(dir);
-    return list;
+    free((void*)path);
+
+    return(StringView)
+    {
+        .data = list,
+        .size = offset
+    };
 }
 
 uint8_t xkeyToAscii

@@ -360,7 +360,9 @@ extern uint8_t river2D_verifyPath
     StringView path
 );
 
-extern const char* river2D_listFiles
+// lists all files in a directory and packs them into a StringView, separated by ';'.
+// makes you responsible for freeing the returned StringView's data. Not recursive.
+StringView river2D_listFiles
 (
     StringView directory
 );

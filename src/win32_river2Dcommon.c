@@ -181,27 +181,26 @@ uint8_t river2D_verifyPath
     return RIVER2D_TYPE_OTHER;
 }
 
-const char* river2D_listFiles
+StringView river2D_listFiles
 (
-    const char *path
+    StringView directory
 ){
     WIN32_FIND_DATAA fileData;
     HANDLE           foundHandle;
 
-    uint16_t stringLength = strlen(path);
-    char *winPath         = malloc(stringLength + 3);
-    for(uint16_t i = 0; i < stringLength; ++i)
+    char *winPath         = malloc(path.size + 3);
+    for(uint16_t i = 0; i < path.size; ++i)
     {
         winPath[i] = path[i];
     }
-    winPath[stringLength]     = '\\';
-    winPath[stringLength + 1] = '*';
-    winPath[stringLength + 2] = '\0';
+    winPath[path.size]     = '\\';
+    winPath[path.size + 1] = '*';
+    winPath[path.size + 2] = '\0';
 
     foundHandle = FindFirstFileA(winPath, &fileData);
     if(foundHandle == INVALID_HANDLE_VALUE)
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: failed to open cwd.\033[0m\n");
+        fprintf(stderr, "\n\033[31;1;7mERROR: failed to open directory.\033[0m\n");
         return 0;
     }
 
@@ -236,7 +235,11 @@ const char* river2D_listFiles
     list[offset] = '\0';
 
     FindClose(foundHandle);
-    return list;
+    free(winPath);
+    return(StringView)
+    {
+        .data = list,
+    };
 }
 
 uint8_t river2D_charToKey
