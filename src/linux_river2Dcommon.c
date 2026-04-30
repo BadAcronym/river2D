@@ -321,7 +321,9 @@ StringView river2D_listFiles
         return(StringView){0};
     }
 
-    char     *list  = (char*)malloc(listSize + 1);
+    String list = {0};
+    list.data   = (char*)malloc(listSize + 1);
+    list.size   = 0;
     uint32_t offset = 0;
 
     free(dir);
@@ -330,23 +332,24 @@ StringView river2D_listFiles
     while((ent = readdir(dir)))
     {
         uint8_t curr_length = 0;
-        for(; curr_length > 0 && ent->d_name[curr_length] != '\0'; ++curr_length)
+        for(; curr_length >= 0 && ent->d_name[curr_length] != '\0'; ++curr_length)
         {
-            list[offset + curr_length] = ent->d_name[curr_length];
+            list.data[offset + curr_length] = ent->d_name[curr_length];
         }
-        list[offset + curr_length] = ';';
-        offset += curr_length + 1;
+        list.data[offset + curr_length] = ';';
+        list.size += curr_length + 1;
+        offset    += curr_length + 1;
     }
 
-    list[offset] = '\0';
+    list.data[offset] = '\0';
 
     free(dir);
     free((void*)path);
 
     return(StringView)
     {
-        .data = list,
-        .size = offset
+        .data = list.data,
+        .size = list.size
     };
 }
 
