@@ -103,7 +103,7 @@ void river2D_loadImage_file
     uint8_t       channels,
     uint8_t       bitdepth
 ){
-    const char *path_cstr = puddle_sv_cstr(path);
+    const char *path_cstr = sv_cstr(path);
 
     image->data = imgsurf_load_file(path_cstr, &image->width, &image->height,
                                     channels, bitdepth);
@@ -155,7 +155,7 @@ void river2D_loadImage_ptr
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI,
                                    &image->width, &image->height, channels, bitdepth);
 
-    image->path = puddle_cstr_sv("river2D_loadImage_ptr");
+    image->path = cstr_sv("river2D_loadImage_ptr");
 
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
@@ -190,7 +190,7 @@ void river2D_createImage
     uint32_t      width,
     uint32_t      height
 ){
-    image->path   = puddle_cstr_sv("river2D_createImage");
+    image->path   = cstr_sv("river2D_createImage");
     image->data   = calloc(width * height * RIVER2D_BPP, 1);
     image->width  = width;
     image->height = height;
@@ -272,7 +272,7 @@ uint8_t river2D_verifyPath
     StringView path
 ){
     struct stat pathInfo;
-    const char *path_cstr = puddle_sv_cstr(path);
+    const char *path_cstr = sv_cstr(path);
 
     if(stat(path_cstr, &pathInfo))
     {
@@ -302,7 +302,7 @@ StringView river2D_listFiles
     struct dirent *ent;
     uint32_t      listSize = 0;
 
-    const char *path = puddle_sv_cstr(directory);
+    const char *path = sv_cstr(directory);
 
     if((dir = opendir(path)))
     {
@@ -365,7 +365,7 @@ uint8_t xkeyToAscii
 
     if(codeString)
     {
-        sv = puddle_cstr_sv(codeString);
+        sv = cstr_sv(codeString);
     }
 
     if(sv.size == 0)
@@ -384,99 +384,99 @@ uint8_t xkeyToAscii
         return (uint8_t)sv.data[0];
     }
 
-    StringView space = puddle_cstr_sv("s");
-    if(puddle_sv_find(sv, space) == space.data)
+    StringView space = cstr_sv("s");
+    if(sv_find(sv, space) == space.data)
     {
         return RIVER2D_ASCII_SPACE;
     }
 
-    StringView backspace = puddle_cstr_sv("B");
-    if(puddle_sv_find(sv, backspace) == sv.data)
+    StringView backspace = cstr_sv("B");
+    if(sv_find(sv, backspace) == sv.data)
     {
         return RIVER2D_ASCII_BACKSPACE;
     }
 
-    StringView less = puddle_cstr_sv("l");
-    if(puddle_sv_find(sv, less) == sv.data)
+    StringView less = cstr_sv("l");
+    if(sv_find(sv, less) == sv.data)
     {
         return '<';
     }
-    StringView greater = puddle_cstr_sv("g");
-    if(puddle_sv_find(sv, greater) == sv.data)
+    StringView greater = cstr_sv("g");
+    if(sv_find(sv, greater) == sv.data)
     {
         return '>';
     }
 
-    StringView period = puddle_cstr_sv("p");
-    if(puddle_sv_find(sv, period) == sv.data)
+    StringView period = cstr_sv("p");
+    if(sv_find(sv, period) == sv.data)
     {
         return '.';
     }
-    StringView comma = puddle_cstr_sv("c");
-    if(puddle_sv_find(sv, comma) == sv.data)
+    StringView comma = cstr_sv("c");
+    if(sv_find(sv, comma) == sv.data)
     {
         return ',';
     }
 
-    StringView minus = puddle_cstr_sv("m");
-    if(puddle_sv_find(sv, minus) == sv.data)
+    StringView minus = cstr_sv("m");
+    if(sv_find(sv, minus) == sv.data)
     {
         return '-';
     }
-    StringView equal = puddle_cstr_sv("e");
-    if(puddle_sv_find(sv, equal) == sv.data)
+    StringView equal = cstr_sv("e");
+    if(sv_find(sv, equal) == sv.data)
     {
         return '=';
     }
 
-    StringView escape = puddle_cstr_sv("E");
-    if(puddle_sv_find(escape, sv) == sv.data)
+    StringView escape = cstr_sv("E");
+    if(sv_find(escape, sv) == sv.data)
     {
         return RIVER2D_ASCII_ESCAPE;
     }
 
-    StringView enter = puddle_cstr_sv("R");
-    if(puddle_sv_find(enter, sv) == sv.data)
+    StringView enter = cstr_sv("R");
+    if(sv_find(enter, sv) == sv.data)
     {
         return RIVER2D_ASCII_ENTER;
     }
 
-    StringView tab = puddle_cstr_sv("T");
-    if(puddle_sv_find(tab, sv) == sv.data)
+    StringView tab = cstr_sv("T");
+    if(sv_find(tab, sv) == sv.data)
     {
         return RIVER2D_ASCII_TAB;
     }
 
-    StringView lshift = puddle_cstr_sv("Shift_L");
-    if(puddle_sv_same(lshift, sv))
+    StringView lshift = cstr_sv("Shift_L");
+    if(sv_same(lshift, sv))
     {
         return RIVER2D_ASCII_LSHIFT;
     }
-    StringView rshift = puddle_cstr_sv("Shift_R");
-    if(puddle_sv_same(rshift, sv))
+    StringView rshift = cstr_sv("Shift_R");
+    if(sv_same(rshift, sv))
     {
         return RIVER2D_ASCII_RSHIFT;
     }
 
-    StringView lctrl = puddle_cstr_sv("Control_L");
-    if(puddle_sv_same(lctrl, sv))
+    StringView lctrl = cstr_sv("Control_L");
+    if(sv_same(lctrl, sv))
     {
         return RIVER2D_ASCII_LCTRL;
     }
-    StringView rctrl = puddle_cstr_sv("Control_R");
-    if(puddle_sv_same(rctrl, sv))
+    StringView rctrl = cstr_sv("Control_R");
+    if(sv_same(rctrl, sv))
     {
         return RIVER2D_ASCII_RCTRL;
     }
 
-    // StringView lalt = puddle_cstr_sv("Alt_L");
-    // if(puddle_sv_find(lalt, sv) == sv.data)
+    // StringView lalt = cstr_sv("Alt_L");
+    // if(sv_find(lalt, sv) == sv.data)
     // {
     //     return RIVER2D_ASCII_LALT;
     // }
     // NOTE: ISO_Level3_Shift for ALT_GR, I think otherwise it'd just be ALT_L
-    // StringView ralt = puddle_cstr_sv("ISO_Level3_Shift");
-    // if(puddle_sv_find(sv, ralt) == sv.data)
+    // StringView ralt = cstr_sv("ISO_Level3_Shift");
+    // if(sv_find(sv, ralt) == sv.data)
     // {
     //     return RIVER2D_ASCII_RALT;
     // }

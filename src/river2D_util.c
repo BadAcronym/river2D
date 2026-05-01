@@ -22,7 +22,7 @@ void river2D_loadConfig
     uint32_t parsedWidth_window  = 0;
     uint32_t parsedHeight_window = 0;
 
-    StringView codePath = puddle_cstr_sv(RIVER2D_CONFIG_PATH);
+    StringView codePath = cstr_sv(RIVER2D_CONFIG_PATH);
     uint8_t    code     = river2D_verifyPath(codePath);
 
     if(code == RIVER2D_TYPE_FILE)
@@ -42,8 +42,8 @@ void river2D_loadConfig
             buffer.data = buf;
             buffer.size = bufsize;
 
-            StringView FPS_sv  = puddle_cstr_sv("showFPS");
-            const char* fpsloc = puddle_sv_find(FPS_sv, buffer);
+            StringView FPS_sv  = cstr_sv("showFPS");
+            const char* fpsloc = sv_find(FPS_sv, buffer);
             if(fpsloc)
             {
                 // TODO: I need to solidify this parsing more... xD
@@ -61,8 +61,8 @@ void river2D_loadConfig
 
             // TODO: now, we want to check whether buf contains "true" or "false", but
 
-            StringView cwidth_sv  = puddle_cstr_sv("canvas_width");
-            const char* cwidthloc = puddle_sv_find(cwidth_sv, buffer);
+            StringView cwidth_sv  = cstr_sv("canvas_width");
+            const char* cwidthloc = sv_find(cwidth_sv, buffer);
             if(cwidthloc)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -89,8 +89,8 @@ void river2D_loadConfig
                 continue;
             }
 
-            StringView cheight_sv  = puddle_cstr_sv("canvas_height");
-            const char* cheightloc = puddle_sv_find(cheight_sv, buffer);
+            StringView cheight_sv  = cstr_sv("canvas_height");
+            const char* cheightloc = sv_find(cheight_sv, buffer);
             if(cheightloc)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -117,8 +117,8 @@ void river2D_loadConfig
                 continue;
             }
 
-            StringView wwidth_sv  = puddle_cstr_sv("window_width");
-            const char* wwidthloc = puddle_sv_find(wwidth_sv, buffer);
+            StringView wwidth_sv  = cstr_sv("window_width");
+            const char* wwidthloc = sv_find(wwidth_sv, buffer);
             if(wwidthloc && (wwidthloc + 14 - buf) < bufsize)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -145,8 +145,8 @@ void river2D_loadConfig
                 continue;
             }
 
-            StringView wheight_sv  = puddle_cstr_sv("window_height");
-            const char* wheightloc = puddle_sv_find(wheight_sv, buffer);
+            StringView wheight_sv  = cstr_sv("window_height");
+            const char* wheightloc = sv_find(wheight_sv, buffer);
             if(wheightloc && (wheightloc + 15 - buf) < bufsize)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
