@@ -44,6 +44,9 @@
     #define RIVER2D_MOUSE3 0x10
 #endif
 
+#define RIVER2D_VERTICAL   0
+#define RIVER2D_HORIZONTAL 1
+
 #define RIVER2D_BPP                      4
 #define RIVER2D_PIXDEPTH                 32
 #define RIVER2D_MAX_PLANES               64
@@ -288,6 +291,13 @@ extern void river2D_createImage
     River2D_Image *image,
     uint32_t      width,
     uint32_t      height
+);
+
+extern void river2D_appendImage
+(
+    River2D_Image *src,
+    River2D_Image *dst,
+    uint8_t       direction
 );
 
 extern void river2D_refreshImage
