@@ -218,7 +218,8 @@ void river2D_createImage
     }
 }
 
-// WIP: these memcpy are prob wrong
+// SEGFAULT: either realloc is failing or I assumed wrong behaviour. trying to copy to 0
+// byte region lmfao
 void river2D_appendImage
 (
     EngineData    *engine,
