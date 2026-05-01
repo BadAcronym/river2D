@@ -295,6 +295,7 @@ extern void river2D_createImage
 
 extern void river2D_appendImage
 (
+    EngineData    *engine,
     River2D_Image *src,
     River2D_Image *dst,
     uint8_t       direction

@@ -218,6 +218,56 @@ void river2D_createImage
     }
 }
 
+// WIP: these memcpy are prob wrong
+void river2D_appendImage
+(
+    EngineData    *engine,
+    River2D_Image *src,
+    River2D_Image *dst,
+    uint8_t       direction
+){
+    if(direction == RIVER2D_HORIZONTAL)
+    {
+        uint32_t og_width = dst->width;
+        uint32_t width    = dst->width + src->width;
+
+        dst->data = realloc(dst->data, width * dst->height * RIVER2D_BPP);
+
+        for(uint32_t y = 0; y < src->height; ++y)
+        {
+            memcpy(dst->data + y * dst->width + og_width, src->data + y * src->width,
+                   src->width * RIVER2D_BPP);
+        }
+    }
+    else if(direction == RIVER2D_VERTICAL)
+    {
+        uint32_t og_height = dst->height;
+        uint32_t height    = dst->height + src->height;
+
+        dst->data = realloc(dst->data, dst->width * height * RIVER2D_BPP);
+
+        for(uint32_t y = 0; y < src->height; ++y)
+        {
+            memcpy(dst->data + (dst->width * dst->height) + y * dst->width,
+                   src->data + y * src->width,
+                   src->width * RIVER2D_BPP);
+        }
+    }
+    else
+    {
+        fprintf(stderr, "\033[31m\nERROR: unkown direction, cannot append.\n\033[0m");
+        return;
+    }
+
+    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                               (char*)dst->data, dst->width, dst->height, 32, 0);
+    XPutImage(engine->display, dst->pixmap, engine->context, img, 0, 0, 0, 0,
+              dst->width, dst->height);
+
+    img->data = NULL;
+    XDestroyImage(img);
+}
+
 void river2D_refreshImage
 (
     EngineData    *engine,
