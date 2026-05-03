@@ -480,7 +480,9 @@ StringView river2D_listFiles
         .size = list.size
     };
 
-    sv_sort_by_delim(result, ';');
+    const char *sorted = sv_sort_by_delim(result, ';');
+    free((void*)result.data);
+    result.data = sorted;
 
     free(dir);
     free((void*)path);
