@@ -466,46 +466,47 @@ uint8_t xkeyToAscii
     }
 
     StringView space = cstr_sv("s");
-    if(sv_find(sv, space) == space.data)
+    if(sv_find(space, sv) == space.data)
     {
         return RIVER2D_ASCII_SPACE;
     }
 
     StringView backspace = cstr_sv("B");
-    if(sv_find(sv, backspace) == sv.data)
+    if(sv_find(backspace, sv) == sv.data)
     {
         return RIVER2D_ASCII_BACKSPACE;
     }
 
-    StringView less = cstr_sv("l");
-    if(sv_find(sv, less) == sv.data)
-    {
-        return '<';
-    }
-    StringView greater = cstr_sv("g");
-    if(sv_find(sv, greater) == sv.data)
-    {
-        return '>';
-    }
+    // these are caps dependent...
+    // StringView less = cstr_sv("l");
+    // if(sv_find(less, sv) == sv.data)
+    // {
+    //     return '<';
+    // }
+    // StringView greater = cstr_sv("g");
+    // if(sv_find(greater, sv) == sv.data)
+    // {
+    //     return '>';
+    // }
 
     StringView period = cstr_sv("p");
-    if(sv_find(sv, period) == sv.data)
+    if(sv_find(period, sv) == sv.data)
     {
         return '.';
     }
     StringView comma = cstr_sv("c");
-    if(sv_find(sv, comma) == sv.data)
+    if(sv_find(comma, sv) == sv.data)
     {
         return ',';
     }
 
     StringView minus = cstr_sv("m");
-    if(sv_find(sv, minus) == sv.data)
+    if(sv_find(minus, sv) == sv.data)
     {
         return '-';
     }
     StringView equal = cstr_sv("e");
-    if(sv_find(sv, equal) == sv.data)
+    if(sv_find(equal, sv) == sv.data)
     {
         return '=';
     }
