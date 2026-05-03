@@ -110,8 +110,6 @@ void compositeImage
         return;
     }
 
-    // TODO: (river2D #5) verify that both images are actually RGBA
-
     uint64_t copyWidth = src->width * RIVER2D_BPP;
     uint64_t bufWidth  = dst->width * RIVER2D_BPP;
 
@@ -147,8 +145,6 @@ void compositeImage
     }
 }
 
-// TODO: figure out some bilinear or lanzcos or something for this, currently it looks
-// awful
 void bltBuffer
 (
     EngineData *engine
@@ -161,8 +157,6 @@ void bltBuffer
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS,
                   SRCCOPY);
 }
-
-// TODO: move these calls to river2D_compositeImage, like linux
 
 void loadText
 (

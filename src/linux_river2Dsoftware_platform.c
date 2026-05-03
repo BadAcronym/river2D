@@ -124,16 +124,7 @@ void init
         fprintf(stderr, "No matching visual could be found.\n");
     }
 
-    // NOTE: do we even need this anymore. dividing constants... when is it ever
-    // gonna be 24bpp?
-    if(RIVER2D_PIXDEPTH / 8 == 4)
-    {
-        engine->format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
-    }
-    else
-    {
-        engine->format = XRenderFindStandardFormat(engine->display, PictStandardRGB24);
-    }
+    engine->format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
 
     if(!engine->format)
     {
@@ -174,7 +165,6 @@ void init
                 "for backbuffer.\n\033[0m");
     }
 
-    // TODO: verify if we need this
     engine->blitDstPict = XRenderCreatePicture(engine->display, engine->window,
                                                engine->format, 0, 0);
 }
@@ -231,8 +221,6 @@ void compositeImage
         fprintf(stderr, "\033[31;1;7mERROR: dst->data is nullptr.\033[0m\n");
         return;
     }
-
-    // TODO: (river2D #5) verify that both images are actually RGBA
 
     if(!src->picture)
     {

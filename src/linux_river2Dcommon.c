@@ -143,7 +143,6 @@ void river2D_loadImage_file
     free((void*)path_cstr);
 }
 
-// TODO: error checking
 void river2D_loadImage_ptr
 (
     EngineData    *engine,
@@ -558,7 +557,7 @@ uint8_t xkeyToAscii
     // {
     //     return RIVER2D_ASCII_LALT;
     // }
-    // NOTE: ISO_Level3_Shift for ALT_GR, I think otherwise it'd just be ALT_L
+    // ISO_Level3_Shift for ALT_GR, I think otherwise it'd just be ALT_L
     // StringView ralt = cstr_sv("ISO_Level3_Shift");
     // if(sv_find(sv, ralt) == sv.data)
     // {

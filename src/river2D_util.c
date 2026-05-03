@@ -3,9 +3,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-// TODO: (river2D #8) allow for hot reloading via menu if necessary, apply config
-//fuzz config file, make sure it can't crash the engine
-
 #define bufsize 32
 
 void river2D_loadConfig
@@ -46,7 +43,6 @@ void river2D_loadConfig
             const char* fpsloc = sv_find(FPS_sv, buffer);
             if(fpsloc)
             {
-                // TODO: I need to solidify this parsing more... xD
                 bool foundShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
                 if(!foundShowFps)
                 {
@@ -58,8 +54,6 @@ void river2D_loadConfig
                 #endif
                 continue;
             }
-
-            // TODO: now, we want to check whether buf contains "true" or "false", but
 
             StringView cwidth_sv  = cstr_sv("canvas_width");
             const char* cwidthloc = sv_find(cwidth_sv, buffer);
@@ -210,17 +204,15 @@ void river2D_loadConfig
     }
 }
 
-bool river2D_insideArea
-(
-    const Coordinates *point,
-    const Area        *area
-){
-    // TODO: in the future, handle non parallel cases.
-    // if(area->upLeft.x == area->lowLeft.x && area->upRight.x && ...)
-
-    return(point->x > area->upLeft.x && point->x < area->upRight.x &&
-           point->y > area->upLeft.y && point->y < area->lowRight.y);
-}
+// handle non-parallel cases
+// bool river2D_insideArea
+// (
+//     const Coordinates *point,
+//     const Area        *area
+// ){
+//     return(point->x > area->upLeft.x && point->x < area->upRight.x &&
+//            point->y > area->upLeft.y && point->y < area->lowRight.y);
+// }
 
 bool river2D_insideRect
 (

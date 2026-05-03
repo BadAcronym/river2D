@@ -50,7 +50,6 @@
 #define RIVER2D_BPP                      4
 #define RIVER2D_PIXDEPTH                 32
 #define RIVER2D_MAX_PLANES               64
-// BACKLOG: (river2D #14) move max threads to some sort of detection function that polls the amount of cores
 #define RIVER2D_MAX_THREADS              8
 
 #define RIVER2D_RENDERER_SOFTWARE        0
@@ -134,7 +133,6 @@ typedef struct River2D_Config
 }
 River2D_Config;
 
-// URGENT: use stringViews
 typedef struct River2D_Image
 {
     StringView path;
@@ -237,7 +235,6 @@ typedef struct EngineData
     Window             window;
     GC                 context;
     Picture            blitDstPict;
-    // BACKLOG: multithread...
     // PosixThreadpool    pool;
 #endif
 
