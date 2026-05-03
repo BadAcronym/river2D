@@ -241,7 +241,7 @@ void compositeImage
         fprintf(stderr, "image->picture: %lu\n",   src->picture);
         fprintf(stderr, "image->width: %u\n",      src->width);
         fprintf(stderr, "image->height: %u\n",     src->height);
-        abort();
+        return;
     }
     if(!dst->picture)
     {
@@ -250,7 +250,7 @@ void compositeImage
         fprintf(stderr, "image->picture: %lu\n",   dst->picture);
         fprintf(stderr, "image->width: %u\n",      dst->width);
         fprintf(stderr, "image->height: %u\n",     dst->height);
-        abort();
+        return;
     }
 
     XRenderComposite(engine->display, pictop, src->picture, None, dst->picture,
