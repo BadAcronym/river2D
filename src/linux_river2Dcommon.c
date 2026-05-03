@@ -225,113 +225,25 @@ void river2D_appendImage
     River2D_Image *dst,
     uint8_t       direction
 ){
-    // FIXME: looks odd and misaligned, besides on the first one?
+    uint32_t width  = dst->width;
+    uint32_t height = dst->height;
+
     if(direction == RIVER2D_HORIZONTAL)
     {
-        uint32_t og_width = dst->width;
-        uint32_t width    = dst->width + src->width;
-        uint32_t height   = dst->height;
+        width = dst->width + src->width;
 
         if(dst->height < src->height)
         {
             height = src->height;
         }
-
-        fprintf(stderr, "og_width: %u\n", og_width);
-        fprintf(stderr, "width: %u\n", width);
-        fprintf(stderr, "height: %u\n", height);
-
-        River2D_Image tmp = {0};
-        river2D_createImage(engine, &tmp, width, height);
-
-        fprintf(stderr, "dst->data: %p\n", dst->data);
-        fprintf(stderr, "src->data: %p\n", src->data);
-        fprintf(stderr, "tmp.data: %p\n", tmp.data);
-
-        if(dst->data)
-        {
-            memcpy(tmp.data, dst->data, dst->width * dst->height * RIVER2D_BPP);
-        }
-
-        river2D_destroyImage(dst);
-        dst->path     = tmp.path;
-        dst->data     = tmp.data;
-        dst->width    = tmp.width;
-        dst->height   = tmp.height;
-        dst->pixmap   = tmp.pixmap;
-        dst->channels = tmp.channels;
-        dst->picture  = tmp.picture;
-
-        for(uint32_t y = 0; y < src->height; ++y)
-        {
-            uint64_t dst_index = RIVER2D_BPP * (y * dst->width + og_width);
-            uint64_t src_index = RIVER2D_BPP * (y * src->width);
-            fprintf(stderr, "src_index in px: %lu\n", src_index / RIVER2D_BPP);
-            fprintf(stderr, "dst_index in px: %lu\n", dst_index / RIVER2D_BPP);
-
-            fprintf(stderr, "trying to memcpy %u from %lux%lu pixels to: %lux%lu\n",
-                    src->width,
-                    (src_index / RIVER2D_BPP) % (src->width / RIVER2D_BPP), src_index / src->width / RIVER2D_BPP,
-                    (dst_index / RIVER2D_BPP) % (dst->width / RIVER2D_BPP), dst_index / dst->width / RIVER2D_BPP);
-
-            memcpy(dst->data + dst_index, src->data + src_index,
-                   src->width * RIVER2D_BPP);
-        }
     }
-    // FIXME: looks odd. why does this work on the first two, but breaks on the third?
-    // seems arbitrary...
-    // I think something about the dst indexing is wrong. the water edge texture gets
-    // copied fairly in the middle of the image.
     else if(direction == RIVER2D_VERTICAL)
     {
-        uint32_t og_height = dst->height;
-        uint32_t height    = dst->height + src->height;
-        uint32_t width     = dst->width;
+        height = dst->height + src->height;
 
         if(dst->width < src->width)
         {
             width = src->width;
-        }
-
-        fprintf(stderr, "og_height: %u\n", og_height);
-        fprintf(stderr, "width: %u\n", width);
-        fprintf(stderr, "height: %u\n", height);
-
-        River2D_Image tmp = {0};
-        river2D_createImage(engine, &tmp, width, height);
-
-        fprintf(stderr, "dst->data: %p\n", dst->data);
-        fprintf(stderr, "src->data: %p\n", src->data);
-        fprintf(stderr, "tmp.data: %p\n", tmp.data);
-
-        if(dst->data)
-        {
-            memcpy(tmp.data, dst->data, dst->width * dst->height * RIVER2D_BPP);
-        }
-
-        river2D_destroyImage(dst);
-        dst->path     = tmp.path;
-        dst->data     = tmp.data;
-        dst->width    = tmp.width;
-        dst->height   = tmp.height;
-        dst->pixmap   = tmp.pixmap;
-        dst->channels = tmp.channels;
-        dst->picture  = tmp.picture;
-
-        for(uint32_t y = 0; y < src->height; ++y)
-        {
-            uint64_t dst_index = RIVER2D_BPP * ((width * og_height) + y * dst->width);
-            uint64_t src_index = RIVER2D_BPP * (y * src->width);
-            //
-            // fprintf(stderr, "src_index in px: %lu\n", src_index / RIVER2D_BPP);
-            // fprintf(stderr, "dst_index in px: %lu\n", dst_index / RIVER2D_BPP);
-            //
-            // fprintf(stderr, "trying to memcpy %u from %lux%lu pixels to: %lux%lu\n",
-            //         src->width,
-            //         (src_index / RIVER2D_BPP) % (src->width / RIVER2D_BPP), src_index / src->width / RIVER2D_BPP,
-            //         (dst_index / RIVER2D_BPP) % (dst->width / RIVER2D_BPP), dst_index / dst->width / RIVER2D_BPP);
-
-            memcpy(dst->data + dst_index, src->data + src_index, src->width * RIVER2D_BPP);
         }
     }
     else
@@ -339,6 +251,41 @@ void river2D_appendImage
         fprintf(stderr, "\033[31m\nERROR: unkown direction, cannot append.\n\033[0m");
         return;
     }
+
+    River2D_Image tmp = {0};
+    river2D_createImage(engine, &tmp, width, height);
+
+    rvCompositeSettings comp = {0};
+    comp.dst                 = &tmp;
+    comp.pictop              = RIVER2D_PICTOP_OVER;
+
+    if(dst->data)
+    {
+        // FIXME: compositing not working. This should totally work, no?
+        // why does compositing here not actually copy anything to tmp :((
+        comp.src        = dst;
+        comp.cropWidth  = dst->width;
+        comp.cropHeight = dst->height;
+
+        river2D_compositeImage(engine, &comp);
+        river2D_destroyImage(dst);
+    }
+
+    comp.src        = src;
+    comp.offsetDstX = direction == RIVER2D_HORIZONTAL ? dst->width  : 0;
+    comp.offsetDstY = direction == RIVER2D_VERTICAL   ? dst->height : 0;
+    comp.cropHeight = src->height;
+    comp.cropWidth  = src->width;
+
+    river2D_compositeImage(engine, &comp);
+
+    dst->path     = tmp.path;
+    dst->data     = tmp.data;
+    dst->width    = tmp.width;
+    dst->height   = tmp.height;
+    dst->pixmap   = tmp.pixmap;
+    dst->channels = tmp.channels;
+    dst->picture  = tmp.picture;
 
     XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
                                (char*)dst->data, dst->width, dst->height, 32, 0);
