@@ -441,8 +441,12 @@ uint8_t xkeyToAscii
     EngineData *engine,
     XEvent     *event
 ){
-    KeySym sym = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode, 0,
-                                    event->xkey.state & ShiftMask);
+    KeySym sym = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode,
+                                    0, 0);
+                                    // for now, treat everything separately, as
+                                    // lowercase.
+                                    // 0, event->xkey.state & ShiftMask);
+
     char *codeString = XKeysymToString(sym);
     StringView sv;
 
@@ -458,12 +462,6 @@ uint8_t xkeyToAscii
 
     if(sv.size == 1)
     {
-        // cast uppercase to lowercase
-        if(sv.data[0] > 0x40 && sv.data[0] < 0x5B)
-        {
-            return (uint8_t)(sv.data[0] + 0x21);
-        }
-
         return (uint8_t)sv.data[0];
     }
 
