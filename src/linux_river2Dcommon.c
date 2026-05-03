@@ -201,10 +201,8 @@ void river2D_createImage
                                  (char*)image->data, image->width, image->height,
                                  32, 0);
 
-    // I don't think we need this here, but still I'm gonna leave it for
-    // posterity's sake, maybe it fixes a bug down the line?
-    // XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0,
-    // 0, image->width, image->height);
+    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0,
+    0, image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
@@ -225,6 +223,9 @@ void river2D_appendImage
     River2D_Image *dst,
     uint8_t       direction
 ){
+    uint32_t og_width  = dst->width;
+    uint32_t og_height = dst->height;
+
     uint32_t width  = dst->width;
     uint32_t height = dst->height;
 
@@ -261,19 +262,18 @@ void river2D_appendImage
 
     if(dst->data)
     {
-        // FIXME: compositing not working. This should totally work, no?
-        // why does compositing here not actually copy anything to tmp :((
         comp.src        = dst;
         comp.cropWidth  = dst->width;
         comp.cropHeight = dst->height;
 
         river2D_compositeImage(engine, &comp);
+
         river2D_destroyImage(dst);
     }
 
     comp.src        = src;
-    comp.offsetDstX = direction == RIVER2D_HORIZONTAL ? dst->width  : 0;
-    comp.offsetDstY = direction == RIVER2D_VERTICAL   ? dst->height : 0;
+    comp.offsetDstX = direction == RIVER2D_HORIZONTAL ? og_width  : 0;
+    comp.offsetDstY = direction == RIVER2D_VERTICAL   ? og_height : 0;
     comp.cropHeight = src->height;
     comp.cropWidth  = src->width;
 
@@ -287,13 +287,13 @@ void river2D_appendImage
     dst->channels = tmp.channels;
     dst->picture  = tmp.picture;
 
-    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                               (char*)dst->data, dst->width, dst->height, 32, 0);
-    XPutImage(engine->display, dst->pixmap, engine->context, img, 0, 0, 0, 0,
-              dst->width, dst->height);
-
-    img->data = NULL;
-    XDestroyImage(img);
+    // XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+    //                            (char*)dst->data, dst->width, dst->height, 32, 0);
+    // XPutImage(engine->display, dst->pixmap, engine->context, img, 0, 0, 0, 0,
+    //           dst->width, dst->height);
+    //
+    // img->data = NULL;
+    // XDestroyImage(img);
 }
 
 void river2D_refreshImage
@@ -301,13 +301,13 @@ void river2D_refreshImage
     EngineData    *engine,
     River2D_Image *image
 ){
-    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+    XImage *ximg = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
                                (char*)image->data, image->width, image->height, 32, 0);
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+    XPutImage(engine->display, image->pixmap, engine->context, ximg, 0, 0, 0, 0,
               image->width, image->height);
 
-    img->data = NULL;
-    XDestroyImage(img);
+    ximg->data = NULL;
+    XDestroyImage(ximg);
 }
 
 void river2D_clearImage
