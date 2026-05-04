@@ -436,23 +436,28 @@ StringView river2D_listFiles
     return result;
 }
 
+// FIXME: escape doesn't work, suddenly? what?
 uint8_t xkeyToAscii
 (
     EngineData *engine,
     XEvent     *event
 ){
-    KeySym sym = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode,
-                                    0, 0);
-                                    // for now, treat everything separately, as
-                                    // lowercase.
-                                    // 0, event->xkey.state & ShiftMask);
+    KeySym sym_shifted = XkbKeycodeToKeysym(engine->display,
+                                            (KeyCode)event->xkey.keycode,
+                                            0, event->xkey.state & ShiftMask);
 
-    char *codeString = XKeysymToString(sym);
+    // KeySym sym_unshifted = XkbKeycodeToKeysym(engine->display,
+    //                                           (KeyCode)event->xkey.keycode,
+    //                                           0, 0);
+
+    char *codeString = XKeysymToString(sym_shifted);
     StringView sv;
 
     if(codeString)
     {
         sv = cstr_sv(codeString);
+        // TESTING: debug
+        fprintf(stderr, "codestring: "PRI_SV"\n", ARG_SV(sv));
     }
 
     if(sv.size == 0)
@@ -477,17 +482,16 @@ uint8_t xkeyToAscii
         return RIVER2D_ASCII_BACKSPACE;
     }
 
-    // these are caps dependent...
-    // StringView less = cstr_sv("l");
-    // if(sv_find(less, sv) == sv.data)
-    // {
-    //     return '<';
-    // }
-    // StringView greater = cstr_sv("g");
-    // if(sv_find(greater, sv) == sv.data)
-    // {
-    //     return '>';
-    // }
+    StringView less = cstr_sv("l");
+    if(sv_find(less, sv) == sv.data)
+    {
+        return '<';
+    }
+    StringView greater = cstr_sv("g");
+    if(sv_find(greater, sv) == sv.data)
+    {
+        return '>';
+    }
 
     StringView period = cstr_sv("p");
     if(sv_find(period, sv) == sv.data)
