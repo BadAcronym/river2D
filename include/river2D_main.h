@@ -264,6 +264,13 @@ typedef struct EngineData
 }
 EngineData;
 
+typedef struct AsciiKey
+{
+    uint8_t unshifted;
+    uint8_t shifted;
+}
+AsciiKey;
+
 extern void river2D_loadImage_file
 (
     EngineData    *engine,
@@ -376,7 +383,7 @@ StringView river2D_listFiles
 );
 
 #ifdef BUILD_LINUX
-extern uint8_t xkeyToAscii
+extern AsciiKey xkeyToAscii
 (
     EngineData *engine,
     XEvent     *event

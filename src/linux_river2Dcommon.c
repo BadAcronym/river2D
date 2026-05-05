@@ -436,8 +436,7 @@ StringView river2D_listFiles
     return result;
 }
 
-// FIXME: escape doesn't work, suddenly? what?
-uint8_t xkeyToAscii
+extern AsciiKey xkeyToAscii
 (
     EngineData *engine,
     XEvent     *event
@@ -446,131 +445,216 @@ uint8_t xkeyToAscii
                                             (KeyCode)event->xkey.keycode,
                                             0, event->xkey.state & ShiftMask);
 
-    // KeySym sym_unshifted = XkbKeycodeToKeysym(engine->display,
-    //                                           (KeyCode)event->xkey.keycode,
-    //                                           0, 0);
+    KeySym sym_unshifted = XkbKeycodeToKeysym(engine->display,
+                                              (KeyCode)event->xkey.keycode,
+                                              0, 0);
 
-    char *codeString = XKeysymToString(sym_shifted);
-    StringView sv;
+    char *codeString_shifted   = XKeysymToString(sym_shifted);
+    char *codeString_unshifted = XKeysymToString(sym_unshifted);
 
-    if(codeString)
+    StringView sv_shifted   = cstr_sv(codeString_shifted);
+    StringView sv_unshifted = cstr_sv(codeString_unshifted);
+
+    if(sv_unshifted.size == 0)
     {
-        sv = cstr_sv(codeString);
-        // TESTING: debug
-        fprintf(stderr, "codestring: "PRI_SV"\n", ARG_SV(sv));
+        return (AsciiKey){0};
     }
 
-    if(sv.size == 0)
+    if(sv_shifted.size == 1 && sv_unshifted.size == 1)
     {
-        return 0;
-    }
-
-    if(sv.size == 1)
-    {
-        return (uint8_t)sv.data[0];
+        return(AsciiKey)
+        {
+            .unshifted = (uint8_t)sv_unshifted.data[0],
+            .shifted   = (uint8_t)sv_shifted.data[0]
+        };
     }
 
     StringView space = cstr_sv("s");
-    if(sv_find(space, sv) == space.data)
+    if(sv_find(space, sv_shifted) == space.data)
     {
-        return RIVER2D_ASCII_SPACE;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_SPACE,
+            .shifted   = RIVER2D_ASCII_SPACE
+        };
     }
 
     StringView backspace = cstr_sv("B");
-    if(sv_find(backspace, sv) == sv.data)
+    if(sv_find(backspace, sv_shifted) == sv_shifted.data)
     {
-        return RIVER2D_ASCII_BACKSPACE;
-    }
-
-    StringView less = cstr_sv("l");
-    if(sv_find(less, sv) == sv.data)
-    {
-        return '<';
-    }
-    StringView greater = cstr_sv("g");
-    if(sv_find(greater, sv) == sv.data)
-    {
-        return '>';
-    }
-
-    StringView period = cstr_sv("p");
-    if(sv_find(period, sv) == sv.data)
-    {
-        return '.';
-    }
-    StringView comma = cstr_sv("c");
-    if(sv_find(comma, sv) == sv.data)
-    {
-        return ',';
-    }
-
-    StringView minus = cstr_sv("m");
-    if(sv_find(minus, sv) == sv.data)
-    {
-        return '-';
-    }
-    StringView equal = cstr_sv("e");
-    if(sv_find(equal, sv) == sv.data)
-    {
-        return '=';
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_BACKSPACE,
+            .shifted   = RIVER2D_ASCII_BACKSPACE
+        };
     }
 
     StringView escape = cstr_sv("E");
-    if(sv_find(escape, sv) == sv.data)
+    if(sv_find(escape, sv_shifted) == sv_shifted.data)
     {
-        return RIVER2D_ASCII_ESCAPE;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_ESCAPE,
+            .shifted   = RIVER2D_ASCII_ESCAPE
+        };
     }
 
     StringView enter = cstr_sv("R");
-    if(sv_find(enter, sv) == sv.data)
+    if(sv_find(enter, sv_shifted) == sv_shifted.data)
     {
-        return RIVER2D_ASCII_ENTER;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_ENTER,
+            .shifted   = RIVER2D_ASCII_ENTER
+        };
     }
 
     StringView tab = cstr_sv("T");
-    if(sv_find(tab, sv) == sv.data)
+    if(sv_find(tab, sv_shifted) == sv_shifted.data)
     {
-        return RIVER2D_ASCII_TAB;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_TAB,
+            .shifted   = RIVER2D_ASCII_TAB
+        };
     }
 
     StringView lshift = cstr_sv("Shift_L");
-    if(sv_same(lshift, sv))
+    if(sv_same(lshift, sv_shifted))
     {
-        return RIVER2D_ASCII_LSHIFT;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_LSHIFT,
+            .shifted   = RIVER2D_ASCII_LSHIFT
+        };
     }
     StringView rshift = cstr_sv("Shift_R");
-    if(sv_same(rshift, sv))
+    if(sv_same(rshift, sv_shifted))
     {
-        return RIVER2D_ASCII_RSHIFT;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_RSHIFT,
+            .shifted   = RIVER2D_ASCII_RSHIFT
+        };
     }
 
     StringView lctrl = cstr_sv("Control_L");
-    if(sv_same(lctrl, sv))
+    if(sv_same(lctrl, sv_shifted))
     {
-        return RIVER2D_ASCII_LCTRL;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_LCTRL,
+            .shifted   = RIVER2D_ASCII_LCTRL
+        };
     }
     StringView rctrl = cstr_sv("Control_R");
-    if(sv_same(rctrl, sv))
+    if(sv_same(rctrl, sv_shifted))
     {
-        return RIVER2D_ASCII_RCTRL;
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_RCTRL,
+            .shifted   = RIVER2D_ASCII_RCTRL
+        };
     }
 
-    // StringView lalt = cstr_sv("Alt_L");
-    // if(sv_find(lalt, sv) == sv.data)
-    // {
-    //     return RIVER2D_ASCII_LALT;
-    // }
-    // ISO_Level3_Shift for ALT_GR, I think otherwise it'd just be ALT_L
-    // StringView ralt = cstr_sv("ISO_Level3_Shift");
-    // if(sv_find(sv, ralt) == sv.data)
-    // {
-    //     return RIVER2D_ASCII_RALT;
-    // }
+    StringView lalt = cstr_sv("Alt_L");
+    if(sv_same(lalt, sv_shifted))
+    {
+        // return(AsciiKey)
+        // {
+        //     .unshifted = RIVER2D_ASCII_LALT,
+        //     .shifted   = RIVER2D_ASCII_LALT
+        // };
+    }
+    StringView ralt = cstr_sv("ISO_Level3_S");
+    if(sv_find(ralt, sv_shifted) == sv_shifted.data)
+    {
+        // return(AsciiKey)
+        // {
+        //     .unshifted = RIVER2D_ASCII_RALT,
+        //     .shifted   = RIVER2D_ASCII_RALT
+        // };
+    }
+
+    AsciiKey result = {0};
+
+    if(sv_shifted.size == 1)
+    {
+        result.shifted = (uint8_t)sv_shifted.data[0];
+    }
+    if(sv_unshifted.size == 1)
+    {
+        result.unshifted = (uint8_t)sv_unshifted.data[0];
+    }
+
+    StringView less = cstr_sv("l");
+    if(sv_find(less, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '<';
+    }
+    else if(sv_find(less, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '<';
+    }
+
+    StringView greater = cstr_sv("g");
+    if(sv_find(greater, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '>';
+    }
+    else if(sv_find(greater, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '>';
+    }
+
+    StringView period = cstr_sv("p");
+    if(sv_find(period, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '.';
+    }
+    else if(sv_find(period, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '.';
+    }
+
+    StringView comma = cstr_sv("c");
+    if(sv_find(comma, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = ',';
+    }
+    else if(sv_find(comma, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = ',';
+    }
+
+    StringView minus = cstr_sv("m");
+    if(sv_find(minus, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '-';
+    }
+    else if(sv_find(minus, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '-';
+    }
+
+    StringView equal = cstr_sv("e");
+    if(sv_find(equal, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '=';
+    }
+    else if(sv_find(equal, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '=';
+    }
 
 #ifdef DEBUG
-    fprintf(stderr, PRI_SV"\n", ARG_SV(sv));
+    if(!result.shifted && result.unshifted)
+    {
+        fprintf(stderr, "unshifted: "PRI_SV"\n", ARG_SV(sv_unshifted));
+        fprintf(stderr, "shifted: "PRI_SV"\n",   ARG_SV(sv_shifted));
+    }
 #endif
-    return 0;
+    return result;
 }
 
 Dimensions river2D_getWindowSize
