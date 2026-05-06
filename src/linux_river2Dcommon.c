@@ -455,6 +455,11 @@ extern AsciiKey xkeyToAscii
     StringView sv_shifted   = cstr_sv(codeString_shifted);
     StringView sv_unshifted = cstr_sv(codeString_unshifted);
 
+    #ifdef DEBUG
+    fprintf(stderr, "sv_shifted:   "PRI_SV"\n", ARG_SV(sv_shifted));
+    fprintf(stderr, "sv_unshifted: "PRI_SV"\n", ARG_SV(sv_unshifted));
+    #endif
+
     if(sv_unshifted.size == 0)
     {
         return (AsciiKey){0};
@@ -560,20 +565,20 @@ extern AsciiKey xkeyToAscii
     StringView lalt = cstr_sv("Alt_L");
     if(sv_same(lalt, sv_shifted))
     {
-        // return(AsciiKey)
-        // {
-        //     .unshifted = RIVER2D_ASCII_LALT,
-        //     .shifted   = RIVER2D_ASCII_LALT
-        // };
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_LALT,
+            .shifted   = RIVER2D_ASCII_LALT
+        };
     }
     StringView ralt = cstr_sv("ISO_Level3_S");
     if(sv_find(ralt, sv_shifted) == sv_shifted.data)
     {
-        // return(AsciiKey)
-        // {
-        //     .unshifted = RIVER2D_ASCII_RALT,
-        //     .shifted   = RIVER2D_ASCII_RALT
-        // };
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_ALTGR,
+            .shifted   = RIVER2D_ASCII_ALTGR
+        };
     }
 
     AsciiKey result = {0};
@@ -587,37 +592,115 @@ extern AsciiKey xkeyToAscii
         result.unshifted = (uint8_t)sv_unshifted.data[0];
     }
 
-    StringView less = cstr_sv("l");
-    if(sv_find(less, sv_shifted) == sv_shifted.data)
+    StringView ampersand = cstr_sv("am");
+    if(sv_same(ampersand, sv_shifted))
     {
-        result.shifted = '<';
+        result.shifted = '&';
     }
-    else if(sv_find(less, sv_unshifted) == sv_unshifted.data)
+    else if(sv_find(ampersand, sv_unshifted) == sv_unshifted.data)
     {
-        result.unshifted = '<';
-    }
-
-    StringView greater = cstr_sv("g");
-    if(sv_find(greater, sv_shifted) == sv_shifted.data)
-    {
-        result.shifted = '>';
-    }
-    else if(sv_find(greater, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '>';
+        result.unshifted = '&';
     }
 
-    StringView period = cstr_sv("p");
-    if(sv_find(period, sv_shifted) == sv_shifted.data)
+    StringView apostrophe = cstr_sv("ap");
+    if(sv_same(apostrophe, sv_shifted))
     {
-        result.shifted = '.';
+        result.shifted = '\'';
     }
-    else if(sv_find(period, sv_unshifted) == sv_unshifted.data)
+    else if(sv_find(apostrophe, sv_unshifted) == sv_unshifted.data)
     {
-        result.unshifted = '.';
+        result.unshifted = '\'';
     }
 
-    StringView comma = cstr_sv("c");
+    StringView circum = cstr_sv("asciic");
+    if(sv_same(circum, sv_shifted))
+    {
+        result.shifted = '^';
+    }
+    else if(sv_find(circum, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '^';
+    }
+
+    StringView asterisk = cstr_sv("ast");
+    if(sv_same(asterisk, sv_shifted))
+    {
+        result.shifted = '*';
+    }
+    else if(sv_find(asterisk, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '*';
+    }
+
+    StringView at = cstr_sv("at");
+    if(sv_same(at, sv_shifted))
+    {
+        result.shifted = '@';
+    }
+    else if(sv_find(at, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '@';
+    }
+
+    StringView backslash = cstr_sv("ba");
+    if(sv_find(backslash, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '\\';
+    }
+    else if(sv_find(backslash, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '\\';
+    }
+
+    StringView braceleft = cstr_sv("bracel");
+    if(sv_find(braceleft, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '{';
+    }
+    else if(sv_find(braceleft, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '{';
+    }
+    StringView braceright = cstr_sv("bracer");
+    if(sv_find(braceright, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '}';
+    }
+    else if(sv_find(braceright, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '}';
+    }
+
+    StringView bracketleft = cstr_sv("bracketl");
+    if(sv_find(bracketleft, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '[';
+    }
+    else if(sv_find(bracketleft, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '[';
+    }
+    StringView bracketright = cstr_sv("bracketr");
+    if(sv_find(bracketright, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = ']';
+    }
+    else if(sv_find(bracketright, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = ']';
+    }
+
+    StringView colon = cstr_sv("col");
+    if(sv_find(colon, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = ':';
+    }
+    else if(sv_find(colon, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = ':';
+    }
+
+    StringView comma = cstr_sv("com");
     if(sv_find(comma, sv_shifted) == sv_shifted.data)
     {
         result.shifted = ',';
@@ -627,7 +710,57 @@ extern AsciiKey xkeyToAscii
         result.unshifted = ',';
     }
 
-    StringView minus = cstr_sv("m");
+    StringView dollar = cstr_sv("dol");
+    if(sv_find(dollar, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '$';
+    }
+    else if(sv_find(dollar, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '$';
+    }
+
+    StringView equal = cstr_sv("eq");
+    if(sv_find(equal, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '=';
+    }
+    else if(sv_find(equal, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '=';
+    }
+
+    StringView exclam = cstr_sv("ex");
+    if(sv_find(exclam, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '!';
+    }
+    else if(sv_find(exclam, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '!';
+    }
+
+    StringView greater = cstr_sv("gr");
+    if(sv_find(greater, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '>';
+    }
+    else if(sv_find(greater, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '>';
+    }
+
+    StringView less = cstr_sv("le");
+    if(sv_find(less, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '<';
+    }
+    else if(sv_find(less, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '<';
+    }
+
+    StringView minus = cstr_sv("mi");
     if(sv_find(minus, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '-';
@@ -637,14 +770,93 @@ extern AsciiKey xkeyToAscii
         result.unshifted = '-';
     }
 
-    StringView equal = cstr_sv("e");
-    if(sv_find(equal, sv_shifted) == sv_shifted.data)
+    StringView num = cstr_sv("nu");
+    if(sv_find(num, sv_shifted) == sv_shifted.data)
     {
-        result.shifted = '=';
+        result.shifted = '#';
     }
-    else if(sv_find(equal, sv_unshifted) == sv_unshifted.data)
+    else if(sv_find(num, sv_unshifted) == sv_unshifted.data)
     {
-        result.unshifted = '=';
+        result.unshifted = '#';
+    }
+
+    StringView parenleft = cstr_sv("parenl");
+    if(sv_find(parenleft, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '(';
+    }
+    else if(sv_find(parenleft, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '(';
+    }
+    StringView parenright = cstr_sv("parenr");
+    if(sv_find(parenright, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = ')';
+    }
+    else if(sv_find(parenright, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = ')';
+    }
+
+    StringView percent = cstr_sv("perc");
+    if(sv_find(percent, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '.';
+    }
+    else if(sv_find(percent, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '.';
+    }
+
+    StringView period = cstr_sv("peri");
+    if(sv_find(period, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '.';
+    }
+    else if(sv_find(period, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '.';
+    }
+
+    StringView question = cstr_sv("qu");
+    if(sv_find(question, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '?';
+    }
+    else if(sv_find(question, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '?';
+    }
+
+    StringView semicolon = cstr_sv("se");
+    if(sv_find(semicolon, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = ';';
+    }
+    else if(sv_find(semicolon, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = ';';
+    }
+
+    StringView slash = cstr_sv("sl");
+    if(sv_find(slash, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '/';
+    }
+    else if(sv_find(slash, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '/';
+    }
+
+    StringView underscore = cstr_sv("un");
+    if(sv_find(underscore, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '_';
+    }
+    else if(sv_find(underscore, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '_';
     }
 
 #ifdef DEBUG
