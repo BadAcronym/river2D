@@ -246,7 +246,7 @@ uint8_t river2D_charToKey
 (
     char inp
 ){
-    if(inp >= RIVER2D_ASCII_A && inp <= RIVER2D_ASCII_Z)
+    if(inp >= 'a' && inp <= 'z')
     {
         return inp - 0x20;
     }
@@ -255,11 +255,11 @@ uint8_t river2D_charToKey
     {
         return 0x10;
     }
-    else if(inp == RIVER2D_ASCII_MINUS)
+    else if(inp == '-')
     {
         return 0xC0;
     }
-    else if(inp == RIVER2D_ASCII_EQUALS)
+    else if(inp == '=')
     {
         return 0xBB;
     }
