@@ -474,13 +474,22 @@ extern AsciiKey xkeyToAscii
         };
     }
 
-    StringView space = cstr_sv("s");
-    if(sv_find(space, sv_shifted) == space.data)
+    StringView lalt = cstr_sv("Alt_L");
+    if(sv_same(lalt, sv_shifted))
     {
         return(AsciiKey)
         {
-            .unshifted = RIVER2D_ASCII_SPACE,
-            .shifted   = RIVER2D_ASCII_SPACE
+            .unshifted = RIVER2D_ASCII_LALT,
+            .shifted   = RIVER2D_ASCII_LALT
+        };
+    }
+    StringView ralt = cstr_sv("ISO_Level3_S");
+    if(sv_find(ralt, sv_shifted) == sv_shifted.data)
+    {
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_ALTGR,
+            .shifted   = RIVER2D_ASCII_ALTGR
         };
     }
 
@@ -491,6 +500,35 @@ extern AsciiKey xkeyToAscii
         {
             .unshifted = RIVER2D_ASCII_BACKSPACE,
             .shifted   = RIVER2D_ASCII_BACKSPACE
+        };
+    }
+
+    StringView lctrl = cstr_sv("Control_L");
+    if(sv_same(lctrl, sv_shifted))
+    {
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_LCTRL,
+            .shifted   = RIVER2D_ASCII_LCTRL
+        };
+    }
+    StringView rctrl = cstr_sv("Control_R");
+    if(sv_same(rctrl, sv_shifted))
+    {
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_RCTRL,
+            .shifted   = RIVER2D_ASCII_RCTRL
+        };
+    }
+
+    StringView delete = cstr_sv("D");
+    if(sv_find(delete, sv_shifted) == sv_shifted.data)
+    {
+        return(AsciiKey)
+        {
+            .unshifted = RIVER2D_ASCII_DELETE,
+            .shifted   = RIVER2D_ASCII_DELETE
         };
     }
 
@@ -514,16 +552,6 @@ extern AsciiKey xkeyToAscii
         };
     }
 
-    StringView tab = cstr_sv("T");
-    if(sv_find(tab, sv_shifted) == sv_shifted.data)
-    {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_TAB,
-            .shifted   = RIVER2D_ASCII_TAB
-        };
-    }
-
     StringView lshift = cstr_sv("Shift_L");
     if(sv_same(lshift, sv_shifted))
     {
@@ -543,41 +571,23 @@ extern AsciiKey xkeyToAscii
         };
     }
 
-    StringView lctrl = cstr_sv("Control_L");
-    if(sv_same(lctrl, sv_shifted))
+    StringView space = cstr_sv("sp");
+    if(sv_find(space, sv_shifted) == space.data)
     {
         return(AsciiKey)
         {
-            .unshifted = RIVER2D_ASCII_LCTRL,
-            .shifted   = RIVER2D_ASCII_LCTRL
-        };
-    }
-    StringView rctrl = cstr_sv("Control_R");
-    if(sv_same(rctrl, sv_shifted))
-    {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_RCTRL,
-            .shifted   = RIVER2D_ASCII_RCTRL
+            .unshifted = RIVER2D_ASCII_SPACE,
+            .shifted   = RIVER2D_ASCII_SPACE
         };
     }
 
-    StringView lalt = cstr_sv("Alt_L");
-    if(sv_same(lalt, sv_shifted))
+    StringView tab = cstr_sv("T");
+    if(sv_find(tab, sv_shifted) == sv_shifted.data)
     {
         return(AsciiKey)
         {
-            .unshifted = RIVER2D_ASCII_LALT,
-            .shifted   = RIVER2D_ASCII_LALT
-        };
-    }
-    StringView ralt = cstr_sv("ISO_Level3_S");
-    if(sv_find(ralt, sv_shifted) == sv_shifted.data)
-    {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_ALTGR,
-            .shifted   = RIVER2D_ASCII_ALTGR
+            .unshifted = RIVER2D_ASCII_TAB,
+            .shifted   = RIVER2D_ASCII_TAB
         };
     }
 
@@ -593,7 +603,7 @@ extern AsciiKey xkeyToAscii
     }
 
     StringView ampersand = cstr_sv("am");
-    if(sv_same(ampersand, sv_shifted))
+    if(sv_find(ampersand, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '&';
     }
@@ -603,7 +613,7 @@ extern AsciiKey xkeyToAscii
     }
 
     StringView apostrophe = cstr_sv("ap");
-    if(sv_same(apostrophe, sv_shifted))
+    if(sv_find(apostrophe, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '\'';
     }
@@ -613,7 +623,7 @@ extern AsciiKey xkeyToAscii
     }
 
     StringView circum = cstr_sv("asciic");
-    if(sv_same(circum, sv_shifted))
+    if(sv_find(circum, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '^';
     }
@@ -623,7 +633,7 @@ extern AsciiKey xkeyToAscii
     }
 
     StringView asterisk = cstr_sv("ast");
-    if(sv_same(asterisk, sv_shifted))
+    if(sv_find(asterisk, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '*';
     }
@@ -637,12 +647,12 @@ extern AsciiKey xkeyToAscii
     {
         result.shifted = '@';
     }
-    else if(sv_find(at, sv_unshifted) == sv_unshifted.data)
+    else if(sv_same(at, sv_unshifted))
     {
         result.unshifted = '@';
     }
 
-    StringView backslash = cstr_sv("ba");
+    StringView backslash = cstr_sv("bac");
     if(sv_find(backslash, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '\\';
@@ -650,6 +660,16 @@ extern AsciiKey xkeyToAscii
     else if(sv_find(backslash, sv_unshifted) == sv_unshifted.data)
     {
         result.unshifted = '\\';
+    }
+
+    StringView verticalbar = cstr_sv("bar");
+    if(sv_same(verticalbar, sv_shifted))
+    {
+        result.shifted = '|';
+    }
+    else if(sv_same(verticalbar, sv_unshifted))
+    {
+        result.unshifted = '|';
     }
 
     StringView braceleft = cstr_sv("bracel");
@@ -710,7 +730,7 @@ extern AsciiKey xkeyToAscii
         result.unshifted = ',';
     }
 
-    StringView dollar = cstr_sv("dol");
+    StringView dollar = cstr_sv("do");
     if(sv_find(dollar, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '$';
