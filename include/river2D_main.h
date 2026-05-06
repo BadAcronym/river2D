@@ -64,10 +64,10 @@
 #define RIVER2D_ASCII_RSHIFT             0x0F
 #define RIVER2D_ASCII_LCTRL              0x11
 #define RIVER2D_ASCII_RCTRL              0x12
+#define RIVER2D_ASCII_LALT               0x13
+#define RIVER2D_ASCII_ALTGR              0x14
 #define RIVER2D_ASCII_ESCAPE             0x1B
 #define RIVER2D_ASCII_SPACE              0x20
-#define RIVER2D_ASCII_MINUS              0x2D
-#define RIVER2D_ASCII_EQUAL              0x3D
 #define RIVER2D_ASCII_A                  0x61
 #define RIVER2D_ASCII_Z                  0x7A
 
