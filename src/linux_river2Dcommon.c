@@ -860,7 +860,7 @@ extern AsciiKey xkeyToAscii
     }
 
 #ifdef DEBUG
-    if(!result.shifted && result.unshifted)
+    if(!result.shifted && !result.unshifted)
     {
         fprintf(stderr, "unshifted: "PRI_SV"\n", ARG_SV(sv_unshifted));
         fprintf(stderr, "shifted: "PRI_SV"\n",   ARG_SV(sv_shifted));
