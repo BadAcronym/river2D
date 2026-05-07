@@ -571,16 +571,6 @@ extern AsciiKey xkeyToAscii
         };
     }
 
-    StringView space = cstr_sv("sp");
-    if(sv_find(space, sv_shifted) == sv_shifted.data)
-    {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_SPACE,
-            .shifted   = RIVER2D_ASCII_SPACE
-        };
-    }
-
     StringView tab = cstr_sv("T");
     if(sv_find(tab, sv_shifted) == sv_shifted.data)
     {
@@ -867,6 +857,16 @@ extern AsciiKey xkeyToAscii
     else if(sv_find(slash, sv_unshifted) == sv_unshifted.data)
     {
         result.unshifted = '/';
+    }
+
+    StringView space = cstr_sv("sp");
+    if(sv_find(space, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = ' ';
+    }
+    else if(sv_find(space, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = ' ';
     }
 
     StringView underscore = cstr_sv("un");

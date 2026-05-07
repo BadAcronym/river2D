@@ -67,7 +67,6 @@
 #define RIVER2D_ASCII_LALT               0x13
 #define RIVER2D_ASCII_ALTGR              0x14
 #define RIVER2D_ASCII_ESCAPE             0x1B
-#define RIVER2D_ASCII_SPACE              0x20
 #define RIVER2D_ASCII_DELETE             0x7F
 
 #define RIVER2D_BIT_UP                   1

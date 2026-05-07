@@ -321,12 +321,12 @@ void loadText
     for(uint32_t i = 0; i < imageChars; ++i)
     {
         char character = 0x7F;
-        if(i < sv->size)
+        if(i < sv->size && sv->data[i] && sv->data[i] != 0x20)
         {
             character = sv->data[i];
         }
 
-        if(character < 0x21 || character > 0x7F)
+        if(character < 0x20 || character > 0x7F)
         {
             continue;
         }
