@@ -572,7 +572,7 @@ extern AsciiKey xkeyToAscii
     }
 
     StringView space = cstr_sv("sp");
-    if(sv_find(space, sv_shifted) == space.data)
+    if(sv_find(space, sv_shifted) == sv_shifted.data)
     {
         return(AsciiKey)
         {
