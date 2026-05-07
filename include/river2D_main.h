@@ -198,11 +198,12 @@ Dimensions;
 typedef struct River2D_ControlMap
 {
     uint64_t     keymap;
+    uint64_t     keymap_special;
     uint64_t     buttonmap;
     Coordinates  pointer;
     River2D_Time lastScrollTime;
     uint64_t     rumble;
-    uint8_t      keycodes[64];
+    uint8_t      keycodes[128];
     uint8_t      buttoncodes[64];
     //other general use stuff
 }
