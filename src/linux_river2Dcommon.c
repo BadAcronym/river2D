@@ -829,7 +829,7 @@ extern AsciiKey xkeyToAscii
         result.unshifted = '.';
     }
 
-    StringView question = cstr_sv("qu");
+    StringView question = cstr_sv("que");
     if(sv_find(question, sv_shifted) == sv_shifted.data)
     {
         result.shifted = '?';
@@ -837,6 +837,16 @@ extern AsciiKey xkeyToAscii
     else if(sv_find(question, sv_unshifted) == sv_unshifted.data)
     {
         result.unshifted = '?';
+    }
+
+    StringView quote = cstr_sv("quo");
+    if(sv_find(quote, sv_shifted) == sv_shifted.data)
+    {
+        result.shifted = '\"';
+    }
+    else if(sv_find(quote, sv_unshifted) == sv_unshifted.data)
+    {
+        result.unshifted = '\"';
     }
 
     StringView semicolon = cstr_sv("se");
