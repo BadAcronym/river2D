@@ -50,19 +50,23 @@ void river2D_resolveRenderer
     }
     else if(renderer == RIVER2D_RENDERER_OPENGL)
     {
-        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for river2D.\033[0m");
+        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for "
+                "river2D.\033[0m");
     }
     else if(renderer == RIVER2D_RENDERER_VULKAN)
     {
-        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for river2D.\033[0m");
+        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for "
+                "river2D.\033[0m");
     }
     else if(renderer == RIVER2D_RENDERER_DIRECTX)
     {
-        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for river2D.\033[0m");
+        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for "
+                "river2D.\033[0m");
     }
     else
     {
-        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in river2D_resolveRenderer.\033[0m");
+        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in "
+                "river2D_resolveRenderer.\033[0m");
     }
 }
 
@@ -88,7 +92,8 @@ void river2D_loadImage_file
     uint8_t       bitdepth
 ){
     (void)engine;
-    image->data = imgsurf_load_file(path, &image->width, &image->height, format, bitdepth);
+    image->data = imgsurf_load_file(path, &image->width, &image->height,
+                                    format, bitdepth);
 
     if(!image->data)
     {
@@ -105,7 +110,8 @@ void river2D_loadImage_ptr
     uint8_t       channels,
     uint8_t       bitdepth
 ){
-    image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width, &image->height, channels, bitdepth);
+    image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width,
+                                   &image->height, channels, bitdepth);
     image->path = cstr_sv("river2D_loadImage_ptr");
 }
 
