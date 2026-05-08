@@ -112,6 +112,11 @@ void river2D_loadImage_ptr
 ){
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width,
                                    &image->height, channels, bitdepth);
+    if(!image->data)
+    {
+        fprintf(stderr, "\033[31m\nERROR: failed to load image to pointer.\n\033[0m");
+    }
+
     image->path = cstr_sv("river2D_loadImage_ptr");
 }
 
@@ -341,4 +346,14 @@ void river2D_changeCursor
     }
 
     SetCursor(engine->hCursor);
+}
+
+// just so I don't have to ifdef all the time, because this function is only really
+// needed on linux for xrender.
+void river2D_refreshImage
+(
+    EngineData    *engine,
+    River2D_Image *image
+){
+    return;
 }
