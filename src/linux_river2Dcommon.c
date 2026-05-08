@@ -40,10 +40,8 @@ void river2D_resolveRenderer
 ){
     if(renderer == RIVER2D_RENDERER_SOFTWARE)
     {
-        // FIXME: use StringViews here, get rid of sprintf
-
-        char so[256] = {'\0'};
-        sprintf(so, PRI_SV"/libriver2Dsoftware.so", ARG_SV(libpath));
+        StringView sv_file = cstr_sv("/libriver2Dsoftware.so");
+        const char *so     = sv_concat(libpath, sv_file);
 
         char *error = 0;
         void *software = dlopen(so, RTLD_NOW);
