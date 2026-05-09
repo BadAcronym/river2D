@@ -145,24 +145,13 @@ void river2D_loadImage_file
     {
         fprintf(stderr, "Failed to load image from file: %s\n", path_cstr);
         writeMissingTexture(image);
+        return;
     }
 
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
-    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                                 (char*)image->data, image->width, image->height,
-                                 32, 0);
-    if(!img)
-    {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XImage from file: %s!."
-                "\n\033[0m", path_cstr);
-    }
 
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
-              image->width, image->height);
-
-    img->data = NULL;
-    XDestroyImage(img);
+    river2D_refreshImage(engine, image);
 
     image->picture = XRenderCreatePicture(engine->display, image->pixmap,
                                           engine->format, 0, 0);
@@ -185,12 +174,14 @@ void river2D_loadImage_ptr
 ){
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI,
                                    &image->width, &image->height, channels, bitdepth);
+    image->path = cstr_sv("river2D_loadImage_ptr");
+
     if(!image->data)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to load image to pointer.\n\033[0m");
+        writeMissingTexture(image);
+        return;
     }
-
-    image->path  = cstr_sv("river2D_loadImage_ptr");
 
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
