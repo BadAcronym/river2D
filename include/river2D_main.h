@@ -303,10 +303,11 @@ extern void river2D_appendImage
     uint8_t       direction
 );
 
-extern void river2D_refreshImage
+extern void river2D_syncImage
 (
     EngineData    *engine,
-    River2D_Image *image
+    River2D_Image *image,
+    bool          CPU_to_GPU
 );
 
 extern void river2D_clearImage

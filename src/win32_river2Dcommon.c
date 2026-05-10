@@ -348,12 +348,11 @@ void river2D_changeCursor
     SetCursor(engine->hCursor);
 }
 
-// just so I don't have to ifdef all the time, because this function is only really
-// needed on linux for xrender.
-void river2D_refreshImage
+void river2D_syncImage
 (
     EngineData    *engine,
-    River2D_Image *image
+    River2D_Image *image,
+    bool          CPU_to_GPU
 ){
     return;
 }

@@ -183,10 +183,11 @@ void river2D_loadImage_ptr
         return;
     }
 
+    image->path   = cstr_sv("river2D_loadImage_ptr");
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
 
-    river2D_refreshImage(engine, image);
+    river2D_syncImage(engine, image, true);
 
     image->picture = XRenderCreatePicture(engine->display, image->pixmap,
                                           engine->format, 0, 0);
@@ -195,20 +196,6 @@ void river2D_loadImage_ptr
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from pointer."
                 "\n\033[0m");
     }
-}
-
-void river2D_refreshImage
-(
-    EngineData    *engine,
-    River2D_Image *image
-){
-    XImage *ximg = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                               (char*)image->data, image->width, image->height, 32, 0);
-    XPutImage(engine->display, image->pixmap, engine->context, ximg, 0, 0, 0, 0,
-              image->width, image->height);
-
-    ximg->data = NULL;
-    XDestroyImage(ximg);
 }
 
 void river2D_clearImage
@@ -882,4 +869,38 @@ void river2D_compositeImage
                            settings->offsetSrcX, settings->offsetSrcY,
                            settings->offsetDstX, settings->offsetDstY,
                            settings->cropWidth,  settings->cropHeight);
+}
+
+void river2D_syncImage
+(
+    EngineData    *engine,
+    River2D_Image *image,
+    bool          CPU_to_GPU
+){
+    if(CPU_to_GPU)
+    {
+        XImage *ximg = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                                   (char*)image->data, image->width, image->height, 32, 0);
+        XPutImage(engine->display, image->pixmap, engine->context, ximg, 0, 0, 0, 0,
+                  image->width, image->height);
+
+        ximg->data = NULL;
+        XDestroyImage(ximg);
+        return;
+    }
+
+    XImage *ximg = XGetImage(engine->display, image->pixmap, 0, 0,
+                             image->width, image->height, AllPlanes, ZPixmap);
+
+    if(!ximg)
+    {
+        fprintf(stderr, "\n\033[31;1;7mERROR: failed to sync ximg.\033[0m\n");
+    }
+
+    if(image->data)
+    {
+        free(image->data);
+    }
+
+    image->data = (uint8_t*)ximg->data;
 }
