@@ -73,13 +73,6 @@
 #define RIVER2D_ASCII_ESCAPE             0x1B
 #define RIVER2D_ASCII_DELETE             0x7F
 
-#define RIVER2D_BIT_UP                   1
-#define RIVER2D_BIT_DOWN                 2
-#define RIVER2D_BIT_LEFT                 4
-#define RIVER2D_BIT_RIGHT                8
-#define RIVER2D_BIT_TAB                  16
-#define RIVER2D_BIT_ESCAPE               32
-
 #define RIVER2D_CHANNELS_RGBA            0
 #define RIVER2D_CHANNELS_BGRA            1
 #define RIVER2D_CHANNELS_RGB             2
