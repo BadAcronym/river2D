@@ -325,467 +325,300 @@ StringView river2D_listFiles
     return result;
 }
 
-extern AsciiKey xkeyToAscii
+extern uint8_t xkeyToAscii
 (
     EngineData *engine,
     XEvent     *event
 ){
-    KeySym sym_shifted = XkbKeycodeToKeysym(engine->display,
-                                            (KeyCode)event->xkey.keycode,
-                                            0, event->xkey.state & ShiftMask);
-
-    KeySym sym_unshifted = XkbKeycodeToKeysym(engine->display,
+    KeySym sym = XkbKeycodeToKeysym(engine->display,
                                               (KeyCode)event->xkey.keycode,
                                               0, 0);
 
-    char *codeString_shifted   = XKeysymToString(sym_shifted);
-    char *codeString_unshifted = XKeysymToString(sym_unshifted);
-
-    StringView sv_shifted   = cstr_sv(codeString_shifted);
-    StringView sv_unshifted = cstr_sv(codeString_unshifted);
+    char *codeString = XKeysymToString(sym);
+    StringView sv    = cstr_sv(codeString);
 
     #ifdef DEBUG
-    fprintf(stderr, "sv_shifted:   "PRI_SV"\n", ARG_SV(sv_shifted));
-    fprintf(stderr, "sv_unshifted: "PRI_SV"\n", ARG_SV(sv_unshifted));
+    fprintf(stderr, "codeString: "PRI_SV"\n", ARG_SV(sv));
     #endif
 
-    if(sv_unshifted.size == 0)
+    if(sv.size == 0)
     {
-        return (AsciiKey){0};
+        return 0;
     }
 
-    if(sv_shifted.size == 1 && sv_unshifted.size == 1)
+    if(sv.size == 1)
     {
-        return(AsciiKey)
-        {
-            .unshifted = (uint8_t)sv_unshifted.data[0],
-            .shifted   = (uint8_t)sv_shifted.data[0]
-        };
+        return (uint8_t)sv.data[0];
     }
 
     StringView lalt = cstr_sv("Alt_L");
-    if(sv_same(lalt, sv_shifted))
+    if(sv_same(lalt, sv))
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_LALT,
-            .shifted   = RIVER2D_ASCII_LALT
-        };
+        return RIVER2D_ASCII_LALT;
     }
     StringView ralt = cstr_sv("ISO_Level3_S");
-    if(sv_find(ralt, sv_shifted) == sv_shifted.data)
+    if(sv_find(ralt, sv) == sv.data)
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_ALTGR,
-            .shifted   = RIVER2D_ASCII_ALTGR
-        };
+        return RIVER2D_ASCII_ALTGR;
     }
 
     StringView backspace = cstr_sv("B");
-    if(sv_find(backspace, sv_shifted) == sv_shifted.data)
+    if(sv_find(backspace, sv) == sv.data)
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_BACKSPACE,
-            .shifted   = RIVER2D_ASCII_BACKSPACE
-        };
+        return RIVER2D_ASCII_BACKSPACE;
     }
 
     StringView lctrl = cstr_sv("Control_L");
-    if(sv_same(lctrl, sv_shifted))
+    if(sv_same(lctrl, sv))
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_LCTRL,
-            .shifted   = RIVER2D_ASCII_LCTRL
-        };
+        return RIVER2D_ASCII_LCTRL;
     }
     StringView rctrl = cstr_sv("Control_R");
-    if(sv_same(rctrl, sv_shifted))
+    if(sv_same(rctrl, sv))
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_RCTRL,
-            .shifted   = RIVER2D_ASCII_RCTRL
-        };
+        return RIVER2D_ASCII_RCTRL;
     }
 
-    StringView delete = cstr_sv("D");
-    if(sv_find(delete, sv_shifted) == sv_shifted.data)
+    StringView delete = cstr_sv("De");
+    if(sv_find(delete, sv) == sv.data)
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_DELETE,
-            .shifted   = RIVER2D_ASCII_DELETE
-        };
+        return RIVER2D_ASCII_DELETE;
+    }
+
+    StringView down = cstr_sv("Do");
+    if(sv_find(down, sv) == sv.data)
+    {
+        return RIVER2D_ASCII_DOWN;
     }
 
     StringView escape = cstr_sv("E");
-    if(sv_find(escape, sv_shifted) == sv_shifted.data)
+    if(sv_find(escape, sv) == sv.data)
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_ESCAPE,
-            .shifted   = RIVER2D_ASCII_ESCAPE
-        };
+        return RIVER2D_ASCII_ESCAPE;
     }
 
-    StringView enter = cstr_sv("R");
-    if(sv_find(enter, sv_shifted) == sv_shifted.data)
+    StringView left = cstr_sv("L");
+    if(sv_find(left, sv) == sv.data)
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_ENTER,
-            .shifted   = RIVER2D_ASCII_ENTER
-        };
+        return RIVER2D_ASCII_LEFT;
+    }
+
+    StringView enter = cstr_sv("Re");
+    if(sv_find(enter, sv) == sv.data)
+    {
+        return RIVER2D_ASCII_ENTER;
+    }
+
+    StringView right = cstr_sv("Ri");
+    if(sv_find(right, sv) == sv.data)
+    {
+        return RIVER2D_ASCII_RIGHT;
     }
 
     StringView lshift = cstr_sv("Shift_L");
-    if(sv_same(lshift, sv_shifted))
+    if(sv_same(lshift, sv))
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_LSHIFT,
-            .shifted   = RIVER2D_ASCII_LSHIFT
-        };
+        return RIVER2D_ASCII_LSHIFT;
     }
     StringView rshift = cstr_sv("Shift_R");
-    if(sv_same(rshift, sv_shifted))
+    if(sv_same(rshift, sv))
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_RSHIFT,
-            .shifted   = RIVER2D_ASCII_RSHIFT
-        };
+        return RIVER2D_ASCII_RSHIFT;
     }
 
     StringView tab = cstr_sv("T");
-    if(sv_find(tab, sv_shifted) == sv_shifted.data)
+    if(sv_find(tab, sv) == sv.data)
     {
-        return(AsciiKey)
-        {
-            .unshifted = RIVER2D_ASCII_TAB,
-            .shifted   = RIVER2D_ASCII_TAB
-        };
+        return RIVER2D_ASCII_TAB;
     }
 
-    AsciiKey result = {0};
-
-    if(sv_shifted.size == 1)
+    StringView up = cstr_sv("U");
+    if(sv_find(up, sv) == sv.data)
     {
-        result.shifted = (uint8_t)sv_shifted.data[0];
-    }
-    if(sv_unshifted.size == 1)
-    {
-        result.unshifted = (uint8_t)sv_unshifted.data[0];
+        return RIVER2D_ASCII_UP;
     }
 
     StringView ampersand = cstr_sv("am");
-    if(sv_find(ampersand, sv_shifted) == sv_shifted.data)
+    if(sv_find(ampersand, sv) == sv.data)
     {
-        result.shifted = '&';
-    }
-    else if(sv_find(ampersand, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '&';
+        return '&';
     }
 
     StringView apostrophe = cstr_sv("ap");
-    if(sv_find(apostrophe, sv_shifted) == sv_shifted.data)
+    if(sv_find(apostrophe, sv) == sv.data)
     {
-        result.shifted = '\'';
-    }
-    else if(sv_find(apostrophe, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '\'';
+        return '\'';
     }
 
     StringView circum = cstr_sv("asciic");
-    if(sv_find(circum, sv_shifted) == sv_shifted.data)
+    if(sv_find(circum, sv) == sv.data)
     {
-        result.shifted = '^';
-    }
-    else if(sv_find(circum, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '^';
+        return '^';
     }
 
     StringView asterisk = cstr_sv("ast");
-    if(sv_find(asterisk, sv_shifted) == sv_shifted.data)
+    if(sv_find(asterisk, sv) == sv.data)
     {
-        result.shifted = '*';
-    }
-    else if(sv_find(asterisk, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '*';
+        return '*';
     }
 
     StringView at = cstr_sv("at");
-    if(sv_same(at, sv_shifted))
+    if(sv_same(at, sv))
     {
-        result.shifted = '@';
-    }
-    else if(sv_same(at, sv_unshifted))
-    {
-        result.unshifted = '@';
+        return '@';
     }
 
     StringView backslash = cstr_sv("bac");
-    if(sv_find(backslash, sv_shifted) == sv_shifted.data)
+    if(sv_find(backslash, sv) == sv.data)
     {
-        result.shifted = '\\';
-    }
-    else if(sv_find(backslash, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '\\';
+        return '\\';
     }
 
     StringView verticalbar = cstr_sv("bar");
-    if(sv_same(verticalbar, sv_shifted))
+    if(sv_same(verticalbar, sv))
     {
-        result.shifted = '|';
-    }
-    else if(sv_same(verticalbar, sv_unshifted))
-    {
-        result.unshifted = '|';
+        return '|';
     }
 
     StringView braceleft = cstr_sv("bracel");
-    if(sv_find(braceleft, sv_shifted) == sv_shifted.data)
+    if(sv_find(braceleft, sv) == sv.data)
     {
-        result.shifted = '{';
-    }
-    else if(sv_find(braceleft, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '{';
+        return '{';
     }
     StringView braceright = cstr_sv("bracer");
-    if(sv_find(braceright, sv_shifted) == sv_shifted.data)
+    if(sv_find(braceright, sv) == sv.data)
     {
-        result.shifted = '}';
-    }
-    else if(sv_find(braceright, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '}';
+        return '}';
     }
 
     StringView bracketleft = cstr_sv("bracketl");
-    if(sv_find(bracketleft, sv_shifted) == sv_shifted.data)
+    if(sv_find(bracketleft, sv) == sv.data)
     {
-        result.shifted = '[';
-    }
-    else if(sv_find(bracketleft, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '[';
+        return '[';
     }
     StringView bracketright = cstr_sv("bracketr");
-    if(sv_find(bracketright, sv_shifted) == sv_shifted.data)
+    if(sv_find(bracketright, sv) == sv.data)
     {
-        result.shifted = ']';
-    }
-    else if(sv_find(bracketright, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = ']';
+        return ']';
     }
 
     StringView colon = cstr_sv("col");
-    if(sv_find(colon, sv_shifted) == sv_shifted.data)
+    if(sv_find(colon, sv) == sv.data)
     {
-        result.shifted = ':';
-    }
-    else if(sv_find(colon, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = ':';
+        return ':';
     }
 
     StringView comma = cstr_sv("com");
-    if(sv_find(comma, sv_shifted) == sv_shifted.data)
+    if(sv_find(comma, sv) == sv.data)
     {
-        result.shifted = ',';
-    }
-    else if(sv_find(comma, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = ',';
+        return ',';
     }
 
     StringView dollar = cstr_sv("do");
-    if(sv_find(dollar, sv_shifted) == sv_shifted.data)
+    if(sv_find(dollar, sv) == sv.data)
     {
-        result.shifted = '$';
-    }
-    else if(sv_find(dollar, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '$';
+        return '$';
     }
 
     StringView equal = cstr_sv("eq");
-    if(sv_find(equal, sv_shifted) == sv_shifted.data)
+    if(sv_find(equal, sv) == sv.data)
     {
-        result.shifted = '=';
-    }
-    else if(sv_find(equal, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '=';
+        return '=';
     }
 
     StringView exclam = cstr_sv("ex");
-    if(sv_find(exclam, sv_shifted) == sv_shifted.data)
+    if(sv_find(exclam, sv) == sv.data)
     {
-        result.shifted = '!';
-    }
-    else if(sv_find(exclam, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '!';
+        return '!';
     }
 
     StringView greater = cstr_sv("gr");
-    if(sv_find(greater, sv_shifted) == sv_shifted.data)
+    if(sv_find(greater, sv) == sv.data)
     {
-        result.shifted = '>';
-    }
-    else if(sv_find(greater, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '>';
+        return '>';
     }
 
     StringView less = cstr_sv("le");
-    if(sv_find(less, sv_shifted) == sv_shifted.data)
+    if(sv_find(less, sv) == sv.data)
     {
-        result.shifted = '<';
-    }
-    else if(sv_find(less, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '<';
+        return '<';
     }
 
     StringView minus = cstr_sv("mi");
-    if(sv_find(minus, sv_shifted) == sv_shifted.data)
+    if(sv_find(minus, sv) == sv.data)
     {
-        result.shifted = '-';
-    }
-    else if(sv_find(minus, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '-';
+        return '-';
     }
 
     StringView num = cstr_sv("nu");
-    if(sv_find(num, sv_shifted) == sv_shifted.data)
+    if(sv_find(num, sv) == sv.data)
     {
-        result.shifted = '#';
-    }
-    else if(sv_find(num, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '#';
+        return '#';
     }
 
     StringView parenleft = cstr_sv("parenl");
-    if(sv_find(parenleft, sv_shifted) == sv_shifted.data)
+    if(sv_find(parenleft, sv) == sv.data)
     {
-        result.shifted = '(';
-    }
-    else if(sv_find(parenleft, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '(';
+        return '(';
     }
     StringView parenright = cstr_sv("parenr");
-    if(sv_find(parenright, sv_shifted) == sv_shifted.data)
+    if(sv_find(parenright, sv) == sv.data)
     {
-        result.shifted = ')';
-    }
-    else if(sv_find(parenright, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = ')';
+        return ')';
     }
 
     StringView percent = cstr_sv("perc");
-    if(sv_find(percent, sv_shifted) == sv_shifted.data)
+    if(sv_find(percent, sv) == sv.data)
     {
-        result.shifted = '.';
-    }
-    else if(sv_find(percent, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '.';
+        return '.';
     }
 
     StringView period = cstr_sv("peri");
-    if(sv_find(period, sv_shifted) == sv_shifted.data)
+    if(sv_find(period, sv) == sv.data)
     {
-        result.shifted = '.';
-    }
-    else if(sv_find(period, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '.';
+        return '.';
     }
 
     StringView question = cstr_sv("que");
-    if(sv_find(question, sv_shifted) == sv_shifted.data)
+    if(sv_find(question, sv) == sv.data)
     {
-        result.shifted = '?';
-    }
-    else if(sv_find(question, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '?';
+        return '?';
     }
 
     StringView quote = cstr_sv("quo");
-    if(sv_find(quote, sv_shifted) == sv_shifted.data)
+    if(sv_find(quote, sv) == sv.data)
     {
-        result.shifted = '\"';
-    }
-    else if(sv_find(quote, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '\"';
+        return '\"';
     }
 
     StringView semicolon = cstr_sv("se");
-    if(sv_find(semicolon, sv_shifted) == sv_shifted.data)
+    if(sv_find(semicolon, sv) == sv.data)
     {
-        result.shifted = ';';
-    }
-    else if(sv_find(semicolon, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = ';';
+        return ';';
     }
 
     StringView slash = cstr_sv("sl");
-    if(sv_find(slash, sv_shifted) == sv_shifted.data)
+    if(sv_find(slash, sv) == sv.data)
     {
-        result.shifted = '/';
-    }
-    else if(sv_find(slash, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '/';
+        return '/';
     }
 
     StringView space = cstr_sv("sp");
-    if(sv_find(space, sv_shifted) == sv_shifted.data)
+    if(sv_find(space, sv) == sv.data)
     {
-        result.shifted = ' ';
-    }
-    else if(sv_find(space, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = ' ';
+        return ' ';
     }
 
     StringView underscore = cstr_sv("un");
-    if(sv_find(underscore, sv_shifted) == sv_shifted.data)
+    if(sv_find(underscore, sv) == sv.data)
     {
-        result.shifted = '_';
-    }
-    else if(sv_find(underscore, sv_unshifted) == sv_unshifted.data)
-    {
-        result.unshifted = '_';
+        return '_';
     }
 
 #ifdef DEBUG
-    if(!result.shifted && !result.unshifted)
-    {
-        fprintf(stderr, "unshifted: "PRI_SV"\n", ARG_SV(sv_unshifted));
-        fprintf(stderr, "shifted: "PRI_SV"\n",   ARG_SV(sv_shifted));
-    }
+    fprintf(stderr, "Key not evaluated: "PRI_SV"\n", ARG_SV(sv));
 #endif
-    return result;
+    return 0;
 }
 
 Dimensions river2D_getWindowSize
