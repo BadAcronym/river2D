@@ -320,19 +320,29 @@ void loadText
 
     for(uint32_t i = 0; i < imageChars; ++i)
     {
-        char character = 0x7F;
-        if(i < sv->size && sv->data[i] && sv->data[i] != 0x20)
+        char character = 0x20;
+        if(i < sv->size && sv->data[i])
         {
             character = sv->data[i];
         }
 
-        if(character < 0x20 || character > 0x7F)
+        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
+        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
+
+        if(character == 0x20)
+        {
+            charBigX = (uint32_t)(0x5F) * charsize % fontImgWidth;
+            charBigY = (uint32_t)(0x5F) * charsize / fontImgWidth;
+        }
+        else if(character == RIVER2D_ASCII_CURSOR)
+        {
+            charBigX = (uint32_t)(0x5E) * charsize % fontImgWidth;
+            charBigY = (uint32_t)(0x5E) * charsize / fontImgWidth;
+        }
+        else if(character < 0x20)
         {
             continue;
         }
-
-        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
-        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
 
         uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
                                  RIVER2D_BPP;

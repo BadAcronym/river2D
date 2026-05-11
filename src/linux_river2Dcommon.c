@@ -325,14 +325,11 @@ StringView river2D_listFiles
     return result;
 }
 
-extern uint8_t xkeyToAscii
+uint8_t xkeyToAscii
 (
-    EngineData *engine,
-    XEvent     *event
+    KeySym sym,
+    XEvent *event
 ){
-    KeySym sym = XkbKeycodeToKeysym(engine->display,
-                                              (KeyCode)event->xkey.keycode,
-                                              0, 0);
 
     char *codeString = XKeysymToString(sym);
     StringView sv    = cstr_sv(codeString);
@@ -619,6 +616,24 @@ extern uint8_t xkeyToAscii
     fprintf(stderr, "Key not evaluated: "PRI_SV"\n", ARG_SV(sv));
 #endif
     return 0;
+}
+
+AsciiKey processXKey
+(
+    EngineData *engine,
+    XEvent     *event
+){
+    KeySym sym_key = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode,
+                                        0, 0);
+
+    KeySym sym_raw = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode,
+                                        0, event->xkey.state & ShiftMask);
+
+    return(AsciiKey)
+    {
+        .key = xkeyToAscii(sym_key, event),
+        .raw = xkeyToAscii(sym_raw, event)
+    };
 }
 
 Dimensions river2D_getWindowSize

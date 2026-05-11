@@ -57,6 +57,7 @@
 #define RIVER2D_RENDERER_VULKAN          2
 #define RIVER2D_RENDERER_DIRECTX         3
 
+#define RIVER2D_ASCII_CURSOR             0x01
 #define RIVER2D_ASCII_UP                 0x02
 #define RIVER2D_ASCII_DOWN               0x03
 #define RIVER2D_ASCII_LEFT               0x04
@@ -155,6 +156,13 @@ typedef struct River2D_Time
     int64_t ns;
 }
 River2D_Time;
+
+typedef struct AsciiKey
+{
+    uint8_t key;
+    uint8_t raw;
+}
+AsciiKey;
 
 typedef struct Coordinates
 {
@@ -376,6 +384,12 @@ StringView river2D_listFiles
 
 #ifdef BUILD_LINUX
 extern uint8_t xkeyToAscii
+(
+    KeySym sym,
+    XEvent *event
+);
+
+extern AsciiKey processXKey
 (
     EngineData *engine,
     XEvent     *event
