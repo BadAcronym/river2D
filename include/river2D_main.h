@@ -57,6 +57,10 @@
 #define RIVER2D_RENDERER_VULKAN          2
 #define RIVER2D_RENDERER_DIRECTX         3
 
+#define RIVER2D_ASCII_UP                 0x02
+#define RIVER2D_ASCII_DOWN               0x03
+#define RIVER2D_ASCII_LEFT               0x04
+#define RIVER2D_ASCII_RIGHT              0x05
 #define RIVER2D_ASCII_BACKSPACE          0x08
 #define RIVER2D_ASCII_TAB                0x09
 #define RIVER2D_ASCII_ENTER              0x0A
@@ -111,6 +115,8 @@
 #define RIVER2D_CHOICE_SHOW_FPS_BIT      1
 #define RIVER2D_CHOICE_STATIC_CANVAS_BIT 2
 #define RIVER2D_CHOICE_BACKGROUNDS_BYTE  0xFF000000
+
+#define RIVER2D_BIT_HOVER                0x01
 
 typedef struct PerformanceCounter
 {
@@ -184,6 +190,7 @@ typedef struct Button
 {
     StringView name;
     Rect       area;
+    uint8_t    status;
 }
 Button;
 
@@ -261,13 +268,6 @@ typedef struct EngineData
                                uint32_t          cropWidth,  uint32_t      cropHeight);
 }
 EngineData;
-
-typedef struct AsciiKey
-{
-    uint8_t unshifted;
-    uint8_t shifted;
-}
-AsciiKey;
 
 extern void river2D_loadImage_file
 (
@@ -382,7 +382,7 @@ StringView river2D_listFiles
 );
 
 #ifdef BUILD_LINUX
-extern AsciiKey xkeyToAscii
+extern uint8_t xkeyToAscii
 (
     EngineData *engine,
     XEvent     *event
