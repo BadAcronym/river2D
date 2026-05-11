@@ -151,7 +151,7 @@ void river2D_loadImage_file
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
 
-    river2D_refreshImage(engine, image);
+    river2D_syncImage(engine, image, true);
 
     image->picture = XRenderCreatePicture(engine->display, image->pixmap,
                                           engine->format, 0, 0);
