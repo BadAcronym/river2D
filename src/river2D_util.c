@@ -225,37 +225,32 @@ bool river2D_insideRect
 
 void river2D_createButton
 (
-    EngineData    *engine,
-    River2D_Image *img,
-    StringView    *sv,
-    uint8_t       font,
-    uint16_t      charsize,
-    uint32_t      spacing,
-    Coordinates   point,
-    Button        *button
+    EngineData     *engine,
+    ButtonSettings *settings
 ){
-    float floatWidth = (float)sv->size * (float)(charsize + spacing) /
-                       (float)engine->backbuffer.width;
-    float floatHeight = (float)charsize / (float)engine->backbuffer.height;
+    float floatWidth = (float)settings->name->size *
+                           (float)(settings->charsize + settings->spacing) /
+                           (float)engine->backbuffer.width;
+    float floatHeight = (float)settings->charsize / (float)engine->backbuffer.height;
 
-    uint32_t offsetX = (uint32_t)((point.x - floatWidth / 2.0f) *
-                       (float)engine->backbuffer.width);
-    uint32_t offsetY = (uint32_t)((point.y - floatHeight / 2.0f) *
-                       (float)engine->backbuffer.height);
+    float offsetX = (settings->point.x - floatWidth / 2.0f) *
+                    (float)engine->backbuffer.width;
+    float offsetY = (settings->point.y - floatHeight / 2.0f) *
+                    (float)engine->backbuffer.height;
 
-    button->area.upLeft.x   = (float)offsetX / (float)engine->backbuffer.width;
-    button->area.upLeft.y   = (float)offsetY / (float)engine->backbuffer.height;
-    button->area.lowRight.x = button->area.upLeft.x + floatWidth;
-    button->area.lowRight.y = button->area.upLeft.y + floatHeight;
+    settings->button->area.upLeft.x   = offsetX / (float)engine->backbuffer.width;
+    settings->button->area.upLeft.y   = offsetY / (float)engine->backbuffer.height;
+    settings->button->area.lowRight.x = settings->button->area.upLeft.x + floatWidth;
+    settings->button->area.lowRight.y = settings->button->area.upLeft.y + floatHeight;
 
     rvLoadTextSettings set = {0};
-    set.image    = img;
-    set.sv       = sv;
-    set.font     = font;
-    set.spacing  = spacing;
-    set.charsize = charsize;
-    set.offsetX  = offsetX;
-    set.offsetY  = offsetY;
+    set.image    = settings->img;
+    set.sv       = settings->name;
+    set.font     = settings->font;
+    set.spacing  = settings->spacing;
+    set.charsize = settings->charsize;
+    set.offsetX  = (uint32_t)offsetX;
+    set.offsetY  = (uint32_t)offsetY;
 
     river2D_loadText(engine, &set);
 }

@@ -270,6 +270,18 @@ typedef struct EngineData
 }
 EngineData;
 
+typedef struct ButtonSettings
+{
+    River2D_Image *img;
+    Coordinates   point;
+    StringView    *name;
+    Button        *button;
+    uint8_t       font;
+    uint16_t      charsize;
+    uint32_t      spacing;
+}
+ButtonSettings;
+
 extern void river2D_loadImage_file
 (
     EngineData    *engine,
@@ -385,8 +397,7 @@ StringView river2D_listFiles
 #ifdef BUILD_LINUX
 extern uint8_t xkeyToAscii
 (
-    KeySym sym,
-    XEvent *event
+    KeySym sym
 );
 
 extern AsciiKey processXKey
@@ -426,14 +437,8 @@ extern bool river2D_insideRect
 
 extern void river2D_createButton
 (
-    EngineData    *engine,
-    River2D_Image *img,
-    StringView    *sv,
-    uint8_t       font,
-    uint16_t      charsize,
-    uint32_t      spacing,
-    Coordinates   point,
-    Button        *button
+    EngineData     *engine,
+    ButtonSettings *settings
 );
 
 // initializes the engine and all needed resources.
