@@ -327,10 +327,8 @@ StringView river2D_listFiles
 
 uint8_t xkeyToAscii
 (
-    KeySym sym,
-    XEvent *event
+    KeySym sym
 ){
-
     char *codeString = XKeysymToString(sym);
     StringView sv    = cstr_sv(codeString);
 
@@ -631,8 +629,8 @@ AsciiKey processXKey
 
     return(AsciiKey)
     {
-        .key = xkeyToAscii(sym_key, event),
-        .raw = xkeyToAscii(sym_raw, event)
+        .key = xkeyToAscii(sym_key),
+        .raw = xkeyToAscii(sym_raw)
     };
 }
 
