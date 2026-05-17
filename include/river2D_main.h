@@ -112,6 +112,15 @@
 
 #define RIVER2D_BIT_HOVER                0x01
 
+#define RIVER2D_ALIGN_TOPLEFT            1
+#define RIVER2D_ALIGN_TOPCENTER          2
+#define RIVER2D_ALIGN_TOPRIGHT           3
+#define RIVER2D_ALIGN_CENTERLEFT         4
+#define RIVER2D_ALIGN_CENTERRIGHT        5
+#define RIVER2D_ALIGN_BOTTOMLEFT         6
+#define RIVER2D_ALIGN_BOTTOMCENTER       7
+#define RIVER2D_ALIGN_BOTTOMRIGHT        8
+
 typedef struct PerformanceCounter
 {
     uint64_t time;
@@ -276,6 +285,7 @@ typedef struct ButtonSettings
     Coordinates   point;
     StringView    *name;
     Button        *button;
+    uint8_t       alignment;
     uint8_t       font;
     uint16_t      charsize;
     uint32_t      spacing;
