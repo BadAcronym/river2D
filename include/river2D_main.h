@@ -279,7 +279,7 @@ typedef struct EngineData
 }
 EngineData;
 
-typedef struct ButtonSettings
+typedef struct rvButtonSettings
 {
     River2D_Image *img;
     Coordinates   point;
@@ -290,7 +290,7 @@ typedef struct ButtonSettings
     uint16_t      charsize;
     uint32_t      spacing;
 }
-ButtonSettings;
+rvButtonSettings;
 
 extern void river2D_loadImage_file
 (
@@ -448,7 +448,7 @@ extern bool river2D_insideRect
 extern void river2D_createButton
 (
     EngineData     *engine,
-    ButtonSettings *settings
+    rvButtonSettings *settings
 );
 
 // initializes the engine and all needed resources.
