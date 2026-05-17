@@ -225,8 +225,8 @@ bool river2D_insideRect
 
 void river2D_createButton
 (
-    EngineData     *engine,
-    ButtonSettings *settings
+    EngineData       *engine,
+    rvButtonSettings *settings
 ){
     float floatWidth = (float)settings->name->size *
                            (float)(settings->charsize + settings->spacing) /
