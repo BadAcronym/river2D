@@ -228,46 +228,48 @@ void river2D_createButton
     EngineData       *engine,
     rvButtonSettings *settings
 ){
-    float floatWidth = (float)settings->name->size *
-                           (float)(settings->charsize + settings->spacing) /
-                           (float)engine->backbuffer.width;
-    float floatHeight = (float)settings->charsize / (float)engine->backbuffer.height;
+    float imgWidth  = (float)settings->img->width;
+    float imgHeight = (float)settings->img->height;
+
+    float floatWidth  = (float)settings->name->size *
+                        (float)(settings->charsize + settings->spacing) / imgWidth;
+    float floatHeight = (float)settings->charsize / imgHeight;
 
     float offsetX = (settings->point.x - floatWidth / 2.0f) *
-                    (float)engine->backbuffer.width;
+                    (float)imgWidth;
     float offsetY = (settings->point.y - floatHeight / 2.0f) *
-                    (float)engine->backbuffer.height;
+                    (float)imgHeight;
 
     if(settings->alignment == RIVER2D_ALIGN_TOPLEFT   ||
        settings->alignment == RIVER2D_ALIGN_TOPCENTER ||
        settings->alignment == RIVER2D_ALIGN_TOPRIGHT
     ){
-        offsetY = settings->point.y * (float)engine->backbuffer.height;
+        offsetY = settings->point.y * (float)imgHeight;
     }
 
     if(settings->alignment == RIVER2D_ALIGN_BOTTOMLEFT   ||
        settings->alignment == RIVER2D_ALIGN_BOTTOMCENTER ||
        settings->alignment == RIVER2D_ALIGN_BOTTOMRIGHT
     ){
-        offsetY = (settings->point.y - floatHeight) * (float)engine->backbuffer.height;
+        offsetY = (settings->point.y - floatHeight) * imgHeight;
     }
 
     if(settings->alignment == RIVER2D_ALIGN_TOPLEFT    ||
        settings->alignment == RIVER2D_ALIGN_CENTERLEFT ||
        settings->alignment == RIVER2D_ALIGN_BOTTOMLEFT
     ){
-        offsetX = settings->point.x * (float)engine->backbuffer.width;
+        offsetX = settings->point.x * imgWidth;
     }
 
     if(settings->alignment == RIVER2D_ALIGN_TOPRIGHT    ||
        settings->alignment == RIVER2D_ALIGN_CENTERRIGHT ||
        settings->alignment == RIVER2D_ALIGN_BOTTOMRIGHT
     ){
-        offsetX = (settings->point.x - floatWidth) * (float)engine->backbuffer.width;
+        offsetX = (settings->point.x - floatWidth) * imgWidth;
     }
 
-    settings->button->area.upLeft.x   = offsetX / (float)engine->backbuffer.width;
-    settings->button->area.upLeft.y   = offsetY / (float)engine->backbuffer.height;
+    settings->button->area.upLeft.x   = offsetX / imgWidth;
+    settings->button->area.upLeft.y   = offsetY / imgHeight;
     settings->button->area.lowRight.x = settings->button->area.upLeft.x + floatWidth;
     settings->button->area.lowRight.y = settings->button->area.upLeft.y + floatHeight;
 
