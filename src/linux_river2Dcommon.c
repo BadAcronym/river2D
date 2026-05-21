@@ -118,12 +118,11 @@ f_internal void writeMissingTexture
 (
     River2D_Image *image
 ){
-    for(uint32_t y = 0; y < image->height; ++y)
+    uint64_t imgsize = image->width * image->height;
+
+    for(uint64_t i = 0; i < imgsize; ++i)
     {
-        for(uint32_t x = 0; x < image->width; ++x)
-        {
-            ((uint32_t*)image->data)[x * y * RIVER2D_BPP] = 0xC64FACFF;
-        }
+        ((uint32_t*)image->data)[i] = 0xC64FACFF;
     }
 }
 
