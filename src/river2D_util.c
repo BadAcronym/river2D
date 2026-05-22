@@ -273,6 +273,8 @@ void river2D_createButton
     settings->button->area.lowRight.x = settings->button->area.upLeft.x + floatWidth;
     settings->button->area.lowRight.y = settings->button->area.upLeft.y + floatHeight;
 
+    settings->button->name = *settings->name;
+
     rvLoadTextSettings set = {0};
     set.image    = settings->img;
     set.sv       = settings->name;
