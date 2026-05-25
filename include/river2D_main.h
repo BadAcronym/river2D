@@ -405,11 +405,6 @@ StringView river2D_listFiles
 );
 
 #ifdef BUILD_LINUX
-extern uint8_t xkeyToAscii
-(
-    KeySym sym
-);
-
 extern AsciiKey processXKey
 (
     EngineData *engine,

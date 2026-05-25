@@ -326,7 +326,7 @@ StringView river2D_listFiles
     return result;
 }
 
-uint8_t xkeyToAscii
+f_internal uint8_t xkeyToAscii
 (
     KeySym sym
 ){
