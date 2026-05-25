@@ -59,6 +59,8 @@ void river2D_resolveRenderer
         resolveFunction((void**)&engine->bltBuffer, software, "bltBuffer", &error);
         resolveFunction((void**)&engine->compositeImage,
                         software, "compositeImage", &error);
+
+        free((void*)so);
     }
     else if(renderer == RIVER2D_RENDERER_OPENGL)
     {
@@ -734,8 +736,8 @@ void river2D_syncImage
         return;
     }
 
-    XImage *ximg = XGetImage(engine->display, image->pixmap, 0, 0,
-                             image->width, image->height, AllPlanes, ZPixmap);
+    XImage *ximg = XGetImage(engine->display, image->pixmap, 0, 0, image->width,
+                             image->height, AllPlanes, ZPixmap);
 
     if(!ximg)
     {
@@ -746,6 +748,8 @@ void river2D_syncImage
     {
         free(image->data);
     }
-
     image->data = (uint8_t*)ximg->data;
+
+    ximg->data = NULL;
+    XDestroyImage(ximg);
 }
