@@ -44,10 +44,12 @@
     #define RIVER2D_MOUSE3 0x10
 #endif
 
-#define RV_ERROR_INVALID_HEADER 1
-#define RV_ERROR_LOADIMAGE_PTR  2
-#define RV_ERROR_LOADIMAGE_FILE 3
-#define RV_SUCCESS              128
+#define RV_ERROR_INVALID_HEADER   1
+#define RV_ERROR_LOADIMAGE_PTR    2
+#define RV_ERROR_LOADIMAGE_FILE   3
+#define RV_ERROR_INVALID_METADATA 4
+#define RV_ERROR_INVALID_INDICES  5
+#define RV_SUCCESS                128
 
 #define RIVER2D_VERTICAL   0
 #define RIVER2D_HORIZONTAL 1
@@ -333,7 +335,15 @@ rvLoadMapSettings;
 
 typedef struct rvSaveMapSettings
 {
+    FILE          *file;
+    uint16_t      tilesize;
+    uint32_t      mapWidth;
+    uint32_t      mapHeight;
+    uint8_t       layers;
+    River2D_Image *tilesheet;
     uint8_t       errorcode;
+    TileMetadata  *metadata;
+    TileIndex     *indices;
 }
 rvSaveMapSettings;
 
