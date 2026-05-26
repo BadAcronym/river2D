@@ -44,6 +44,11 @@
     #define RIVER2D_MOUSE3 0x10
 #endif
 
+#define RV_ERROR_INVALID_HEADER 1
+#define RV_ERROR_LOADIMAGE_PTR  2
+#define RV_ERROR_LOADIMAGE_FILE 3
+#define RV_SUCCESS              128
+
 #define RIVER2D_VERTICAL   0
 #define RIVER2D_HORIZONTAL 1
 
@@ -211,6 +216,28 @@ typedef struct Dimensions
 }
 Dimensions;
 
+typedef struct TileIndex
+{
+    uint16_t x;
+    uint16_t y;
+}
+TileIndex;
+
+typedef struct TileMetadata
+{
+    uint8_t  fps;
+    uint8_t  flags;
+    int16_t  next;
+}
+TileMetadata;
+
+typedef struct TileMap
+{
+    TileMetadata *metadata;
+    TileIndex    *indices;
+}
+TileMap;
+
 typedef struct River2D_ControlMap
 {
     uint64_t     keymap;
@@ -291,6 +318,24 @@ typedef struct rvButtonSettings
     uint32_t      spacing;
 }
 rvButtonSettings;
+
+typedef struct rvLoadMapSettings
+{
+    FILE          *file;
+    uint16_t      *tilesize;
+    uint32_t      *mapWidth;
+    uint32_t      *mapHeight;
+    uint8_t       *layers;
+    River2D_Image *tilesheet;
+    uint8_t       errorcode;
+}
+rvLoadMapSettings;
+
+typedef struct rvSaveMapSettings
+{
+    uint8_t       errorcode;
+}
+rvSaveMapSettings;
 
 extern void river2D_loadImage_file
 (
