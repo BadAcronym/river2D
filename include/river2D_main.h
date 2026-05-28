@@ -220,13 +220,6 @@ typedef struct Dimensions
 }
 Dimensions;
 
-typedef struct TileIndex
-{
-    uint16_t x;
-    uint16_t y;
-}
-TileIndex;
-
 typedef struct TileMetadata
 {
     uint8_t  fps;
@@ -234,6 +227,13 @@ typedef struct TileMetadata
     int16_t  next;
 }
 TileMetadata;
+
+typedef struct TileIndex
+{
+    uint16_t x;
+    uint16_t y;
+}
+TileIndex;
 
 typedef struct TileMap
 {
