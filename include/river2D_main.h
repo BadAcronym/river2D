@@ -329,7 +329,7 @@ typedef struct rvLoadMapSettings
     uint16_t      *tilesize;
     uint32_t      *mapWidth;
     uint32_t      *mapHeight;
-    uint8_t       *layers;
+    uint8_t       *mapLayers;
     River2D_Image *tilesheet;
     uint8_t       errorcode;
 }
