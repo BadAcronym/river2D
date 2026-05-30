@@ -192,7 +192,7 @@ void river2D_appendImage
     uint32_t width  = dst->width;
     uint32_t height = dst->height;
 
-    if(direction == RIVER2D_HORIZONTAL)
+    if(direction == RV_HORIZONTAL)
     {
         width = dst->width + src->width;
 
@@ -201,7 +201,7 @@ void river2D_appendImage
             height = src->height;
         }
     }
-    else if(direction == RIVER2D_VERTICAL)
+    else if(direction == RV_VERTICAL)
     {
         height = dst->height + src->height;
 
@@ -235,8 +235,8 @@ void river2D_appendImage
     }
 
     comp.src        = src;
-    comp.offsetDstX = direction == RIVER2D_HORIZONTAL ? og_width  : 0;
-    comp.offsetDstY = direction == RIVER2D_VERTICAL   ? og_height : 0;
+    comp.offsetDstX = direction == RV_HORIZONTAL ? og_width  : 0;
+    comp.offsetDstY = direction == RV_VERTICAL   ? og_height : 0;
     comp.cropHeight = src->height;
     comp.cropWidth  = src->width;
 

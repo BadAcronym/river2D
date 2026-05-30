@@ -53,8 +53,11 @@
 #define RV_ERROR_WRITE_INDICES    7
 #define RV_SUCCESS                128
 
-#define RIVER2D_VERTICAL   0
-#define RIVER2D_HORIZONTAL 1
+#define RV_TILE_BIT_ANIMATED      0x01
+#define RV_TILE_BIT_COLLISION     0x02
+
+#define RV_VERTICAL   1
+#define RV_HORIZONTAL 2
 
 #define RIVER2D_BPP                      4
 #define RIVER2D_PIXDEPTH                 32
