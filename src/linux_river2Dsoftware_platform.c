@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <memory.h>
-#include <stdlib.h>
 #include <pthread.h>
 
 f_internal Visual* findVisual
@@ -46,7 +45,7 @@ f_internal Visual* findVisual
     return visual;
 }
 
-Window river2D_openWindow
+Window rvOpenWindow
 (
     EngineData *engine
 ){
@@ -69,7 +68,7 @@ Window river2D_openWindow
                                   XDefaultRootWindow(engine->display), 0, 0,
                                   engine->config.window_width,
                                   engine->config.window_height,
-                                  0, RIVER2D_PIXDEPTH, InputOutput,
+                                  0, RV_PIXDEPTH, InputOutput,
                                   engine->visual, valuemask, &attributes);
 
     XStoreName(engine->display, window, engine->windowName);
@@ -82,7 +81,7 @@ Window river2D_openWindow
     return window;
 }
 
-void river2D_resizeBackbuffer
+void rvResizeBackbuffer
 (
     EngineData *engine,
     uint32_t   width,
@@ -93,15 +92,15 @@ void river2D_resizeBackbuffer
         XFreePixmap(engine->display, engine->backbuffer.pixmap);
     }
     engine->backbuffer.pixmap = XCreatePixmap(engine->display, engine->window,
-                                              width, height, RIVER2D_PIXDEPTH);
+                                              width, height, RV_PIXDEPTH);
     engine->backbuffer.width  = width;
     engine->backbuffer.height = height;
 }
 
 void init
 (
-    EngineData         *engine,
-    River2D_Image      *planes
+    EngineData *engine,
+    RiverImage *planes
 ){
     engine->running = true;
     engine->planes  = planes;
@@ -118,7 +117,7 @@ void init
         fprintf(stderr, "Failed to get default screen!\n");
     }
 
-    engine->visual = findVisual(engine->display, RIVER2D_PIXDEPTH);
+    engine->visual = findVisual(engine->display, RV_PIXDEPTH);
     if(!engine->visual)
     {
         fprintf(stderr, "No matching visual could be found.\n");
@@ -135,7 +134,7 @@ void init
     {
         engine->windowName = "unnamed river2D application";
     }
-    engine->window = river2D_openWindow(engine);
+    engine->window = rvOpenWindow(engine);
     if(!engine->window)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create window!.\n\033[0m");
@@ -147,16 +146,15 @@ void init
         fprintf(stderr, "\033[31m\nERROR: failed to Graphics Context!.\n\033[0m");
     }
 
-    if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
+    if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_createImage(engine, &engine->backbuffer,
-                            engine->config.canvas_width,
-                            engine->config.canvas_height);
+        rvCreateImage(engine, &engine->backbuffer, engine->config.canvas_width,
+                      engine->config.canvas_height);
     }
     else
     {
-        river2D_createImage(engine, &engine->backbuffer, engine->config.window_width,
-                            engine->config.window_height);
+        rvCreateImage(engine, &engine->backbuffer, engine->config.window_width,
+                      engine->config.window_height);
     }
 
     if(!engine->backbuffer.picture)
@@ -173,12 +171,12 @@ int32_t shutdown
 (
     EngineData *engine
 ){
-    for(uint8_t i = 0; i < RIVER2D_MAX_PLANES; ++i)
+    for(uint8_t i = 0; i < RV_MAX_PLANES; ++i)
     {
-        river2D_destroyImage(&engine->planes[i]);
+        rvDestroyImage(&engine->planes[i]);
     }
 
-    river2D_destroyImage(&engine->backbuffer);
+    rvDestroyImage(&engine->backbuffer);
 
     XFreeGC(engine->display, engine->context);
     XDestroyWindow(engine->display, engine->window);
@@ -189,16 +187,16 @@ int32_t shutdown
 
 void compositeImage
 (
-    EngineData    *engine,
-    River2D_Image *src,
-    River2D_Image *dst,
-    uint8_t       pictop,
-    uint32_t      offsetSrcX,
-    uint32_t      offsetSrcY,
-    uint32_t      offsetDstX,
-    uint32_t      offsetDstY,
-    uint32_t      cropWidth,
-    uint32_t      cropHeight
+    EngineData *engine,
+    RiverImage *src,
+    RiverImage *dst,
+    uint8_t    pictop,
+    uint32_t   offsetSrcX,
+    uint32_t   offsetSrcY,
+    uint32_t   offsetDstX,
+    uint32_t   offsetDstY,
+    uint32_t   cropWidth,
+    uint32_t   cropHeight
 ){
     if(!src)
     {
@@ -270,14 +268,14 @@ void bltBuffer
 
 void loadText
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    StringView    *sv,
-    uint8_t       font,
-    uint16_t      charsize,
-    uint32_t      spacing,
-    uint32_t      offsetX,
-    uint32_t      offsetY
+    EngineData *engine,
+    RiverImage *image,
+    StringView *sv,
+    uint8_t    font,
+    uint16_t   charsize,
+    uint32_t   spacing,
+    uint32_t   offsetX,
+    uint32_t   offsetY
 ){
     if(!engine->planes[font].data)
     {
@@ -296,12 +294,12 @@ void loadText
 
     if(image->width < minTextWidth || image->height < charsize)
     {
-        river2D_destroyImage(image);
+        rvDestroyImage(image);
     }
 
     if(!image->data)
     {
-        river2D_createImage(engine, image, minTextWidth, charsize);
+        rvCreateImage(engine, image, minTextWidth, charsize);
     }
 
     if(offsetX > image->width)
@@ -334,7 +332,7 @@ void loadText
             charBigX = (uint32_t)(0x5F) * charsize % fontImgWidth;
             charBigY = (uint32_t)(0x5F) * charsize / fontImgWidth;
         }
-        else if(character == RIVER2D_ASCII_CURSOR)
+        else if(character == RV_ASCII_CURSOR)
         {
             charBigX = (uint32_t)(0x5E) * charsize % fontImgWidth;
             charBigY = (uint32_t)(0x5E) * charsize / fontImgWidth;
@@ -345,19 +343,19 @@ void loadText
         }
 
         uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
-                                 RIVER2D_BPP;
+                                 RV_BPP;
         uint64_t trueDestOffset = (offsetY * image->width + offsetX + i *
-                                  (charsize + spacing)) * RIVER2D_BPP;
+                                  (charsize + spacing)) * RV_BPP;
 
         uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
         uint8_t* destloc = image->data + trueDestOffset;
 
         for(uint32_t j = 0; j < charsize; ++j)
         {
-            uint8_t* charlineLoc = charloc + j * fontImgWidth * RIVER2D_BPP;
-            uint8_t* destlineLoc = destloc + j * image->width * RIVER2D_BPP;
+            uint8_t* charlineLoc = charloc + j * fontImgWidth * RV_BPP;
+            uint8_t* destlineLoc = destloc + j * image->width * RV_BPP;
 
-            memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
+            memcpy(destlineLoc, charlineLoc, charsize * RV_BPP);
         }
     }
 

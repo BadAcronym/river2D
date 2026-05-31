@@ -25,8 +25,8 @@ void river2D_resizeBackbuffer
     engine->backbuffer.info.bmiHeader.biBitCount    = 32;
     engine->backbuffer.info.bmiHeader.biCompression = BI_RGB;
 
-    engine->backbuffer.data = VirtualAlloc(0, width * height * RIVER2D_BPP,
-                                           MEM_COMMIT, PAGE_READWRITE);
+    engine->backbuffer.data = VirtualAlloc(0, width * height * RV_BPP, MEM_COMMIT,
+                                           PAGE_READWRITE);
     if(!engine->backbuffer.data)
     {
         fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer.\033[0m");
@@ -46,7 +46,7 @@ void init
         engine->windowName = "unnamed river2D application";
     }
 
-    if(engine->config.choices & RIVER2D_CHOICE_STATIC_CANVAS_BIT)
+    if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
     {
         river2D_createImage(engine, &engine->backbuffer,
                             engine->config.canvas_width, engine->config.canvas_height);
@@ -82,7 +82,7 @@ void compositeImage
     uint32_t      cropWidth,
     uint32_t      cropHeight
 ){
-    if(pictop != RIVER2D_PICTOP_OVER)
+    if(pictop != RV_PICTOP_OVER)
     {
         fprintf(stderr, "\033[31;1;7mERROR: pictop %u not impletmented on windows.\033[0m\n", pictop);
         return;
@@ -110,8 +110,8 @@ void compositeImage
         return;
     }
 
-    uint64_t copyWidth = src->width * RIVER2D_BPP;
-    uint64_t bufWidth  = dst->width * RIVER2D_BPP;
+    uint64_t copyWidth = src->width * RV_BPP;
+    uint64_t bufWidth  = dst->width * RV_BPP;
 
     if(offsetDstX + cropWidth > engine->backbuffer.width)
     {
@@ -124,13 +124,13 @@ void compositeImage
     }
 
     uint8_t *dst_data = (uint8_t*)dst->data +
-                        offsetDstY * bufWidth + offsetDstX * RIVER2D_BPP;
-    uint8_t *src_data = src->data + offsetSrcY * copyWidth + offsetSrcX * RIVER2D_BPP;
+                        offsetDstY * bufWidth + offsetDstX * RV_BPP;
+    uint8_t *src_data = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
 
-    cropWidth *= RIVER2D_BPP;
+    cropWidth *= RV_BPP;
     for(uint32_t y = 0; y < cropHeight; ++y)
     {
-        for(uint32_t x = 0; x < cropWidth; x += RIVER2D_BPP)
+        for(uint32_t x = 0; x < cropWidth; x += RV_BPP)
         {
             uint64_t srcIndex = y * copyWidth + x;
             uint64_t dstIndex = y * bufWidth + x;
@@ -225,19 +225,19 @@ void loadText
         uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
 
         uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
-                                 RIVER2D_BPP;
+                                 RV_BPP;
         uint64_t trueDestOffset = (offsetY * image->width + offsetX + i *
-                                  (charsize + spacing)) * RIVER2D_BPP;
+                                  (charsize + spacing)) * RV_BPP;
 
         uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
         uint8_t* destloc = image->data + trueDestOffset;
 
         for(uint32_t j = 0; j < charsize; ++j)
         {
-            uint8_t* charlineLoc = charloc + j * fontImgWidth * RIVER2D_BPP;
-            uint8_t* destlineLoc = destloc + j * image->width * RIVER2D_BPP;
+            uint8_t* charlineLoc = charloc + j * fontImgWidth * RV_BPP;
+            uint8_t* destlineLoc = destloc + j * image->width * RV_BPP;
 
-            memcpy(destlineLoc, charlineLoc, charsize * RIVER2D_BPP);
+            memcpy(destlineLoc, charlineLoc, charsize * RV_BPP);
         }
     }
 }

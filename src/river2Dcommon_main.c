@@ -5,8 +5,8 @@
 
 f_internal void calcDelta
 (
-    const River2D_Time *time1,
-    const River2D_Time *time2,
+    const RiverTime *time1,
+    const RiverTime *time2,
     int64_t      *deltaS,
     int64_t      *deltaNS
 ){
@@ -45,15 +45,15 @@ f_internal void calcDelta
     }
 }
 
-River2D_Time river2D_deltaTime
+RiverTime rvDeltaTime
 (
-    const River2D_Time *time1,
-    const River2D_Time *time2
+    const RiverTime *time1,
+    const RiverTime *time2
 ){
     if(!time1 || !time2)
     {
         fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        River2D_Time time = {0, 0};
+        RiverTime time = {0, 0};
         return time;
     }
 
@@ -61,14 +61,14 @@ River2D_Time river2D_deltaTime
     int64_t deltaNS = 0;
     calcDelta(time1, time2, &deltaS, &deltaNS);
 
-    River2D_Time delta = {deltaS, deltaNS};
+    RiverTime delta = {deltaS, deltaNS};
     return delta;
 }
 
-float river2D_deltaTime_ms
+float rvDeltaTime_ms
 (
-    const River2D_Time *time1,
-    const River2D_Time *time2
+    const RiverTime *time1,
+    const RiverTime *time2
 ){
     if(!time1 || !time2)
     {
@@ -83,10 +83,10 @@ float river2D_deltaTime_ms
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }
 
-extern int64_t river2D_deltaTime_ns
+extern int64_t rvDeltaTime_ns
 (
-    const River2D_Time *time1,
-    const River2D_Time *time2
+    const RiverTime *time1,
+    const RiverTime *time2
 ){
     if(!time1 || !time2)
     {
@@ -101,37 +101,37 @@ extern int64_t river2D_deltaTime_ns
     return (deltaS * BILLION + deltaNS);
 }
 
-River2D_Time river2D_deltaTime_now
+RiverTime rvDeltaTime_now
 (
-    const River2D_Time *time
+    const RiverTime *time
 ){
     if(!time || !time->s)
     {
         fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        River2D_Time result = {-1, -1};
+        RiverTime result = {-1, -1};
         return result;
     }
 
-    River2D_Time current = river2D_queryTime();
-    int64_t      deltaS  = 0;
-    int64_t      deltaNS = 0;
+    RiverTime current = rvQueryTime();
+    int64_t   deltaS  = 0;
+    int64_t   deltaNS = 0;
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
         fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
-        River2D_Time result = {0, 0};
+        RiverTime result = {0, 0};
         return result;
     }
 
     calcDelta(time, &current, &deltaS, &deltaNS);
 
-    River2D_Time delta = {deltaS, deltaNS};
+    RiverTime delta = {deltaS, deltaNS};
     return delta;
 }
 
-float river2D_deltaTime_now_ms
+float rvDeltaTime_now_ms
 (
-    const River2D_Time *time
+    const RiverTime *time
 ){
     if(!time)
     {
@@ -139,9 +139,9 @@ float river2D_deltaTime_now_ms
         return -1;
     }
 
-    River2D_Time current = river2D_queryTime();
-    int64_t      deltaS  = 0;
-    int64_t      deltaNS = 0;
+    RiverTime current = rvQueryTime();
+    int64_t   deltaS  = 0;
+    int64_t   deltaNS = 0;
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
@@ -154,9 +154,9 @@ float river2D_deltaTime_now_ms
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }
 
-extern uint64_t river2D_deltaTime_now_ns
+extern uint64_t rvDeltaTime_now_ns
 (
-    const River2D_Time *time
+    const RiverTime *time
 ){
     if(!time)
     {
@@ -164,9 +164,9 @@ extern uint64_t river2D_deltaTime_now_ns
         return BILLION + 1;
     }
 
-    River2D_Time current = river2D_queryTime();
-    int64_t      deltaS  = 0;
-    int64_t      deltaNS = 0;
+    RiverTime current = rvQueryTime();
+    int64_t   deltaS  = 0;
+    int64_t   deltaNS = 0;
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
@@ -179,12 +179,12 @@ extern uint64_t river2D_deltaTime_now_ns
     return(uint64_t)(deltaS * BILLION + deltaNS);
 }
 
-void river2D_appendImage
+void rvAppendImage
 (
-    EngineData    *engine,
-    River2D_Image *src,
-    River2D_Image *dst,
-    uint8_t       direction
+    EngineData *engine,
+    RiverImage *src,
+    RiverImage *dst,
+    uint8_t    direction
 ){
     uint32_t og_width  = dst->width;
     uint32_t og_height = dst->height;
@@ -216,12 +216,12 @@ void river2D_appendImage
         return;
     }
 
-    River2D_Image tmp = {0};
-    river2D_createImage(engine, &tmp, width, height);
+    RiverImage tmp = {0};
+    rvCreateImage(engine, &tmp, width, height);
 
     rvCompositeSettings comp = {0};
     comp.dst                 = &tmp;
-    comp.pictop              = RIVER2D_PICTOP_OVER;
+    comp.pictop              = RV_PICTOP_OVER;
 
     if(dst->data)
     {
@@ -229,9 +229,9 @@ void river2D_appendImage
         comp.cropWidth  = dst->width;
         comp.cropHeight = dst->height;
 
-        river2D_compositeImage(engine, &comp);
+        rvCompositeImage(engine, &comp);
 
-        river2D_destroyImage(dst);
+        rvDestroyImage(dst);
     }
 
     comp.src        = src;
@@ -240,7 +240,7 @@ void river2D_appendImage
     comp.cropHeight = src->height;
     comp.cropWidth  = src->width;
 
-    river2D_compositeImage(engine, &comp);
+    rvCompositeImage(engine, &comp);
 
     dst->path     = tmp.path;
     dst->data     = tmp.data;
@@ -251,9 +251,9 @@ void river2D_appendImage
     dst->picture  = tmp.picture;
 }
 
-void river2D_destroyImage
+void rvDestroyImage
 (
-    River2D_Image *image
+    RiverImage *image
 ){
     if(!image)
     {
