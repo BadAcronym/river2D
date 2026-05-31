@@ -38,7 +38,7 @@ void river2D_resolveRenderer
     StringView libpath,
     uint8_t    renderer
 ){
-    if(renderer == RIVER2D_RENDERER_SOFTWARE)
+    if(renderer == RV_RENDERER_SOFTWARE)
     {
         StringView sv_file = cstr_sv("/libriver2Dsoftware.so");
         const char *so     = sv_concat(libpath, sv_file);
@@ -62,17 +62,17 @@ void river2D_resolveRenderer
 
         free((void*)so);
     }
-    else if(renderer == RIVER2D_RENDERER_OPENGL)
+    else if(renderer == RV_RENDERER_OPENGL)
     {
         fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for river2D."
                 "\033[0m");
     }
-    else if(renderer == RIVER2D_RENDERER_VULKAN)
+    else if(renderer == RV_RENDERER_VULKAN)
     {
         fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for river2D."
                 "\033[0m");
     }
-    else if(renderer == RIVER2D_RENDERER_DIRECTX)
+    else if(renderer == RV_RENDERER_DIRECTX)
     {
         fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for river2D."
                 "\033[0m");
@@ -86,13 +86,13 @@ void river2D_resolveRenderer
 
 void river2D_createImage
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    uint32_t      width,
-    uint32_t      height
+    EngineData *engine,
+    RiverImage *image,
+    uint32_t   width,
+    uint32_t   height
 ){
     image->path   = cstr_sv("river2D_createImage");
-    image->data   = calloc(width * height * RIVER2D_BPP, 1);
+    image->data   = calloc(width * height * RV_BPP, 1);
     image->width  = width;
     image->height = height;
 
@@ -118,7 +118,7 @@ void river2D_createImage
 
 f_internal void writeMissingTexture
 (
-    River2D_Image *image
+    RiverImage *image
 ){
     uint64_t imgsize = image->width * image->height;
 
@@ -128,13 +128,13 @@ f_internal void writeMissingTexture
     }
 }
 
-void river2D_loadImage_file
+void rvLoadImage_file
 (
-    EngineData    *engine,
-    StringView    path,
-    River2D_Image *image,
-    uint8_t       channels,
-    uint8_t       bitdepth
+    EngineData *engine,
+    StringView path,
+    RiverImage *image,
+    uint8_t    channels,
+    uint8_t    bitdepth
 ){
     const char *path_cstr = sv_cstr(path);
 
@@ -152,7 +152,7 @@ void river2D_loadImage_file
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
 
-    river2D_syncImage(engine, image, true);
+    rvSyncImage(engine, image, true);
 
     image->picture = XRenderCreatePicture(engine->display, image->pixmap,
                                           engine->format, 0, 0);
@@ -165,13 +165,13 @@ void river2D_loadImage_file
     free((void*)path_cstr);
 }
 
-void river2D_loadImage_ptr
+void rvLoadImage_ptr
 (
-    EngineData    *engine,
-    void          *file,
-    River2D_Image *image,
-    uint8_t       channels,
-    uint8_t       bitdepth
+    EngineData *engine,
+    void       *file,
+    RiverImage *image,
+    uint8_t    channels,
+    uint8_t    bitdepth
 ){
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI,
                                    &image->width, &image->height, channels, bitdepth);
@@ -188,7 +188,7 @@ void river2D_loadImage_ptr
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
 
-    river2D_syncImage(engine, image, true);
+    rvSyncImage(engine, image, true);
 
     image->picture = XRenderCreatePicture(engine->display, image->pixmap,
                                           engine->format, 0, 0);
@@ -199,10 +199,10 @@ void river2D_loadImage_ptr
     }
 }
 
-void river2D_clearImage
+void rvClearImage
 (
-    EngineData    *engine,
-    River2D_Image *image
+    EngineData *engine,
+    RiverImage *image
 ){
     for(uint64_t i = 0; i < image->width * image->height; ++i)
     {
@@ -218,14 +218,14 @@ void river2D_clearImage
     XDestroyImage(img);
 }
 
-River2D_Time river2D_queryTime
+RiverTime rvQueryTime
 (
     void
 ){
     struct timespec spec;
     clock_gettime(CLOCK_MONOTONIC, &spec);
 
-    River2D_Time time =
+    RiverTime time =
     {
         .s  = (int64_t)spec.tv_sec,
         .ns = (int64_t)spec.tv_nsec
@@ -234,7 +234,7 @@ River2D_Time river2D_queryTime
     return time;
 }
 
-uint8_t river2D_verifyPath
+uint8_t rvVerifyPath
 (
     StringView path
 ){
@@ -244,24 +244,24 @@ uint8_t river2D_verifyPath
     if(stat(path_cstr, &pathInfo))
     {
         free((void*)path_cstr);
-        return RIVER2D_TYPE_ERROR;
+        return RV_TYPE_ERROR;
     }
 
     free((void*)path_cstr);
 
     if(S_ISDIR(pathInfo.st_mode))
     {
-        return RIVER2D_TYPE_DIRECTORY;
+        return RV_TYPE_DIRECTORY;
     }
 
     if(S_ISREG(pathInfo.st_mode))
     {
-        return RIVER2D_TYPE_FILE;
+        return RV_TYPE_FILE;
     }
-    return RIVER2D_TYPE_OTHER;
+    return RV_TYPE_OTHER;
 }
 
-StringView river2D_listFiles
+StringView rvListFiles
 (
     StringView directory
 ){
@@ -350,88 +350,88 @@ f_internal uint8_t xkeyToAscii
     StringView lalt = cstr_sv("Alt_L");
     if(sv_same(lalt, sv))
     {
-        return RIVER2D_ASCII_LALT;
+        return RV_ASCII_LALT;
     }
     StringView ralt = cstr_sv("ISO_Level3_S");
     if(sv_find(ralt, sv) == sv.data)
     {
-        return RIVER2D_ASCII_ALTGR;
+        return RV_ASCII_ALTGR;
     }
 
     StringView backspace = cstr_sv("B");
     if(sv_find(backspace, sv) == sv.data)
     {
-        return RIVER2D_ASCII_BACKSPACE;
+        return RV_ASCII_BACKSPACE;
     }
 
     StringView lctrl = cstr_sv("Control_L");
     if(sv_same(lctrl, sv))
     {
-        return RIVER2D_ASCII_LCTRL;
+        return RV_ASCII_LCTRL;
     }
     StringView rctrl = cstr_sv("Control_R");
     if(sv_same(rctrl, sv))
     {
-        return RIVER2D_ASCII_RCTRL;
+        return RV_ASCII_RCTRL;
     }
 
     StringView delete = cstr_sv("De");
     if(sv_find(delete, sv) == sv.data)
     {
-        return RIVER2D_ASCII_DELETE;
+        return RV_ASCII_DELETE;
     }
 
     StringView down = cstr_sv("Do");
     if(sv_find(down, sv) == sv.data)
     {
-        return RIVER2D_ASCII_DOWN;
+        return RV_ASCII_DOWN;
     }
 
     StringView escape = cstr_sv("E");
     if(sv_find(escape, sv) == sv.data)
     {
-        return RIVER2D_ASCII_ESCAPE;
+        return RV_ASCII_ESCAPE;
     }
 
     StringView left = cstr_sv("L");
     if(sv_find(left, sv) == sv.data)
     {
-        return RIVER2D_ASCII_LEFT;
+        return RV_ASCII_LEFT;
     }
 
     StringView enter = cstr_sv("Re");
     if(sv_find(enter, sv) == sv.data)
     {
-        return RIVER2D_ASCII_ENTER;
+        return RV_ASCII_ENTER;
     }
 
     StringView right = cstr_sv("Ri");
     if(sv_find(right, sv) == sv.data)
     {
-        return RIVER2D_ASCII_RIGHT;
+        return RV_ASCII_RIGHT;
     }
 
     StringView lshift = cstr_sv("Shift_L");
     if(sv_same(lshift, sv))
     {
-        return RIVER2D_ASCII_LSHIFT;
+        return RV_ASCII_LSHIFT;
     }
     StringView rshift = cstr_sv("Shift_R");
     if(sv_same(rshift, sv))
     {
-        return RIVER2D_ASCII_RSHIFT;
+        return RV_ASCII_RSHIFT;
     }
 
     StringView tab = cstr_sv("T");
     if(sv_find(tab, sv) == sv.data)
     {
-        return RIVER2D_ASCII_TAB;
+        return RV_ASCII_TAB;
     }
 
     StringView up = cstr_sv("U");
     if(sv_find(up, sv) == sv.data)
     {
-        return RIVER2D_ASCII_UP;
+        return RV_ASCII_UP;
     }
 
     StringView ampersand = cstr_sv("am");
@@ -617,7 +617,7 @@ f_internal uint8_t xkeyToAscii
     return 0;
 }
 
-AsciiKey processXKey
+AsciiKey rvProcessXKey
 (
     EngineData *engine,
     XEvent     *event
@@ -635,7 +635,7 @@ AsciiKey processXKey
     };
 }
 
-Dimensions river2D_getWindowSize
+Dimensions rvGetWindowSize
 (
     EngineData *engine
 ){
@@ -651,10 +651,10 @@ Dimensions river2D_getWindowSize
     return dim;
 }
 
-void river2D_changeCursor
+void rvChangeCursor
 (
-    EngineData    *engine,
-    River2D_Image *image
+    EngineData *engine,
+    RiverImage *image
 ){
     if(engine->currentCursor == image)
     {
@@ -673,29 +673,29 @@ void river2D_changeCursor
 }
 
 // to simplify access to renderer-agnostic function calls:
-void river2D_init
+void rvInit
 (
-    EngineData    *engine,
-    River2D_Image *planes
+    EngineData *engine,
+    RiverImage *planes
 ){
     engine->init(engine, planes);
 }
 
-int32_t river2D_shutdown
+int32_t rvShutdown
 (
     EngineData *engine
 ){
     return engine->shutdown(engine);
 }
 
-void river2D_bltBuffer
+void rvBltBuffer
 (
     EngineData *engine
 ){
     engine->bltBuffer(engine);
 }
 
-void river2D_loadText
+void rvLoadText
 (
     EngineData         *engine,
     rvLoadTextSettings *settings
@@ -706,7 +706,7 @@ void river2D_loadText
                      settings->offsetX,  settings->offsetY);
 }
 
-void river2D_compositeImage
+void rvCompositeImage
 (
     EngineData          *engine,
     rvCompositeSettings *settings
@@ -718,16 +718,17 @@ void river2D_compositeImage
                            settings->cropWidth,  settings->cropHeight);
 }
 
-void river2D_syncImage
+void rvSyncImage
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    bool          CPU_to_GPU
+    EngineData *engine,
+    RiverImage *image,
+    bool       CPU_to_GPU
 ){
     if(CPU_to_GPU)
     {
         XImage *ximg = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                                   (char*)image->data, image->width, image->height, 32, 0);
+                                   (char*)image->data, image->width, image->height,
+                                    32, 0);
         XPutImage(engine->display, image->pixmap, engine->context, ximg, 0, 0, 0, 0,
                   image->width, image->height);
 
