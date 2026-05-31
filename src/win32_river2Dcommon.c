@@ -66,7 +66,7 @@ void rvResolveRenderer
     else
     {
         fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in "
-                "river2D_resolveRenderer.\033[0m");
+                "rvResolveRenderer.\033[0m");
     }
 }
 
@@ -116,17 +116,17 @@ void rvLoadImage_ptr
         fprintf(stderr, "\033[31m\nERROR: failed to load image to pointer.\n\033[0m");
     }
 
-    image->path = cstr_sv("river2D_loadImage_ptr");
+    image->path = cstr_sv("rvLoadImage_ptr");
 }
 
-void river2D_createImage
+void rvCreateImage
 (
     EngineData *engine,
     RiverImage *image,
     uint32_t   width,
     uint32_t   height
 ){
-    image->path   = cstr_sv("river2D_createImage");
+    image->path   = cstr_sv("rvCreateImage");
     image->data   = calloc(width * height * RV_BPP, 1);
     image->width  = width;
     image->height = height;

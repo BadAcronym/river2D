@@ -32,7 +32,7 @@ f_internal void resolveFunction
     #endif
 }
 
-void river2D_resolveRenderer
+void rvResolveRenderer
 (
     EngineData *engine,
     StringView libpath,
@@ -80,18 +80,18 @@ void river2D_resolveRenderer
     else
     {
         fprintf(stderr, "\033[31m\nERROR: invalid renderer specified "
-                "in river2D_resolveRenderer.\033[0m");
+                "in rvResolveRenderer.\033[0m");
     }
 }
 
-void river2D_createImage
+void rvCreateImage
 (
     EngineData *engine,
     RiverImage *image,
     uint32_t   width,
     uint32_t   height
 ){
-    image->path   = cstr_sv("river2D_createImage");
+    image->path   = cstr_sv("rvCreateImage");
     image->data   = calloc(width * height * RV_BPP, 1);
     image->width  = width;
     image->height = height;
@@ -175,7 +175,7 @@ void rvLoadImage_ptr
 ){
     image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI,
                                    &image->width, &image->height, channels, bitdepth);
-    image->path = cstr_sv("river2D_loadImage_ptr");
+    image->path = cstr_sv("rvLoadImage_ptr");
 
     if(!image->data)
     {
@@ -184,7 +184,7 @@ void rvLoadImage_ptr
         return;
     }
 
-    image->path   = cstr_sv("river2D_loadImage_ptr");
+    image->path   = cstr_sv("rvLoadImage_ptr");
     image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
                                   image->width, image->height, 32);
 
