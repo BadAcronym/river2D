@@ -5,9 +5,9 @@
 
 #define bufsize 32
 
-void river2D_loadConfig
+void rvLoadConfig
 (
-    River2D_Config *config
+    RiverConfig *config
 ){
     if(!config)
     {
@@ -19,16 +19,16 @@ void river2D_loadConfig
     uint32_t parsedWidth_window  = 0;
     uint32_t parsedHeight_window = 0;
 
-    StringView codePath = cstr_sv(RIVER2D_CONFIG_PATH);
-    uint8_t    code     = river2D_verifyPath(codePath);
+    StringView codePath = cstr_sv(RV_CONFIG_PATH);
+    uint8_t    code     = rvVerifyPath(codePath);
 
-    if(code == RIVER2D_TYPE_FILE)
+    if(code == RV_TYPE_FILE)
     {
-        FILE *file = fopen(RIVER2D_CONFIG_PATH, "r");
+        FILE *file = fopen(RV_CONFIG_PATH, "r");
         if(!file)
         {
             fprintf(stderr, "\n\033[31;1;7mERROR: Could not open file %s\033[0m\n",
-                    RIVER2D_CONFIG_PATH);
+                    RV_CONFIG_PATH);
             return;
         }
 
@@ -48,7 +48,7 @@ void river2D_loadConfig
                 {
                     continue;
                 }
-                config->choices |= RIVER2D_CHOICE_SHOW_FPS_BIT;
+                config->choices |= RV_CHOICE_SHOW_FPS_BIT;
                 #ifdef DEBUG
                 fprintf(stderr, "parsed result: true\n");
                 #endif
@@ -170,20 +170,20 @@ void river2D_loadConfig
 
         fclose(file);
     }
-    else if(code == RIVER2D_TYPE_ERROR)
+    else if(code == RV_TYPE_ERROR)
     {
         fprintf(stderr, "\nCan't find the file '%s', default config loaded.\n\n",
-                RIVER2D_CONFIG_PATH);
+                RV_CONFIG_PATH);
     }
-    else if(code == RIVER2D_TYPE_DIRECTORY)
+    else if(code == RV_TYPE_DIRECTORY)
     {
         fprintf(stderr, "\n\033[31;1;7mERROR: '%s' is a Directory! "
-                "Default config loaded.\033[0m\n", RIVER2D_CONFIG_PATH);
+                "Default config loaded.\033[0m\n", RV_CONFIG_PATH);
     }
-    else if(code == RIVER2D_TYPE_OTHER)
+    else if(code == RV_TYPE_OTHER)
     {
         fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n",
-                RIVER2D_CONFIG_PATH);
+                RV_CONFIG_PATH);
     }
 
     if(!parsedWidth_canvas)
@@ -205,7 +205,7 @@ void river2D_loadConfig
 }
 
 // handle non-parallel cases
-// bool river2D_insideArea
+// bool rvInsideArea
 // (
 //     const Coordinates *point,
 //     const Area        *area
@@ -214,7 +214,7 @@ void river2D_loadConfig
 //            point->y > area->upLeft.y && point->y < area->lowRight.y);
 // }
 
-bool river2D_insideRect
+bool rvInsideRect
 (
     const Coordinates *point,
     const Rect        *rect
@@ -223,7 +223,7 @@ bool river2D_insideRect
            point->y > rect->upLeft.y && point->y < rect->lowRight.y);
 }
 
-void river2D_createButton
+void rvCreateButton
 (
     EngineData       *engine,
     rvButtonSettings *settings
@@ -240,30 +240,30 @@ void river2D_createButton
     float offsetY = (settings->point.y - floatHeight / 2.0f) *
                     (float)imgHeight;
 
-    if(settings->alignment == RIVER2D_ALIGN_TOPLEFT   ||
-       settings->alignment == RIVER2D_ALIGN_TOPCENTER ||
-       settings->alignment == RIVER2D_ALIGN_TOPRIGHT
+    if(settings->alignment == RV_ALIGN_TOPLEFT   ||
+       settings->alignment == RV_ALIGN_TOPCENTER ||
+       settings->alignment == RV_ALIGN_TOPRIGHT
     ){
         offsetY = settings->point.y * (float)imgHeight;
     }
 
-    if(settings->alignment == RIVER2D_ALIGN_BOTTOMLEFT   ||
-       settings->alignment == RIVER2D_ALIGN_BOTTOMCENTER ||
-       settings->alignment == RIVER2D_ALIGN_BOTTOMRIGHT
+    if(settings->alignment == RV_ALIGN_BOTTOMLEFT   ||
+       settings->alignment == RV_ALIGN_BOTTOMCENTER ||
+       settings->alignment == RV_ALIGN_BOTTOMRIGHT
     ){
         offsetY = (settings->point.y - floatHeight) * imgHeight;
     }
 
-    if(settings->alignment == RIVER2D_ALIGN_TOPLEFT    ||
-       settings->alignment == RIVER2D_ALIGN_CENTERLEFT ||
-       settings->alignment == RIVER2D_ALIGN_BOTTOMLEFT
+    if(settings->alignment == RV_ALIGN_TOPLEFT    ||
+       settings->alignment == RV_ALIGN_CENTERLEFT ||
+       settings->alignment == RV_ALIGN_BOTTOMLEFT
     ){
         offsetX = settings->point.x * imgWidth;
     }
 
-    if(settings->alignment == RIVER2D_ALIGN_TOPRIGHT    ||
-       settings->alignment == RIVER2D_ALIGN_CENTERRIGHT ||
-       settings->alignment == RIVER2D_ALIGN_BOTTOMRIGHT
+    if(settings->alignment == RV_ALIGN_TOPRIGHT    ||
+       settings->alignment == RV_ALIGN_CENTERRIGHT ||
+       settings->alignment == RV_ALIGN_BOTTOMRIGHT
     ){
         offsetX = (settings->point.x - floatWidth) * imgWidth;
     }
@@ -284,5 +284,5 @@ void river2D_createButton
     set.offsetX  = (uint32_t)offsetX;
     set.offsetY  = (uint32_t)offsetY;
 
-    river2D_loadText(engine, &set);
+    rvLoadText(engine, &set);
 }
