@@ -24,24 +24,24 @@
     #include <time.h>
 
     #include "pthread.h"
-    #define  RIVER2D_SCANLINE 32
-    #define  RIVER2D_CONFIG_PATH "./.river2Dconf"
+    #define  RV_SCANLINE 32
+    #define  RV_CONFIG_PATH "./.river2Dconf"
 
-    #define RIVER2D_MOUSE1 Button1
-    #define RIVER2D_MOUSE2 Button2
-    #define RIVER2D_MOUSE3 Button3
-    #define RIVER2D_MOUSE4 Button4
-    #define RIVER2D_MOUSE5 Button5
+    #define RV_MOUSE1 Button1
+    #define RV_MOUSE2 Button2
+    #define RV_MOUSE3 Button3
+    #define RV_MOUSE4 Button4
+    #define RV_MOUSE5 Button5
 
 #endif
 
 #ifdef BUILD_WINDOWS
     #include "Windows.h"
-    #define  RIVER2D_CONFIG_PATH "./river2D.ini"
+    #define  RV_CONFIG_PATH "./river2D.ini"
 
-    #define RIVER2D_MOUSE1 0x01
-    #define RIVER2D_MOUSE2 0x02
-    #define RIVER2D_MOUSE3 0x10
+    #define RV_MOUSE1 0x01
+    #define RV_MOUSE2 0x02
+    #define RV_MOUSE3 0x10
 #endif
 
 #define RV_ERROR_LOADIMAGE_PTR    1
@@ -59,79 +59,79 @@
 #define RV_VERTICAL   1
 #define RV_HORIZONTAL 2
 
-#define RIVER2D_BPP                      4
-#define RIVER2D_PIXDEPTH                 32
-#define RIVER2D_MAX_PLANES               64
-#define RIVER2D_MAX_THREADS              8
+#define RV_BPP                      4
+#define RV_PIXDEPTH                 32
+#define RV_MAX_PLANES               64
+#define RV_MAX_THREADS              8
 
-#define RIVER2D_RENDERER_SOFTWARE        0
-#define RIVER2D_RENDERER_OPENGL          1
-#define RIVER2D_RENDERER_VULKAN          2
-#define RIVER2D_RENDERER_DIRECTX         3
+#define RV_RENDERER_SOFTWARE        0
+#define RV_RENDERER_OPENGL          1
+#define RV_RENDERER_VULKAN          2
+#define RV_RENDERER_DIRECTX         3
 
-#define RIVER2D_ASCII_CURSOR             0x01
-#define RIVER2D_ASCII_UP                 0x02
-#define RIVER2D_ASCII_DOWN               0x03
-#define RIVER2D_ASCII_LEFT               0x04
-#define RIVER2D_ASCII_RIGHT              0x05
-#define RIVER2D_ASCII_BACKSPACE          0x08
-#define RIVER2D_ASCII_TAB                0x09
-#define RIVER2D_ASCII_ENTER              0x0A
-#define RIVER2D_ASCII_LSHIFT             0x0E
-#define RIVER2D_ASCII_RSHIFT             0x0F
-#define RIVER2D_ASCII_LCTRL              0x11
-#define RIVER2D_ASCII_RCTRL              0x12
-#define RIVER2D_ASCII_LALT               0x13
-#define RIVER2D_ASCII_ALTGR              0x14
-#define RIVER2D_ASCII_ESCAPE             0x1B
-#define RIVER2D_ASCII_DELETE             0x7F
+#define RV_ASCII_CURSOR             0x01
+#define RV_ASCII_UP                 0x02
+#define RV_ASCII_DOWN               0x03
+#define RV_ASCII_LEFT               0x04
+#define RV_ASCII_RIGHT              0x05
+#define RV_ASCII_BACKSPACE          0x08
+#define RV_ASCII_TAB                0x09
+#define RV_ASCII_ENTER              0x0A
+#define RV_ASCII_LSHIFT             0x0E
+#define RV_ASCII_RSHIFT             0x0F
+#define RV_ASCII_LCTRL              0x11
+#define RV_ASCII_RCTRL              0x12
+#define RV_ASCII_LALT               0x13
+#define RV_ASCII_ALTGR              0x14
+#define RV_ASCII_ESCAPE             0x1B
+#define RV_ASCII_DELETE             0x7F
 
-#define RIVER2D_CHANNELS_RGBA            0
-#define RIVER2D_CHANNELS_BGRA            1
-#define RIVER2D_CHANNELS_RGB             2
-#define RIVER2D_CHANNELS_BGR             3
-#define RIVER2D_CHANNELS_MAX             3
+#define RV_CHANNELS_RGBA            0
+#define RV_CHANNELS_BGRA            1
+#define RV_CHANNELS_RGB             2
+#define RV_CHANNELS_BGR             3
+#define RV_CHANNELS_MAX             3
 
-#define RIVER2D_FONT_DEFAULT             0
-#define RIVER2D_FONT_MAX                 0
+#define RV_FONT_DEFAULT             0
+#define RV_FONT_MAX                 0
 
-#define RIVER2D_TYPE_FILE                0
-#define RIVER2D_TYPE_DIRECTORY           1
-#define RIVER2D_TYPE_ERROR               2
-#define RIVER2D_TYPE_OTHER               3
-#define RIVER2D_TYPE_MAX                 3
+#define RV_TYPE_FILE                0
+#define RV_TYPE_DIRECTORY           1
+#define RV_TYPE_ERROR               2
+#define RV_TYPE_OTHER               3
+#define RV_TYPE_MAX                 3
 
-#define RIVER2D_PICTOP_MINIMUM           0
-#define RIVER2D_PICTOP_CLEAR             0
-#define RIVER2D_PICTOP_SRC               1
-#define RIVER2D_PICTOP_DST               2
-#define RIVER2D_PICTOP_OVER              3
-#define RIVER2D_PICTOP_OVERREVERSE       4
-#define RIVER2D_PICTOP_IN                5
-#define RIVER2D_PICTOP_INREVERSE         6
-#define RIVER2D_PICTOP_OUT               7
-#define RIVER2D_PICTOP_OUTREVERSE        8
-#define RIVER2D_PICTOP_ATOP              9
-#define RIVER2D_PICTOP_ATOPREVERSE       10
-#define RIVER2D_PICTOP_XOR               11
-#define RIVER2D_PICTOP_ADD               12
-#define RIVER2D_PICTOP_SATURATE          13
-#define RIVER2D_PICTOP_MAXIMUM           13
+#define RV_PICTOP_MINIMUM           0
+#define RV_PICTOP_CLEAR             0
+#define RV_PICTOP_SRC               1
+#define RV_PICTOP_DST               2
+#define RV_PICTOP_OVER              3
+#define RV_PICTOP_OVERREVERSE       4
+#define RV_PICTOP_IN                5
+#define RV_PICTOP_INREVERSE         6
+#define RV_PICTOP_OUT               7
+#define RV_PICTOP_OUTREVERSE        8
+#define RV_PICTOP_ATOP              9
+#define RV_PICTOP_ATOPREVERSE       10
+#define RV_PICTOP_XOR               11
+#define RV_PICTOP_ADD               12
+#define RV_PICTOP_SATURATE          13
+#define RV_PICTOP_MAXIMUM           13
 
-#define RIVER2D_CHOICE_SHOW_FPS_BIT      1
-#define RIVER2D_CHOICE_STATIC_CANVAS_BIT 2
-#define RIVER2D_CHOICE_BACKGROUNDS_BYTE  0xFF000000
+#define RV_CHOICE_SHOW_FPS_BIT      1
+#define RV_CHOICE_STATIC_CANVAS_BIT 2
+#define RV_CHOICE_BACKGROUNDS_BYTE  0xFF000000
 
-#define RIVER2D_BIT_HOVER                0x01
+#define RV_BIT_HOVER                0x01
 
-#define RIVER2D_ALIGN_TOPLEFT            1
-#define RIVER2D_ALIGN_TOPCENTER          2
-#define RIVER2D_ALIGN_TOPRIGHT           3
-#define RIVER2D_ALIGN_CENTERLEFT         4
-#define RIVER2D_ALIGN_CENTERRIGHT        5
-#define RIVER2D_ALIGN_BOTTOMLEFT         6
-#define RIVER2D_ALIGN_BOTTOMCENTER       7
-#define RIVER2D_ALIGN_BOTTOMRIGHT        8
+#define RV_ALIGN_TOPLEFT            1
+#define RV_ALIGN_TOPCENTER          2
+#define RV_ALIGN_TOPRIGHT           3
+#define RV_ALIGN_CENTERLEFT         4
+#define RV_ALIGN_CENTERRIGHT        5
+#define RV_ALIGN_BOTTOMLEFT         6
+#define RV_ALIGN_BOTTOMCENTER       7
+#define RV_ALIGN_BOTTOMRIGHT        8
 
 typedef struct PerformanceCounter
 {
@@ -258,14 +258,6 @@ typedef struct RiverControls
 }
 RiverControls;
 
-#ifdef BUILD_LINUX
-// typedef struct PosixThreadpool
-// {
-//     pthread_t  threads[RIVER2D_MAX_THREADS];
-// }
-// PosixThreadpool;
-#endif
-
 typedef struct EngineData
 {
     const char    *windowName;
@@ -284,7 +276,6 @@ typedef struct EngineData
     Window            window;
     GC                context;
     Picture           blitDstPict;
-    // PosixThreadpool    pool;
 #endif
 
 #ifdef BUILD_WINDOWS
@@ -352,7 +343,7 @@ typedef struct rvSaveMapSettings
 }
 rvSaveMapSettings;
 
-extern void river2D_loadImage_file
+extern void rvLoadImage_file
 (
     EngineData *engine,
     StringView path,
@@ -361,7 +352,7 @@ extern void river2D_loadImage_file
     uint8_t    bitdepth
 );
 
-extern void river2D_loadImage_ptr
+extern void rvLoadImage_ptr
 (
     EngineData *engine,
     void       *file,
@@ -370,7 +361,7 @@ extern void river2D_loadImage_ptr
     uint8_t    bitdepth
 );
 
-extern void river2D_createImage
+extern void rvCreateImage
 (
     EngineData *engine,
     RiverImage *image,
@@ -378,7 +369,7 @@ extern void river2D_createImage
     uint32_t   height
 );
 
-extern void river2D_appendImage
+extern void rvAppendImage
 (
     EngineData *engine,
     RiverImage *src,
@@ -386,142 +377,142 @@ extern void river2D_appendImage
     uint8_t    direction
 );
 
-extern void river2D_syncImage
+extern void rvSyncImage
 (
     EngineData *engine,
     RiverImage *image,
     bool       CPU_to_GPU
 );
 
-extern void river2D_clearImage
+extern void rvClearImage
 (
     EngineData *engine,
     RiverImage *image
 );
 
-extern void river2D_destroyImage
+extern void rvDestroyImage
 (
     RiverImage *image
 );
 
-extern RiverTime river2D_queryTime
+extern RiverTime rvQueryTime
 (
     void
 );
 
 // delta is taken from time2 - time1.
-extern RiverTime river2D_deltaTime
+extern RiverTime rvDeltaTime
 (
     const RiverTime *time1,
     const RiverTime *time2
 );
 
 // delta is taken from time2 - time1.
-extern float river2D_deltaTime_ms
+extern float rvDeltaTime_ms
 (
     const RiverTime *time1,
     const RiverTime *time2
 );
 
 // delta is taken from time2 - time1.
-extern int64_t river2D_deltaTime_ns
+extern int64_t rvDeltaTime_ns
 (
     const RiverTime *time1,
     const RiverTime *time2
 );
 
-extern RiverTime river2D_deltaTime_now
+extern RiverTime rvDeltaTime_now
 (
     const RiverTime *time
 );
 
-extern float river2D_deltaTime_now_ms
+extern float rvDeltaTime_now_ms
 (
     const RiverTime *time
 );
 
-extern uint64_t river2D_deltaTime_now_ns
+extern uint64_t rvDeltaTime_now_ns
 (
     const RiverTime *time
 );
 
-extern void river2D_resolveRenderer
+extern void rvResolveRenderer
 (
     EngineData *engine,
     StringView libpath,
     uint8_t    renderer
 );
 
-extern uint8_t river2D_verifyPath
+extern uint8_t rvVerifyPath
 (
     StringView path
 );
 
 // lists all files in a directory and packs them into a StringView, separated by ';'.
 // makes you responsible for freeing the returned StringView's data. Not recursive.
-StringView river2D_listFiles
+StringView rvListFiles
 (
     StringView directory
 );
 
 #ifdef BUILD_LINUX
-extern AsciiKey processXKey
+extern AsciiKey rvProcessXKey
 (
     EngineData *engine,
     XEvent     *event
 );
 #endif
 
-extern void river2D_loadConfig
+extern void rvLoadConfig
 (
     RiverConfig *config
 );
 
-extern Dimensions river2D_getWindowSize
+extern Dimensions rvGetWindowSize
 (
     EngineData *engine
 );
 
-extern void river2D_changeCursor
+extern void rvChangeCursor
 (
     EngineData *engine,
     RiverImage *image
 );
 
-extern bool river2D_insideArea
+extern bool rvInsideArea
 (
     const Coordinates *point,
     const Area        *area
 );
 
-extern bool river2D_insideRect
+extern bool rvInsideRect
 (
     const Coordinates *point,
     const Rect        *rect
 );
 
-extern void river2D_createButton
+extern void rvCreateButton
 (
     EngineData       *engine,
     rvButtonSettings *settings
 );
 
 // initializes the engine and all needed resources.
-extern void river2D_init
+extern void rvInit
 (
     EngineData *engine,
     RiverImage *planes
 );
 
 // shuts down the engine and safely frees all used resources.
-extern int32_t river2D_shutdown
+extern int32_t rvShutdown
 (
     EngineData *engine
 );
 
 // takes whatever is in `engine->backbuffer` and blts it to the window, performing
 // scaling, if necessary.
-extern void river2D_bltBuffer
+extern void rvBltBuffer
 (
     EngineData *engine
 );
@@ -541,7 +532,7 @@ rvLoadTextSettings;
 // reads the text from `sv`, creates an image with the wanted text,
 // taking the font image from `engine->planes[font]`.
 // Needs you to specify `charsize` and the `offsetX`, `offsetY`.
-extern void river2D_loadText
+extern void rvLoadText
 (
     EngineData         *engine,
     rvLoadTextSettings *settings
@@ -563,7 +554,7 @@ rvCompositeSettings;
 
 // Takes `src` at offsets `offsetSrcX` and `offsetSrcY`.
 // Composites `src` onto `dst`, at `offsetDstX`, `offsetDstY`, given `pictop`.
-extern void river2D_compositeImage
+extern void rvCompositeImage
 (
     EngineData          *engine,
     rvCompositeSettings *settings
