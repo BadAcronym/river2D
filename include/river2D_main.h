@@ -140,7 +140,7 @@ typedef struct PerformanceCounter
 }
 PerformanceCounter;
 
-typedef struct River2D_Config
+typedef struct RiverConfig
 {
     uint32_t choices;
     uint8_t  renderer;
@@ -150,9 +150,9 @@ typedef struct River2D_Config
     uint32_t canvas_width;
     uint32_t canvas_height;
 }
-River2D_Config;
+RiverConfig;
 
-typedef struct River2D_Image
+typedef struct RiverImage
 {
     StringView path;
     uint8_t    *data;
@@ -169,14 +169,14 @@ typedef struct River2D_Image
     BITMAPINFO info;
     #endif
 }
-River2D_Image;
+RiverImage;
 
-typedef struct River2D_Time
+typedef struct RiverTime
 {
     int64_t s;
     int64_t ns;
 }
-River2D_Time;
+RiverTime;
 
 typedef struct AsciiKey
 {
@@ -245,18 +245,18 @@ typedef struct TileMap
 }
 TileMap;
 
-typedef struct River2D_ControlMap
+typedef struct RiverControls
 {
     uint64_t     keymap;
     uint64_t     buttonmap;
     Coordinates  pointer;
-    River2D_Time lastScrollTime;
+    RiverTime lastScrollTime;
     uint64_t     rumble;
     uint8_t      keycodes[128];
     uint8_t      buttoncodes[64];
     char         ascii;
 }
-River2D_ControlMap;
+RiverControls;
 
 #ifdef BUILD_LINUX
 // typedef struct PosixThreadpool
@@ -268,22 +268,22 @@ River2D_ControlMap;
 
 typedef struct EngineData
 {
-    const char         *windowName;
-    River2D_ControlMap controls;
-    River2D_Config     config;
-    River2D_Image      backbuffer;
-    River2D_Image      *planes;
-    River2D_Image      *currentCursor;
-    bool               running;
+    const char    *windowName;
+    RiverControls controls;
+    RiverConfig   config;
+    RiverImage    backbuffer;
+    RiverImage    *planes;
+    RiverImage    *currentCursor;
+    bool          running;
 
 #ifdef BUILD_LINUX
-    Display            *display;
-    Screen             *screen;
-    XRenderPictFormat  *format;
-    Visual             *visual;
-    Window             window;
-    GC                 context;
-    Picture            blitDstPict;
+    Display           *display;
+    Screen            *screen;
+    XRenderPictFormat *format;
+    Visual            *visual;
+    Window            window;
+    GC                context;
+    Picture           blitDstPict;
     // PosixThreadpool    pool;
 #endif
 
@@ -296,153 +296,153 @@ typedef struct EngineData
     HCURSOR            hCursor;
 #endif
 
-    void    (*init)           (struct EngineData *engine,    River2D_Image *planes);
+    void    (*init)           (struct EngineData *engine,    RiverImage *planes);
     int32_t (*shutdown)       (struct EngineData *engine);
     void    (*bltBuffer)      (struct EngineData *engine);
 
-    void    (*loadText)       (struct EngineData *engine,    River2D_Image *image,
-                               StringView        *sv,        uint8_t       font,
-                               uint16_t          charsize,   uint32_t      spacing,
-                               uint32_t          offsetX,    uint32_t      offsetY);
+    void    (*loadText)       (struct EngineData *engine,    RiverImage *image,
+                               StringView        *sv,        uint8_t    font,
+                               uint16_t          charsize,   uint32_t   spacing,
+                               uint32_t          offsetX,    uint32_t   offsetY);
 
-    void    (*compositeImage) (struct EngineData *engine,    River2D_Image *src,
-                               River2D_Image     *dst,       uint8_t       pictop,
-                               uint32_t          offsetSrcX, uint32_t      offsetSrcY,
-                               uint32_t          offsetDstX, uint32_t      offsetDstY,
-                               uint32_t          cropWidth,  uint32_t      cropHeight);
+    void    (*compositeImage) (struct EngineData *engine,    RiverImage *src,
+                               RiverImage        *dst,       uint8_t    pictop,
+                               uint32_t          offsetSrcX, uint32_t   offsetSrcY,
+                               uint32_t          offsetDstX, uint32_t   offsetDstY,
+                               uint32_t          cropWidth,  uint32_t   cropHeight);
 }
 EngineData;
 
 typedef struct rvButtonSettings
 {
-    River2D_Image *img;
-    Coordinates   point;
-    StringView    *name;
-    Button        *button;
-    uint8_t       alignment;
-    uint8_t       font;
-    uint16_t      charsize;
-    uint32_t      spacing;
+    RiverImage  *img;
+    Coordinates point;
+    StringView  *name;
+    Button      *button;
+    uint8_t     alignment;
+    uint8_t     font;
+    uint16_t    charsize;
+    uint32_t    spacing;
 }
 rvButtonSettings;
 
 typedef struct rvLoadMapSettings
 {
-    FILE          *file;
-    uint16_t      *tilesize;
-    uint32_t      *mapWidth;
-    uint32_t      *mapHeight;
-    uint8_t       *mapLayers;
-    River2D_Image *tilesheet;
-    uint8_t       errorcode;
+    FILE       *file;
+    uint16_t   *tilesize;
+    uint32_t   *mapWidth;
+    uint32_t   *mapHeight;
+    uint8_t    *mapLayers;
+    RiverImage *tilesheet;
+    uint8_t    errorcode;
 }
 rvLoadMapSettings;
 
 typedef struct rvSaveMapSettings
 {
-    FILE          *file;
-    uint16_t      tilesize;
-    uint32_t      mapWidth;
-    uint32_t      mapHeight;
-    uint8_t       mapLayers;
-    River2D_Image *tilesheet;
-    uint8_t       errorcode;
-    TileMetadata  *metadata;
-    TileIndex     *indices;
+    FILE         *file;
+    uint16_t     tilesize;
+    uint32_t     mapWidth;
+    uint32_t     mapHeight;
+    uint8_t      mapLayers;
+    RiverImage   *tilesheet;
+    uint8_t      errorcode;
+    TileMetadata *metadata;
+    TileIndex    *indices;
 }
 rvSaveMapSettings;
 
 extern void river2D_loadImage_file
 (
-    EngineData    *engine,
-    StringView    path,
-    River2D_Image *image,
-    uint8_t       channels,
-    uint8_t       bitdepth
+    EngineData *engine,
+    StringView path,
+    RiverImage *image,
+    uint8_t    channels,
+    uint8_t    bitdepth
 );
 
 extern void river2D_loadImage_ptr
 (
-    EngineData    *engine,
-    void          *file,
-    River2D_Image *image,
-    uint8_t       channels,
-    uint8_t       bitdepth
+    EngineData *engine,
+    void       *file,
+    RiverImage *image,
+    uint8_t    channels,
+    uint8_t    bitdepth
 );
 
 extern void river2D_createImage
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    uint32_t      width,
-    uint32_t      height
+    EngineData *engine,
+    RiverImage *image,
+    uint32_t   width,
+    uint32_t   height
 );
 
 extern void river2D_appendImage
 (
-    EngineData    *engine,
-    River2D_Image *src,
-    River2D_Image *dst,
-    uint8_t       direction
+    EngineData *engine,
+    RiverImage *src,
+    RiverImage *dst,
+    uint8_t    direction
 );
 
 extern void river2D_syncImage
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    bool          CPU_to_GPU
+    EngineData *engine,
+    RiverImage *image,
+    bool       CPU_to_GPU
 );
 
 extern void river2D_clearImage
 (
-    EngineData    *engine,
-    River2D_Image *image
+    EngineData *engine,
+    RiverImage *image
 );
 
 extern void river2D_destroyImage
 (
-    River2D_Image *image
+    RiverImage *image
 );
 
-extern River2D_Time river2D_queryTime
+extern RiverTime river2D_queryTime
 (
     void
 );
 
 // delta is taken from time2 - time1.
-extern River2D_Time river2D_deltaTime
+extern RiverTime river2D_deltaTime
 (
-    const River2D_Time *time1,
-    const River2D_Time *time2
+    const RiverTime *time1,
+    const RiverTime *time2
 );
 
 // delta is taken from time2 - time1.
 extern float river2D_deltaTime_ms
 (
-    const River2D_Time *time1,
-    const River2D_Time *time2
+    const RiverTime *time1,
+    const RiverTime *time2
 );
 
 // delta is taken from time2 - time1.
 extern int64_t river2D_deltaTime_ns
 (
-    const River2D_Time *time1,
-    const River2D_Time *time2
+    const RiverTime *time1,
+    const RiverTime *time2
 );
 
-extern River2D_Time river2D_deltaTime_now
+extern RiverTime river2D_deltaTime_now
 (
-    const River2D_Time *time
+    const RiverTime *time
 );
 
 extern float river2D_deltaTime_now_ms
 (
-    const River2D_Time *time
+    const RiverTime *time
 );
 
 extern uint64_t river2D_deltaTime_now_ns
 (
-    const River2D_Time *time
+    const RiverTime *time
 );
 
 extern void river2D_resolveRenderer
@@ -474,7 +474,7 @@ extern AsciiKey processXKey
 
 extern void river2D_loadConfig
 (
-    River2D_Config *config
+    RiverConfig *config
 );
 
 extern Dimensions river2D_getWindowSize
@@ -484,8 +484,8 @@ extern Dimensions river2D_getWindowSize
 
 extern void river2D_changeCursor
 (
-    EngineData    *engine,
-    River2D_Image *image
+    EngineData *engine,
+    RiverImage *image
 );
 
 extern bool river2D_insideArea
@@ -502,15 +502,15 @@ extern bool river2D_insideRect
 
 extern void river2D_createButton
 (
-    EngineData     *engine,
+    EngineData       *engine,
     rvButtonSettings *settings
 );
 
 // initializes the engine and all needed resources.
 extern void river2D_init
 (
-    EngineData    *engine,
-    River2D_Image *planes
+    EngineData *engine,
+    RiverImage *planes
 );
 
 // shuts down the engine and safely frees all used resources.
@@ -528,13 +528,13 @@ extern void river2D_bltBuffer
 
 typedef struct rvLoadTextSettings
 {
-    River2D_Image *image;
-    StringView    *sv;
-    uint8_t       font;
-    uint16_t      charsize;
-    uint32_t      spacing;
-    uint32_t      offsetX;
-    uint32_t      offsetY;
+    RiverImage *image;
+    StringView *sv;
+    uint8_t    font;
+    uint16_t   charsize;
+    uint32_t   spacing;
+    uint32_t   offsetX;
+    uint32_t   offsetY;
 }
 rvLoadTextSettings;
 
@@ -549,15 +549,15 @@ extern void river2D_loadText
 
 typedef struct rvCompositeSettings
 {
-    River2D_Image *src;
-    River2D_Image *dst;
-    uint8_t       pictop;
-    uint32_t      offsetSrcX;
-    uint32_t      offsetSrcY;
-    uint32_t      offsetDstX;
-    uint32_t      offsetDstY;
-    uint32_t      cropWidth;
-    uint32_t      cropHeight;
+    RiverImage *src;
+    RiverImage *dst;
+    uint8_t    pictop;
+    uint32_t   offsetSrcX;
+    uint32_t   offsetSrcY;
+    uint32_t   offsetDstX;
+    uint32_t   offsetDstY;
+    uint32_t   cropWidth;
+    uint32_t   cropHeight;
 }
 rvCompositeSettings;
 
