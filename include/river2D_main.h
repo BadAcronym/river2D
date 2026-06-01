@@ -436,6 +436,18 @@ extern uint64_t rvDeltaTime_now_ns
     const RiverTime *time
 );
 
+extern TileMap rvLoadTilemap
+(
+    EngineData        *engine,
+    rvLoadMapSettings *set
+);
+
+extern void rvSaveTilemap
+(
+    EngineData        *engine,
+    rvSaveMapSettings *set
+);
+
 extern void rvResolveRenderer
 (
     EngineData *engine,
