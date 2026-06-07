@@ -192,6 +192,13 @@ typedef struct Coordinates
 }
 Coordinates;
 
+typedef struct TileCoords
+{
+    uint16_t x;
+    uint16_t y;
+}
+TileCoords;
+
 typedef struct Area
 {
     Coordinates upLeft;
