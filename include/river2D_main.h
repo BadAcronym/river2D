@@ -59,6 +59,11 @@
 #define RV_VERTICAL   1
 #define RV_HORIZONTAL 2
 
+#define RV_UP    1
+#define RV_DOWN  2
+#define RV_LEFT  3
+#define RV_RIGHT 4
+
 #define RV_BPP                      4
 #define RV_PIXDEPTH                 32
 #define RV_MAX_PLANES               64
