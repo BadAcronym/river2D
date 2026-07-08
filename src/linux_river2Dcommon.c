@@ -39,10 +39,12 @@ void rvResolveRenderer
 ){
     if(renderer == RV_RENDERER_SOFTWARE)
     {
-        StringView sv_file = cstr_sv("/libriver2Dsoftware.so");
-        const char *so     = sv_concat(libpath, sv_file);
+        char so[4096] = {0};
+        char *error   = 0;
 
-        char *error = 0;
+        StringView sv_file = cstr_sv("/libriver2Dsoftware.so");
+        sv_concat(libpath, sv_file, so);
+
         void *software = dlopen(so, RTLD_NOW);
         if(!software)
         {
@@ -58,8 +60,6 @@ void rvResolveRenderer
         resolveFunction((void**)&engine->bltBuffer, software, "bltBuffer", &error);
         resolveFunction((void**)&engine->compositeImage,
                         software, "compositeImage", &error);
-
-        free((void*)so);
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
@@ -135,7 +135,8 @@ void rvLoadImage_file
     uint8_t    channels,
     uint8_t    bitdepth
 ){
-    const char *path_cstr = sv_cstr(path);
+    char path_cstr[4096] = {0};
+    sv_cstr(path, path_cstr);
 
     image->data = imgsurf_load_file(path_cstr, &image->width, &image->height,
                                     channels, bitdepth);
@@ -160,8 +161,6 @@ void rvLoadImage_file
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from file: "
                 "%s!.\n\033[0m", path_cstr);
     }
-
-    free((void*)path_cstr);
 }
 
 void rvLoadImage_ptr
@@ -238,15 +237,13 @@ uint8_t rvVerifyPath
     StringView path
 ){
     struct stat pathInfo;
-    const char *path_cstr = sv_cstr(path);
+    char path_cstr[4096] = {0};
+    sv_cstr(path, path_cstr);
 
     if(stat(path_cstr, &pathInfo))
     {
-        free((void*)path_cstr);
         return RV_TYPE_ERROR;
     }
-
-    free((void*)path_cstr);
 
     if(S_ISDIR(pathInfo.st_mode))
     {
@@ -268,7 +265,9 @@ StringView rvListFiles
     struct dirent *ent;
     uint32_t      listSize = 0;
 
-    const char *path = sv_cstr(directory);
+    char path[4096] = {0};
+
+    sv_cstr(directory, path);
 
     if((dir = opendir(path)))
     {
@@ -315,12 +314,13 @@ StringView rvListFiles
         .size = list.size
     };
 
-    const char *sorted = sv_sort_by_delim(result, ';');
+    char *sorted = calloc(4096, 1);
+    sv_sort_by_delim(result, ';', sorted);
+
     free((void*)result.data);
     result.data = sorted;
 
     free(dir);
-    free((void*)path);
 
     return result;
 }
