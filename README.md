@@ -16,6 +16,4 @@ application, such as the map editor that's linked below.
 - Alongside the game, there's also a map / tile editor in development over here: [river2D_mapedit](https://github.com/BadAcronym/river2D_mapedit/)
 
 ## Future Plans:
-
-- sound
 - openGL, vulkan & directX renderers, in that order
