@@ -13,7 +13,7 @@ application, such as the map editor that's linked below.
 - Software renderer - done. Including text loading and free stretch resizing.
 - Image loader as submodule / standalone - done.
 - Currently in development alongside a simple game, because writing an engine with no point of reference would be delusional.
-- Alongside the game, there's also a map / tile editor in development over here: [river2D_mapedit](https://github.com/FlyMandi/river2D_mapedit/)
+- Alongside the game, there's also a map / tile editor in development over here: [river2D_mapedit](https://github.com/BadAcronym/river2D_mapedit/)
 
 ## Future Plans:
 
