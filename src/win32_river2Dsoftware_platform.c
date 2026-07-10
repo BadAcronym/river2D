@@ -25,8 +25,8 @@ void river2D_resizeBackbuffer
     engine->backbuffer.info.bmiHeader.biBitCount    = 32;
     engine->backbuffer.info.bmiHeader.biCompression = BI_RGB;
 
-    engine->backbuffer.data = VirtualAlloc(0, width * height * RV_BPP, MEM_COMMIT,
-                                           PAGE_READWRITE);
+    engine->backbuffer.data = VirtualAlloc(0, width * height * RV_BPP,
+                                           MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if(!engine->backbuffer.data)
     {
         fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer.\033[0m");
