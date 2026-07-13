@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-void river2D_resizeBackbuffer
+void rvResizeBackbuffer
 (
     EngineData *engine,
     uint32_t   width,
@@ -35,8 +35,8 @@ void river2D_resizeBackbuffer
 
 void init
 (
-    EngineData         *engine,
-    River2D_Image      *planes
+    EngineData *engine,
+    RiverImage *planes
 ){
     engine->running = true;
     engine->planes  = planes;
@@ -48,12 +48,12 @@ void init
 
     if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
     {
-        river2D_createImage(engine, &engine->backbuffer,
+        rvCreateImage(engine, &engine->backbuffer,
                             engine->config.canvas_width, engine->config.canvas_height);
     }
     else
     {
-        river2D_createImage(engine, &engine->backbuffer,
+        rvCreateImage(engine, &engine->backbuffer,
                             engine->config.window_width, engine->config.window_height);
     }
 }
@@ -63,7 +63,6 @@ int32_t shutdown
     EngineData *engine
 ){
     DeleteObject(engine->cursorMask);
-
     DestroyWindow(engine->window);
 
     return 0;
@@ -71,16 +70,16 @@ int32_t shutdown
 
 void compositeImage
 (
-    EngineData    *engine,
-    River2D_Image *src,
-    River2D_Image *dst,
-    uint8_t       pictop,
-    uint32_t      offsetSrcX,
-    uint32_t      offsetSrcY,
-    uint32_t      offsetDstX,
-    uint32_t      offsetDstY,
-    uint32_t      cropWidth,
-    uint32_t      cropHeight
+    EngineData *engine,
+    RiverImage *src,
+    RiverImage *dst,
+    uint8_t    pictop,
+    uint32_t   offsetSrcX,
+    uint32_t   offsetSrcY,
+    uint32_t   offsetDstX,
+    uint32_t   offsetDstY,
+    uint32_t   cropWidth,
+    uint32_t   cropHeight
 ){
     if(pictop != RV_PICTOP_OVER)
     {
@@ -150,7 +149,7 @@ void bltBuffer
     EngineData *engine
 ){
     Dimensions dim = {0};
-    dim = river2D_getWindowSize(engine);
+    dim = rvGetWindowSize(engine);
 
     StretchDIBits(engine->context, 0, 0, dim.width, dim.height, 0, 0,
                   (int)engine->backbuffer.width, (int)engine->backbuffer.height,
@@ -186,12 +185,12 @@ void loadText
 
     if(image->width < minTextWidth || image->height < charsize)
     {
-        river2D_destroyImage(image);
+        rvDestroyImage(image);
     }
 
     if(!image->data)
     {
-        river2D_createImage(engine, image, minTextWidth, charsize);
+        rvCreateImage(engine, image, minTextWidth, charsize);
     }
 
     if(offsetX > image->width)
