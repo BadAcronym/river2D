@@ -15,8 +15,8 @@ project("river2D common functions")
     libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/"})
     includedirs({"./include/",
                  "/usr/include/",
-                 "./vendor/puddle/include/",
-                 "./vendor/imgsurf/include/"})
+                 "./vendor/imgsurf/include/",
+                 "./vendor/imgsurf/vendor/puddle/include/"})
 
     filter("configurations:asan")
         defines{"ASAN"}
@@ -92,8 +92,8 @@ project("river2D software renderer")
     libdirs({"./vendor/imgsurf/bin/%{cfg.buildcfg}/", "./bin/%{cfg.buildcfg}/"})
     includedirs({"./include/",
                  "/usr/include/",
-                 "./vendor/puddle/include/",
-                 "./vendor/imgsurf/include/"})
+                 "./vendor/imgsurf/include/",
+                 "./vendor/imgsurf/vendor/puddle/include/"})
 
     filter("configurations:asan")
         defines{"ASAN"}
