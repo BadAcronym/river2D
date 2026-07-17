@@ -22,7 +22,7 @@ void rvLoadConfig
     StringView codePath = cstr_sv(RV_CONFIG_PATH);
     uint8_t    code     = pdVerifyPath(codePath);
 
-    if(code == RV_TYPE_FILE)
+    if(code == PD_TYPE_FILE)
     {
         FILE *file = fopen(RV_CONFIG_PATH, "r");
         if(!file)
@@ -170,17 +170,17 @@ void rvLoadConfig
 
         fclose(file);
     }
-    else if(code == RV_TYPE_ERROR)
+    else if(code == PD_TYPE_ERROR)
     {
         fprintf(stderr, "\nCan't find the file '%s', default config loaded.\n\n",
                 RV_CONFIG_PATH);
     }
-    else if(code == RV_TYPE_DIRECTORY)
+    else if(code == PD_TYPE_DIRECTORY)
     {
         fprintf(stderr, "\n\033[31;1;7mERROR: '%s' is a Directory! "
                 "Default config loaded.\033[0m\n", RV_CONFIG_PATH);
     }
-    else if(code == RV_TYPE_OTHER)
+    else if(code == PD_TYPE_OTHER)
     {
         fprintf(stderr, "\nUnknown filetype for '%s', default config loaded.\n\n",
                 RV_CONFIG_PATH);

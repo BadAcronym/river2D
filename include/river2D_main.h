@@ -101,12 +101,6 @@
 #define RV_FONT_DEFAULT             0
 #define RV_FONT_MAX                 0
 
-#define RV_TYPE_FILE                0
-#define RV_TYPE_DIRECTORY           1
-#define RV_TYPE_ERROR               2
-#define RV_TYPE_OTHER               3
-#define RV_TYPE_MAX                 3
-
 #define RV_PICTOP_MINIMUM           0
 #define RV_PICTOP_CLEAR             0
 #define RV_PICTOP_SRC               1
