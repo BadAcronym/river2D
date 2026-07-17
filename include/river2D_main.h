@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pd_path.h"
 #include "string_view.h"
 
 #include <stdint.h>
@@ -465,18 +466,6 @@ extern void rvResolveRenderer
     EngineData *engine,
     StringView libpath,
     uint8_t    renderer
-);
-
-extern uint8_t rvVerifyPath
-(
-    StringView path
-);
-
-// lists all files in a directory and packs them into a StringView, separated by ';'.
-// makes you responsible for freeing the returned StringView's data. Not recursive.
-StringView rvListFiles
-(
-    StringView directory
 );
 
 #ifdef BUILD_LINUX

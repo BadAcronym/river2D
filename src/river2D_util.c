@@ -20,7 +20,7 @@ void rvLoadConfig
     uint32_t parsedHeight_window = 0;
 
     StringView codePath = cstr_sv(RV_CONFIG_PATH);
-    uint8_t    code     = rvVerifyPath(codePath);
+    uint8_t    code     = pdVerifyPath(codePath);
 
     if(code == RV_TYPE_FILE)
     {
