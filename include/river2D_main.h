@@ -257,7 +257,7 @@ typedef struct RiverControls
     uint64_t     keymap;
     uint64_t     buttonmap;
     Coordinates  pointer;
-    RiverTime lastScrollTime;
+    RiverTime    lastScrollTime;
     uint64_t     rumble;
     uint8_t      keycodes[128];
     uint8_t      buttoncodes[64];
