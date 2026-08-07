@@ -1,7 +1,7 @@
 param
 (
-    $build = "release",
-    [switch]$compile_only = $false
+    [Parameter(Position = 0)][string]$build,
+    [Parameter(Position = 1)][string]$compile_only
 )
 
 if(-Not(Test-Path ".\obj\"))
@@ -19,59 +19,54 @@ if(-Not(Test-Path ".\bin\"))
     &mkdir .\bin\
 }
 
-function Get-CompiledImgloader()
+if($build -eq $null -or $build -eq "")
 {
-    if(Test-Path ".\vendor\imgsurf\run.ps1")
+    $build = "release"
+}
+
+if($build -eq "asan" -or $build -eq "debug" -or $build -eq "release")
+{
+
+    if(Test-Path "./vendor/imgsurf/run.ps1")
     {
-        pushd ".\vendor\imgsurf\"
-        .\run.ps1 $build -compile_only
-        if(0 -ne $LASTEXITCODE)
+        pushd "./vendor/imgsurf/"
+        &./run.ps1 $build --compile-only
+        if($LASTEXITCODE -ne 0)
         {
-            Write-Host "`033[31m`nERROR: failed to compile imgsurf.`033[0m"
+
+            Write-Host "`nERROR: failed to compile imgsurf.`n" -ForegroundColor Red
             popd
-            exit -1
+            exit -3;
         }
         popd
     }
     else
     {
-        Write-Host "`033[31m`nERROR: can't find imgsurf run script.`033[0m"
+        Write-Host "ERROR: can't find imgsurf's run script." -ForegroundColor Red
     }
-}
 
-function Get-Compileprep()
-{
-    Write-Host ""
-    Write-Host "`033[36mcompiling imgsurf...`033[0m"
-    Write-Host ""
-    premake5 vs2022
-}
+    Write-Host "`ncompiling river2D...`n" -Fore Cyan
 
-if($build -eq "asan" -or $build -eq "debug" -or $build -eq "release")
-{
-    Get-CompiledImgloader
-    Get-Compileprep
-    pushd ".\build\"
-    &MSBuild river2D.sln -p:Configuration=$build -p:Platform=windows
-    if(0 -ne $LASTEXITCODE)
-    {
-        Write-Host "`033[31m`nERROR: failed to compile river2D.`n`033[0m"
-        popd
-        exit -1
-    }
+    premake5 gmake
+    pushd "./build/"
+    make config=$build`_windows
     popd
 }
 else
 {
-    Write-Host "`033[31m`nERROR: invalid make config: $build.`033[0m"
+    Write-Host "ERROR: invalid make config: '$build'." -ForegroundColor Red
     exit -2;
+}
+
+if($LASTEXITCODE -ne 0)
+{
+    Write-Host "`nERROR: failed to compile river2D.`n" -ForegroundColor Red
+    exit -1;
 }
 
 Write-Host "`n"
 
-if($compile_only)
+if($compile_only -eq "--compile-only")
 {
-    exit 0
+    exit 0;
 }
-
-popd
