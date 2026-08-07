@@ -6,7 +6,7 @@ workspace("river2D")
     location("build")
     architecture("x86_64")
 
-project("river2D common functions")
+project("river2D_common")
     language("C")
     cdialect("C99")
     warnings("Extra")
@@ -63,8 +63,7 @@ project("river2D common functions")
                "./include/win32_river2Dcommon*",
                "./src/river2Dcommon*",
                "./include/river2Dcommon*" })
-        links({"imgsurf.lib"})
-        buildoptions({"/wd4068"})
+        links({"imgsurf:static"})
 
     filter({"platforms:Linux", "configurations:debug or asan"})
         buildoptions({"-gfull", "-O1"})
@@ -80,10 +79,7 @@ project("river2D common functions")
         editandcontinue("Off")
         buildoptions({"/fsanitize=address", "/Zi", "/INCREMENTAL:NO"})
 
-    filter({"platforms:Windows", "configurations:release"})
-        linkoptions("/NODEFAULTLIB:MSVCRTD")
-
-project("river2D software renderer")
+project("river2D_software")
     language("C")
     cdialect("C99")
     warnings("Extra")
@@ -152,6 +148,3 @@ project("river2D software renderer")
     filter({"platforms:Windows", "configurations:asan"})
         editandcontinue("Off")
         buildoptions({"/fsanitize=address", "/Zi", "/INCREMENTAL:NO"})
-
-    filter({"platforms:Windows", "configurations:release"})
-        linkoptions("/NODEFAULTLIB:MSVCRTD")
