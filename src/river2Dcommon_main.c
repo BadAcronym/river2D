@@ -28,7 +28,7 @@ f_internal void calcDelta
     }
     else
     {
-        *deltaS  = time2->s  - time1->s;
+        *deltaS = time2->s - time1->s;
     }
 
     if(time1->ns == INT64_MIN && time2->ns > 0)
