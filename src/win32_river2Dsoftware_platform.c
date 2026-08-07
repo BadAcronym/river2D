@@ -159,14 +159,14 @@ void bltBuffer
 
 void loadText
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    StringView    *sv,
-    uint8_t       font,
-    uint16_t      charsize,
-    uint32_t      spacing,
-    uint32_t      offsetX,
-    uint32_t      offsetY
+    EngineData *engine,
+    RiverImage *image,
+    StringView *sv,
+    uint8_t    font,
+    uint16_t   charsize,
+    uint32_t   spacing,
+    uint32_t   offsetX,
+    uint32_t   offsetY
 ){
     if(!engine->planes[font].data)
     {
