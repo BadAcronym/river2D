@@ -29,7 +29,10 @@ void rvResolveRenderer
     StringView libpath,
     uint8_t    renderer
 ){
-    SetDllDirectoryA(libpath);
+    char libpath_cstr[libpath.size + 1];
+    sv_cstr(libpath, libpath_cstr);
+
+    SetDllDirectoryA(libpath_cstr);
 
     if(renderer == RV_RENDERER_SOFTWARE)
     {
@@ -37,7 +40,8 @@ void rvResolveRenderer
         if(!software)
         {
             fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load software renderer!\n");
-            fprintf(stderr, "Tried to load from library path:%s ", libpath);
+            fprintf(stderr, "Tried to load from library path: '"PRI_SV"'",
+                    ARG_SV(libpath));
             fprintf(stderr, "\033[0m\n");
             return;
         }
@@ -85,18 +89,21 @@ f_internal void writeMissingTexture
 void rvLoadImage_file
 (
     EngineData *engine,
-    char       *path,
+    StringView path,
     RiverImage *image,
     uint8_t    format,
     uint8_t    bitdepth
 ){
     (void)engine;
-    image->data = imgsurf_load_file(path, &image->width, &image->height,
+    char path_cstr[path.size + 1];
+    sv_cstr(path, path_cstr);
+
+    image->data = imgsurf_load_file(path_cstr, &image->width, &image->height,
                                     format, bitdepth);
 
     if(!image->data)
     {
-        fprintf(stderr, "Failed to load image from file: %s\n", path);
+        fprintf(stderr, "Failed to load image from file: '%s'\n", path_cstr);
         writeMissingTexture(image);
     }
 }
@@ -160,7 +167,7 @@ RiverTime rvQueryTime
 
     uint64_t nanoseconds = (remainder * 1000000000ULL) / freq.QuadPart;
 
-    River2D_Time time;
+    RiverTime time;
     time.s  = seconds;
     time.ns = nanoseconds;
 
@@ -209,8 +216,8 @@ Dimensions rvGetWindowSize
 
 void rvChangeCursor
 (
-    EngineData    *engine,
-    River2D_Image *image
+    EngineData *engine,
+    RiverImage *image
 ){
     if(engine->currentCursor == image)
     {
@@ -264,9 +271,9 @@ void rvChangeCursor
 
 void rvSyncImage
 (
-    EngineData    *engine,
-    River2D_Image *image,
-    bool          CPU_to_GPU
+    EngineData *engine,
+    RiverImage *image,
+    bool       CPU_to_GPU
 ){
     return;
 }
