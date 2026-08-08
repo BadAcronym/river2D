@@ -89,6 +89,9 @@ project("river2D_software")
                  "/usr/include/",
                  "./vendor/imgsurf/include/",
                  "./vendor/imgsurf/vendor/puddle/include/"})
+    buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow",
+                  "-Wsign-compare", "-Wtype-limits"})
+    links({"imgsurf:static", "river2Dcommon:static"})
 
     filter("configurations:asan")
         defines{"ASAN"}
@@ -116,9 +119,6 @@ project("river2D_software")
                "./include/linux_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
-        links({"imgsurf:static", "river2Dcommon:static"})
-        buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow",
-                      "-Wsign-compare"})
         linkoptions({"-lX11", "-lXrender", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
         toolset("clang")
 
@@ -131,8 +131,6 @@ project("river2D_software")
                "./include/win32_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*" })
-        links({"imgsurf.lib", "river2Dcommon.lib"})
-        buildoptions({"/wd4068"})
 
     filter({"platforms:Linux", "configurations:debug or asan"})
         buildoptions({"-gfull", "-O1"})
