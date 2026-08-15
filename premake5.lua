@@ -19,7 +19,7 @@ project("river2D_common")
                  "./vendor/imgsurf/vendor/puddle/include/"})
     links("imgsurf:static")
     buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow",
-                  "-Wsign-compare", "-Wtype-limits"})
+                  "-Wsign-compare", "-Wtype-limits", "-Wunused"})
 
     filter("configurations:asan")
         defines{"ASAN"}
