@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RV_SOFTWARE_WIN32
+#define RV_SOFTWARE_WIN32
 
 #include "river2D_main.h"
 
@@ -47,3 +48,5 @@ EXPORT void loadText
     uint32_t   offsetX,
     uint32_t   offsetY
 );
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RV_HEADER
+#define RV_HEADER
 
 #include "pd_path.h"
 #include "string_view.h"
@@ -566,3 +567,5 @@ extern void rvCompositeImage
     EngineData          *engine,
     rvCompositeSettings *settings
 );
+
+#endif
