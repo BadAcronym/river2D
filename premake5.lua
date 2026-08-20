@@ -62,7 +62,7 @@ project("river2D_common")
                "./src/win32_river2Dcommon*",
                "./include/win32_river2Dcommon*",
                "./src/river2Dcommon*",
-               "./include/river2Dcommon*" })
+               "./include/river2Dcommon*"})
 
     filter({"platforms:Linux", "configurations:debug or asan"})
         buildoptions({"-gfull", "-O1"})
