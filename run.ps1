@@ -33,8 +33,6 @@ if($build -eq "asan" -or $build -eq "debug" -or $build -eq "release")
         &./run.ps1 $build --compile-only
         if($LASTEXITCODE -ne 0)
         {
-
-            Write-Host "`nERROR: failed to compile imgsurf.`n" -ForegroundColor Red
             popd
             exit -3;
         }
