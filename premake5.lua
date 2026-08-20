@@ -66,10 +66,6 @@ project("river2D_common")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*"})
 
-    filter({"platforms:windows", "configurations:debug or asan"})
-        buildoptions({"-gcodeview"})
-        linkoptions({"-gcodeview"})
-
     filter({"platforms:linux", "configurations:asan"})
         buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
@@ -142,10 +138,6 @@ project("river2D_software")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*"})
         linkoptions({"-lriver2Dcommon", "-lgdi32", "-luser32"})
-
-    filter({"platforms:windows", "configurations:debug or asan"})
-        buildoptions({"-gcodeview"})
-        linkoptions({"-gcodeview"})
 
     filter({"platforms:linux", "configurations:asan"})
         buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
