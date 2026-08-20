@@ -269,6 +269,52 @@ void rvChangeCursor
     SetCursor(engine->hCursor);
 }
 
+// to simplify access to renderer-agnostic function calls:
+void rvInit
+(
+    EngineData *engine,
+    RiverImage *planes
+){
+    engine->init(engine, planes);
+}
+
+int32_t rvShutdown
+(
+    EngineData *engine
+){
+    return engine->shutdown(engine);
+}
+
+void rvBltBuffer
+(
+    EngineData *engine
+){
+    engine->bltBuffer(engine);
+}
+
+void rvLoadText
+(
+    EngineData         *engine,
+    rvLoadTextSettings *settings
+){
+    engine->loadText(engine,             settings->image,
+                     settings->sv,       settings->font,
+                     settings->charsize, settings->spacing,
+                     settings->offsetX,  settings->offsetY);
+}
+
+void rvCompositeImage
+(
+    EngineData          *engine,
+    rvCompositeSettings *settings
+){
+    engine->compositeImage(engine,               settings->src,
+                           settings->dst,        settings->pictop,
+                           settings->offsetSrcX, settings->offsetSrcY,
+                           settings->offsetDstX, settings->offsetDstY,
+                           settings->cropWidth,  settings->cropHeight);
+}
+
 void rvSyncImage
 (
     EngineData *engine,
