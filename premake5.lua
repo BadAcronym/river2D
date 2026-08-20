@@ -17,9 +17,10 @@ project("river2D_common")
                  "/usr/include/",
                  "./vendor/imgsurf/include/",
                  "./vendor/imgsurf/vendor/puddle/include/"})
-    links("imgsurf:static")
+    toolset("clang")
     buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow",
                   "-Wsign-compare", "-Wtype-limits", "-Wunused"})
+    links("imgsurf:static")
 
     filter("configurations:asan")
         defines{"ASAN"}
@@ -38,8 +39,8 @@ project("river2D_common")
         symbols("Off")
         optimize("Speed")
 
-    filter("platforms:Linux")
-        system("Linux")
+    filter("platforms:linux")
+        system("linux")
         defines("BUILD_LINUX")
         targetdir("bin/%{cfg.buildcfg}")
         objdir("obj/river2Dcommon/")
@@ -50,10 +51,9 @@ project("river2D_common")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*"})
         linkoptions({"-lX11", "-fuse-ld=mold"})
-        toolset("clang")
 
-    filter("platforms:Windows")
-        system("Windows")
+    filter("platforms:windows")
+        system("windows")
         defines("BUILD_WINDOWS")
         targetdir("bin/%{cfg.buildcfg}")
         objdir("obj/")
@@ -64,19 +64,29 @@ project("river2D_common")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*"})
 
-    filter({"platforms:Linux", "configurations:debug or asan"})
+    filter({"platforms:linux", "configurations:debug or asan"})
         buildoptions({"-gfull", "-O1"})
         linkoptions({"-gfull", "-O1"})
 
-    filter({"platforms:Linux", "configurations:asan"})
+    filter({"platforms:windows", "configurations:debug or asan"})
+        buildoptions({"-gcodeview"})
+        linkoptions({"-gcodeview"})
+
+    filter({"platforms:linux", "configurations:asan"})
         buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
         linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
 
-    filter({"platforms:Windows", "configurations:asan"})
-        editandcontinue("Off")
+    filter({"platforms:windows", "configurations:debug or asan"})
+        buildoptions("-gcodeview");
+        linkoptions("-gcodeview");
+
+    filter({"platforms:windows", "configurations:asan"})
+        toolset("clang-cl")
         buildoptions({"/fsanitize=address", "/Zi", "/INCREMENTAL:NO"})
+        linkoptions{"/link clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib"}
+        editandcontinue("Off")
 
 project("river2D_software")
     language("C")
@@ -110,38 +120,48 @@ project("river2D_software")
         symbols("Off")
         optimize("Speed")
 
-    filter("platforms:Linux")
-        system("Linux")
+    filter("platforms:linux")
+        system("linux")
         defines("BUILD_LINUX")
         targetdir("bin/%{cfg.buildcfg}")
         objdir("obj/river2Dsoftware/")
         files({"./src/linux_river2Dsoftware*",
                "./include/linux_river2Dsoftware*",
                "./src/river2Dsoftware*",
-               "./include/river2Dsoftware*" })
+               "./include/river2Dsoftware*"})
         linkoptions({"-lX11", "-lXrender", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
         toolset("clang")
 
-    filter("platforms:Windows")
-        system("Windows")
+    filter("platforms:windows")
+        system("windows")
         defines("BUILD_WINDOWS")
         targetdir("bin/%{cfg.buildcfg}")
         objdir("obj/")
         files({"./src/win32_river2Dsoftware*",
                "./include/win32_river2Dsoftware*",
                "./src/river2Dsoftware*",
-               "./include/river2Dsoftware*" })
+               "./include/river2Dsoftware*"})
 
-    filter({"platforms:Linux", "configurations:debug or asan"})
+    filter({"platforms:linux", "configurations:debug or asan"})
         buildoptions({"-gfull", "-O1"})
         linkoptions({"-gfull", "-O1"})
 
-    filter({"platforms:Linux", "configurations:asan"})
+    filter({"platforms:windows", "configurations:debug or asan"})
+        buildoptions({"-gcodeview"})
+        linkoptions({"-gcodeview"})
+
+    filter({"platforms:linux", "configurations:asan"})
         buildoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                       "-static-libasan"})
         linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
 
-    filter({"platforms:Windows", "configurations:asan"})
-        editandcontinue("Off")
+    filter({"platforms:windows", "configurations:debug or asan"})
+        buildoptions("-gcodeview");
+        linkoptions("-gcodeview");
+
+    filter({"platforms:windows", "configurations:asan"})
+        toolset("clang-cl")
         buildoptions({"/fsanitize=address", "/Zi", "/INCREMENTAL:NO"})
+        linkoptions{"/link clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib"}
+        editandcontinue("Off")
