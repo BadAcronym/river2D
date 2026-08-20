@@ -32,6 +32,8 @@ project("river2D_common")
         runtime("debug")
         symbols("On")
         optimize("Off")
+        buildoptions({"-gfull", "-O1"})
+        linkoptions({"-gfull", "-O1"})
 
     filter("configurations:release")
         staticruntime("off")
@@ -64,10 +66,6 @@ project("river2D_common")
                "./src/river2Dcommon*",
                "./include/river2Dcommon*"})
 
-    filter({"platforms:linux", "configurations:debug or asan"})
-        buildoptions({"-gfull", "-O1"})
-        linkoptions({"-gfull", "-O1"})
-
     filter({"platforms:windows", "configurations:debug or asan"})
         buildoptions({"-gcodeview"})
         linkoptions({"-gcodeview"})
@@ -99,6 +97,7 @@ project("river2D_software")
                  "/usr/include/",
                  "./vendor/imgsurf/include/",
                  "./vendor/imgsurf/vendor/puddle/include/"})
+    toolset("clang")
     buildoptions({"-Wextra", "-Wall", "-Wpedantic", "-Wconversion", "-Wshadow",
                   "-Wsign-compare", "-Wtype-limits"})
     links({"imgsurf:static", "river2Dcommon:static"})
@@ -113,6 +112,8 @@ project("river2D_software")
         runtime("debug")
         symbols("On")
         optimize("Off")
+        buildoptions({"-gfull", "-O1"})
+        linkoptions({"-gfull", "-O1"})
 
     filter("configurations:release")
         staticruntime("off")
@@ -130,7 +131,6 @@ project("river2D_software")
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*"})
         linkoptions({"-lX11", "-lXrender", "-lriver2Dcommon", "-lm", "-fuse-ld=mold"})
-        toolset("clang")
 
     filter("platforms:windows")
         system("windows")
@@ -141,10 +141,7 @@ project("river2D_software")
                "./include/win32_river2Dsoftware*",
                "./src/river2Dsoftware*",
                "./include/river2Dsoftware*"})
-
-    filter({"platforms:linux", "configurations:debug or asan"})
-        buildoptions({"-gfull", "-O1"})
-        linkoptions({"-gfull", "-O1"})
+        linkoptions({"-lriver2Dcommon", "-lgdi32", "-luser32"})
 
     filter({"platforms:windows", "configurations:debug or asan"})
         buildoptions({"-gcodeview"})
