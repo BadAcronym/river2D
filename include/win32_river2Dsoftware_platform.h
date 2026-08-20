@@ -7,23 +7,23 @@
 
 #define EXPORT __declspec(dllexport)
 
-EXPORT void init
+EXPORT void _init
 (
     EngineData *engine,
     RiverImage *planes
 );
 
-EXPORT int32_t shutdown
+EXPORT int32_t _shutdown
 (
     EngineData *engine
 );
 
-EXPORT void bltBuffer
+EXPORT void _bltBuffer
 (
     EngineData *engine
 );
 
-EXPORT void compositeImage
+EXPORT void _compositeImage
 (
     EngineData *engine,
     RiverImage *src,
@@ -37,11 +37,11 @@ EXPORT void compositeImage
     uint32_t   cropHeight
 );
 
-EXPORT void loadText
+EXPORT void _loadText
 (
     EngineData *engine,
     RiverImage *image,
-    const char *text,
+    StringView *sv,
     uint8_t    font,
     uint16_t   charsize,
     uint32_t   spacing,

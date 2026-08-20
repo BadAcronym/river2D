@@ -33,7 +33,7 @@ void rvResizeBackbuffer
     }
 }
 
-void init
+void _init
 (
     EngineData *engine,
     RiverImage *planes
@@ -58,7 +58,7 @@ void init
     }
 }
 
-int32_t shutdown
+int32_t _shutdown
 (
     EngineData *engine
 ){
@@ -68,7 +68,7 @@ int32_t shutdown
     return 0;
 }
 
-void compositeImage
+void _compositeImage
 (
     EngineData *engine,
     RiverImage *src,
@@ -144,20 +144,20 @@ void compositeImage
     }
 }
 
-void bltBuffer
+void _bltBuffer
 (
     EngineData *engine
 ){
     Dimensions dim = {0};
     dim = rvGetWindowSize(engine);
 
-    StretchDIBits(engine->context, 0, 0, dim.width, dim.height, 0, 0,
+    StretchDIBits(engine->context, 0, 0, (int)dim.width, (int)dim.height, 0, 0,
                   (int)engine->backbuffer.width, (int)engine->backbuffer.height,
                   engine->backbuffer.data, &engine->backbuffer.info, DIB_RGB_COLORS,
                   SRCCOPY);
 }
 
-void loadText
+void _loadText
 (
     EngineData *engine,
     RiverImage *image,
@@ -215,7 +215,7 @@ void loadText
             character = sv->data[i];
         }
 
-        if(character < 0x21 || character > 0x7F)
+        if(character < 0x21)
         {
             continue;
         }
