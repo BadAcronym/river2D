@@ -85,7 +85,7 @@ float rvDeltaTime_ms
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }
 
-extern int64_t rvDeltaTime_ns
+int64_t rvDeltaTime_ns
 (
     const RiverTime *time1,
     const RiverTime *time2
@@ -156,7 +156,7 @@ float rvDeltaTime_now_ms
     return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
 }
 
-extern uint64_t rvDeltaTime_now_ns
+uint64_t rvDeltaTime_now_ns
 (
     const RiverTime *time
 ){
