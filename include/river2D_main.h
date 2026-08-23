@@ -143,13 +143,13 @@ PerformanceCounter;
 
 typedef struct RiverConfig
 {
-    uint32_t choices;
     uint8_t  renderer;
     uint8_t  backgrounds;
     uint32_t window_width;
     uint32_t window_height;
     uint32_t canvas_width;
     uint32_t canvas_height;
+    uint32_t choices;
 }
 RiverConfig;
 
