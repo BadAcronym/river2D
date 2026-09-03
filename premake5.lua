@@ -32,8 +32,8 @@ project("river2D_common")
         runtime("debug")
         symbols("On")
         optimize("Off")
-        buildoptions({"-gfull", "-O1"})
-        linkoptions({"-gfull", "-O1"})
+        buildoptions({"-g", "-O0"});
+        linkoptions({"-g", "-O0"});
 
     filter("configurations:release")
         staticruntime("off")
@@ -72,6 +72,10 @@ project("river2D_common")
         linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
 
+    filter({"platforms:linux", "configurations:debug or asan"})
+        buildoptions("-gfull");
+        linkoptions("-gfull");
+
     filter({"platforms:windows", "configurations:debug or asan"})
         buildoptions("-gcodeview");
         linkoptions("-gcodeview");
@@ -108,8 +112,8 @@ project("river2D_software")
         runtime("debug")
         symbols("On")
         optimize("Off")
-        buildoptions({"-gfull", "-O1"})
-        linkoptions({"-gfull", "-O1"})
+        buildoptions({"-g", "-O0"});
+        linkoptions({"-g", "-O0"});
 
     filter("configurations:release")
         staticruntime("off")
@@ -144,6 +148,10 @@ project("river2D_software")
                       "-static-libasan"})
         linkoptions({"-fsanitize=address,leak,undefined", "-fno-omit-frame-pointer",
                      "-static-libasan"})
+
+    filter({"platforms:linux", "configurations:debug or asan"})
+        buildoptions("-gfull");
+        linkoptions("-gfull");
 
     filter({"platforms:windows", "configurations:debug or asan"})
         buildoptions("-gcodeview");
