@@ -122,8 +122,7 @@ void _compositeImage
         cropHeight = engine->backbuffer.height - offsetDstY;
     }
 
-    uint8_t *dst_data = (uint8_t*)dst->data +
-                        offsetDstY * bufWidth + offsetDstX * RV_BPP;
+    uint8_t *dst_data = dst->data + offsetDstY * bufWidth + offsetDstX * RV_BPP;
     uint8_t *src_data = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
 
     cropWidth *= RV_BPP;
@@ -132,7 +131,7 @@ void _compositeImage
         for(uint32_t x = 0; x < cropWidth; x += RV_BPP)
         {
             uint64_t srcIndex = y * copyWidth + x;
-            uint64_t dstIndex = y * bufWidth + x;
+            uint64_t dstIndex = y * bufWidth  + x;
             if(src_data[srcIndex + 3])
             {
                 dst_data[dstIndex]     = src_data[srcIndex];
