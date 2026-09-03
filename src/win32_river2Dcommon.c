@@ -95,15 +95,14 @@ void rvLoadImage_file
     uint8_t    bitdepth
 ){
     (void)engine;
-    char path_cstr[path.size + 1];
-    sv_cstr(path, path_cstr);
+    char path_buf[path.size + 1];
+    sv_cstr(path, path_buf);
 
-    image->data = imgsurf_load_file(path_cstr, &image->width, &image->height,
-                                    format, bitdepth);
+    image->data = imLoadFile(path_buf, &image->width, &image->height, format, bitdepth);
 
     if(!image->data)
     {
-        fprintf(stderr, "Failed to load image from file: '%s'\n", path_cstr);
+        fprintf(stderr, "Failed to load image from file: '%s'\n", path_buf);
         writeMissingTexture(image);
     }
 }
@@ -116,8 +115,8 @@ void rvLoadImage_ptr
     uint8_t    channels,
     uint8_t    bitdepth
 ){
-    image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI, &image->width,
-                                   &image->height, channels, bitdepth);
+    image->data = imLoadPtr(file, IM_FILE_QOI, &image->width, &image->height,
+                            channels, bitdepth);
     if(!image->data)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to load image to pointer.\n\033[0m");

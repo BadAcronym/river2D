@@ -138,8 +138,8 @@ void rvLoadImage_file
     char path_cstr[4096] = {0};
     sv_cstr(path, path_cstr);
 
-    image->data = imgsurf_load_file(path_cstr, &image->width, &image->height,
-                                    channels, bitdepth);
+    image->data = imLoadFile(path_cstr, &image->width, &image->height,
+                             channels, bitdepth);
     image->path = path;
 
     if(!image->data)
@@ -171,8 +171,8 @@ void rvLoadImage_ptr
     uint8_t    channels,
     uint8_t    bitdepth
 ){
-    image->data = imgsurf_load_ptr(file, IMGSURF_FILE_QOI,
-                                   &image->width, &image->height, channels, bitdepth);
+    image->data = imLoadPtr(file, IM_FILE_QOI, &image->width, &image->height,
+                            channels, bitdepth);
     image->path = cstr_sv("rvLoadImage_ptr");
 
     if(!image->data)

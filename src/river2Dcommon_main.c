@@ -361,9 +361,8 @@ void rvSaveTilemap
 
     rvSyncImage(engine, set->tilesheet, false);
 
-    imgsurf_write_ptr(set->file, set->tilesheet->data, IMGSURF_FILE_QOI,
-                      set->tilesheet->width, set->tilesheet->height,
-                      IMGSURF_CHANNELS_BGRA, 8);
+    imWritePtr(set->file, set->tilesheet->data, IM_FILE_QOI,
+               set->tilesheet->width, set->tilesheet->height, IM_CHANNELS_BGRA, 8);
 
     if(!set->metadata)
     {
