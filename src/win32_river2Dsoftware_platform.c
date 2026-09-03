@@ -122,8 +122,8 @@ void _compositeImage
         cropHeight = engine->backbuffer.height - offsetDstY;
     }
 
-    uint8_t *dst_data = dst->data + offsetDstY * bufWidth + offsetDstX * RV_BPP;
-    uint8_t *src_data = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
+    uint8_t *dstData = dst->data + offsetDstY * bufWidth + offsetDstX * RV_BPP;
+    uint8_t *srcData = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
 
     cropWidth *= RV_BPP;
     for(uint32_t y = 0; y < cropHeight; ++y)
@@ -132,12 +132,13 @@ void _compositeImage
         {
             uint64_t srcIndex = y * copyWidth + x;
             uint64_t dstIndex = y * bufWidth  + x;
-            if(src_data[srcIndex + 3])
+            if(srcData[srcIndex + 3])
             {
-                dst_data[dstIndex]     = src_data[srcIndex];
-                dst_data[dstIndex + 1] = src_data[srcIndex + 1];
-                dst_data[dstIndex + 2] = src_data[srcIndex + 2];
-                dst_data[dstIndex + 3] = src_data[srcIndex + 3];
+                // ASAN: segfault while trying to access them inside here...
+                dstData[dstIndex]     = srcData[srcIndex];
+                dstData[dstIndex + 1] = srcData[srcIndex + 1];
+                dstData[dstIndex + 2] = srcData[srcIndex + 2];
+                dstData[dstIndex + 3] = srcData[srcIndex + 3];
             }
         }
     }
