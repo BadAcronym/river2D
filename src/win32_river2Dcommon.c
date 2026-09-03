@@ -46,11 +46,11 @@ void rvResolveRenderer
             return;
         }
 
-        resolveFunction((void**)&engine->init,           software, "init");
-        resolveFunction((void**)&engine->shutdown,       software, "shutdown");
-        resolveFunction((void**)&engine->loadText,       software, "loadText");
-        resolveFunction((void**)&engine->bltBuffer,      software, "bltBuffer");
-        resolveFunction((void**)&engine->compositeImage, software, "compositeImage");
+        resolveFunction((void**)&engine->init,           software, "_init");
+        resolveFunction((void**)&engine->shutdown,       software, "_shutdown");
+        resolveFunction((void**)&engine->loadText,       software, "_loadText");
+        resolveFunction((void**)&engine->bltBuffer,      software, "_bltBuffer");
+        resolveFunction((void**)&engine->compositeImage, software, "_compositeImage");
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
