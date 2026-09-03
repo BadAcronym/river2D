@@ -83,7 +83,8 @@ void _compositeImage
 ){
     if(pictop != RV_PICTOP_OVER)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: pictop %u not impletmented on windows.\033[0m\n", pictop);
+        fprintf(stderr, "\033[31;1;7mERROR: pictop %u not impletmented on windows."
+                "\033[0m\n", pictop);
         return;
     }
 
@@ -122,7 +123,7 @@ void _compositeImage
         cropHeight = engine->backbuffer.height - offsetDstY;
     }
 
-    uint8_t *dstData = dst->data + offsetDstY * bufWidth + offsetDstX * RV_BPP;
+    uint8_t *dstData = dst->data + offsetDstY * bufWidth  + offsetDstX * RV_BPP;
     uint8_t *srcData = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
 
     cropWidth *= RV_BPP;
@@ -132,9 +133,12 @@ void _compositeImage
         {
             uint64_t srcIndex = y * copyWidth + x;
             uint64_t dstIndex = y * bufWidth  + x;
+
+            // should check here whether access is safe. if indices are over xyz value,
+            // just skip an iteration
+
             if(srcData[srcIndex + 3])
             {
-                // ASAN: segfault while trying to access them inside here...
                 dstData[dstIndex]     = srcData[srcIndex];
                 dstData[dstIndex + 1] = srcData[srcIndex + 1];
                 dstData[dstIndex + 2] = srcData[srcIndex + 2];
