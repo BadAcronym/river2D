@@ -1,27 +1,20 @@
 #!/bin/bash
 
-if [[ -f ./vendor/imgsurf/clean ]]
-then
-    pushd ./vendor/imgsurf > /dev/null
-    ./clean
-    popd > /dev/null
-fi
-
 echo -e "\033[33mcleaning up river2D builds...\033[0m"
-
-if [[ -d ./build/ ]]
-then
-    rm ./build/ -rf
-fi
 
 if [[ -d ./bin/ ]]
 then
     rm ./bin/ -rf
 fi
 
-if [[ -d ./build/ ]]
-then
-    rm ./build/ -rf
-fi
+for file in *.o
+do
+    if [[ ! -f $file ]]
+    then
+        continue;
+    fi
 
-echo -e "\033[32mcleaned river2D!\n\033[0m"
+    rm $file
+done
+
+echo -e "\033[32mcleaned imgsurf!\n\033[0m"

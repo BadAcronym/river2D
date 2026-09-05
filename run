@@ -1,15 +1,5 @@
 #!/bin/bash
 
-if [[ ! -d "./obj/" ]]
-then
-    mkdir ./obj/
-fi
-
-if [[ ! -d "./build/" ]]
-then
-    mkdir ./build/
-fi
-
 if [[ ! -d "./bin/" ]]
 then
     mkdir ./bin/
@@ -22,47 +12,105 @@ else
     build=$1
 fi
 
-if [[ $build = "asan" ]] || [[ $build = "debug" ]] || [[ $build = "release" ]]
-then
+args_always="-DBUILD_LINUX \
+-Iinclude/ \
+-I/usr/include/ \
+-Ivendor/imgsurf/include/ \
+-Ivendor/imgsurf/vendor/puddle/include/ \
+./vendor/imgsurf/vendor/puddle/src/string_view.c \
+./vendor/imgsurf/vendor/puddle/src/linux_pd_path.c \
+-Wextra -Wall -Wpedantic -Wconversion -Wshadow -Wsign-compare -Wtype-limits -Wunused \
+-lm \
+-c"
 
-    if [[ -f "./vendor/imgsurf/run" ]]
+args_common="src/river2Dcommon_main.c \
+src/linux_river2Dcommon.c"
+
+args_software="src/river2D_* \
+-Lbin/$build/ \
+-lriver2Dcommon \
+-shared"
+
+args_release="-O2"
+
+args_debug="-DDEBUG -g -O0"
+
+args_asan="$args_debug -DASAN \
+-fsanitize=address,leak,undefined \
+-fno-omit-frame-pointer \
+-static-libasan \
+-fPIC \
+-O0"
+
+function compile()
+{
+    echo "identifying a compiler..."
+
+    clang --version > /dev/null
+    if [[ $? = 0 ]]
     then
-        pushd ./vendor/imgsurf/ > /dev/null
-        ./run $build --compile-only
-        if [[ $? != 0 ]]
-        then
-            echo -e "\033[31m\nERROR: failed to compile imgsurf.\033[0m"
-            popd > /dev/null
-            exit -1
-        fi
-        popd > /dev/null
+        echo "found clang."
+        compiler="clang"
     else
-        echo -e "\033[31m\nERROR: can't find imgsurf's run script.\033[0m"
+        gcc --version > /dev/null
+        if [[ $? = 0 ]]
+        then
+            compiler="gcc"
+        else
+            echo -e "\033[31m\nERROR: no suitable compiler found.\n\033[0m"
+        fi
+    fi
+
+    if [[ ! -d ./bin/$build ]]
+    then
+        mkdir ./bin/$build
     fi
 
     echo ""
-    echo -e "\033[36mcompiling river2D...\033[0m"
+    echo -e "\033[36mcompiling river2Dcommon...\033[0m"
     echo ""
-    premake5 gmake
+    echo "compiling $build build with the following command:"
+    echo "$compiler $1 $args_common"
 
-    pushd ./build/ > /dev/null
-    make config=$build\_linux
+    $($compiler $1 $args_common)
+    if [[ $? != 0 ]]
+    then
+        echo -e "\033[31m\nERROR: $compiler failed to compile river2Dcommon.\n\033[0m"
+        exit -1
+    fi
+    mv ./a.out ./bin/$build/libriver2Dcommon.a
+
+    echo ""
+    echo -e "\033[36mcompiling river2Dsoftware...\033[0m"
+    echo ""
+    echo "compiling $build build with the following command:"
+    echo "$compiler $1 $args_software"
+
+    $($compiler $1 $args_software)
+    if [[ $? != 0 ]]
+    then
+        echo -e "\033[31m\nERROR: $compiler failed to compile river2Dsoftware.\n\033[0m"
+        exit -1
+    fi
+    mv ./a.out ./bin/$build/libriver2Dsoftware.so
+}
+
+if [[ $build = "release" ]]
+then
+    compile "$args_always $args_release"
+else
+if [[ $build = "debug" ]]
+then
+    compile "$args_always $args_debug"
+else
+if [[ $build = "asan" ]]
+then
+    compile "$args_always $args_asan"
 else
     echo -e "\033[31m\nERROR: invalid make config: $build.\033[0m"
-    exit -2;
+    exit 3;
 fi
-
-if [[ $? != 0 ]]
-then
-    echo -e "\033[31m\nERROR: failed to compile river2D.\n\033[0m"
-    exit -1
+fi
 fi
 
 echo -e "\n"
-
-if [[ $2 = "--compile-only" ]]
-then
-    exit 0
-fi
-
-popd > /dev/null
