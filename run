@@ -20,12 +20,12 @@ args_always="-DBUILD_LINUX \
 ./vendor/imgsurf/vendor/puddle/src/string_view.c \
 ./vendor/imgsurf/vendor/puddle/src/linux_pd_path.c \
 -Wextra -Wall -Wpedantic -Wconversion -Wshadow -Wsign-compare -Wtype-limits -Wunused \
--lm \
--c"
+-lm"
 
 args_common="src/river2Dcommon_main.c \
 src/linux_river2Dcommon.c \
-src/river2D_util.c"
+src/river2D_util.c \
+-c"
 
 args_software="src/river2D_* \
 src/linux_river2Dsoftware.c \
