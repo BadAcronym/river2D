@@ -24,9 +24,11 @@ args_always="-DBUILD_LINUX \
 -c"
 
 args_common="src/river2Dcommon_main.c \
-src/linux_river2Dcommon.c"
+src/linux_river2Dcommon.c \
+src/river2D_util.c"
 
 args_software="src/river2D_* \
+src/linux_river2Dsoftware.c \
 -Lbin/$build/ \
 -lriver2Dcommon \
 -shared"
