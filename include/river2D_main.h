@@ -22,7 +22,9 @@
     #include "X11/Xcursor/Xcursor.h"
     #include "X11/extensions/Xrender.h"
 
-    #define __USE_POSIX199309
+    #ifndef  __USE_POSIX199309
+        #define __USE_POSIX199309
+    #endif
     #include <time.h>
 
     #include "pthread.h"
