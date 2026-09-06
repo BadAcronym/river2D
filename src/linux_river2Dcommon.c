@@ -111,6 +111,14 @@ void rvResolveFunctions
     resolve((void**)&engine->xFreePixmap,     x11, "XFreePixmap",           &error);
     resolve((void**)&engine->xDefRootWindow,  x11, "XDefaultRootWindow",    &error);
     resolve((void**)&engine->xkbcodeToKeysym, x11, "XkbKeycodeToKeysym",    &error);
+    resolve((void**)&engine->xCreateWindow,   x11, "XCreateWindow",         &error);
+    resolve((void**)&engine->xStoreName,      x11, "XStoreName",            &error);
+    resolve((void**)&engine->xSelectInput,    x11, "XSelectInput",          &error);
+    resolve((void**)&engine->xMapWindow,      x11, "XMapWindow",            &error);
+    resolve((void**)&engine->xCreateGC,       x11, "XCreateGC",             &error);
+    resolve((void**)&engine->xFreeGC,         x11, "XFreeGC",               &error);
+    resolve((void**)&engine->xDestroyWindow,  x11, "XDestroyWindow",        &error);
+    resolve((void**)&engine->xCloseDisplay,   x11, "XCloseDisplay",         &error);
 
     dlclose(x11);
 
