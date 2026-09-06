@@ -18,10 +18,10 @@ f_internal Visual* findVisual
     visualInfo.depth  = depth;
 
     int numVisuals;
-    XVisualInfo *foundVisuals = XGetVisualInfo(display,
-                                               VisualScreenMask | VisualDepthMask,
-                                               &visualInfo, &numVisuals);
-    if(!foundVisuals)
+    XVisualInfo *found = engine->xGetVisualInfo(display,
+                                                VisualScreenMask | VisualDepthMask,
+                                                &visualInfo, &numVisuals);
+    if(!found)
     {
         fprintf(stderr, "No valid visuals could be found "
                 "for the desired depth of %i.\n", visualInfo.depth);
@@ -33,15 +33,15 @@ f_internal Visual* findVisual
 
     for(int i = 0; i < numVisuals; ++i)
     {
-        if(foundVisuals[i].class == rootAttributes.visual->class &&
-           foundVisuals[i].depth == depth
+        if(found[i].class == rootAttributes.visual->class &&
+           found[i].depth == depth
         ){
-            visual = foundVisuals[i].visual;
+            visual = found[i].visual;
             break;
         }
     }
 
-    XFree(foundVisuals);
+    engine->xFree(found);
 
     return visual;
 }
@@ -53,31 +53,32 @@ Window rvOpenWindow
     unsigned long valuemask = CWBackPixel | CWBorderPixel |
                               CWColormap  | CWOverrideRedirect;
 
-    XSetWindowAttributes attributes;
-    attributes.background_pixel  = BlackPixel(engine->display,
-                                              DefaultScreen(engine->display));
-    attributes.background_pixmap = 0;
-    attributes.border_pixel = BlackPixel(engine->display,
-                                         DefaultScreen(engine->display));
-    attributes.border_pixmap = 0;
-    attributes.colormap = XCreateColormap(engine->display,
+    XSetWindowAttributes attr;
+    attr.override_redirect = false;
+    attr.background_pixel  = BlackPixel(engine->display,
+                                        DefaultScreen(engine->display));
+    attr.background_pixmap = 0;
+    attr.border_pixel      = BlackPixel(engine->display,
+                                        DefaultScreen(engine->display));
+    attr.border_pixmap = 0;
+    attr.colormap = engine->xCreateColormap(engine->display,
+                                            engine->xDefRootWindow(engine->display),
+                                            engine->visual, AllocNone);
+
+    Window window = engine->xCreateWindow(engine->display,
                                           engine->xDefRootWindow(engine->display),
-                                          engine->visual, AllocNone);
-    attributes.override_redirect = false;
+                                          0, 0,
+                                          engine->config.window_width,
+                                          engine->config.window_height,
+                                          0, RV_PIXDEPTH, InputOutput,
+                                          engine->visual, valuemask, &attr);
 
-    Window window = XCreateWindow(engine->display,
-                                  engine->xDefRootWindow(engine->display), 0, 0,
-                                  engine->config.window_width,
-                                  engine->config.window_height,
-                                  0, RV_PIXDEPTH, InputOutput,
-                                  engine->visual, valuemask, &attributes);
-
-    XStoreName(engine->display, window, engine->windowName);
-    XSelectInput(engine->display, window,
-                 KeyPressMask    | KeyReleaseMask    | PointerMotionMask |
-                 ButtonPressMask | ButtonReleaseMask | ButtonMotionMask  |
-                 StructureNotifyMask);
-    XMapWindow(engine->display, window);
+    engine->xStoreName(engine->display, window, engine->windowName);
+    engine->xSelectInput(engine->display, window,
+                         KeyPressMask    | KeyReleaseMask    | PointerMotionMask |
+                         ButtonPressMask | ButtonReleaseMask | ButtonMotionMask  |
+                         StructureNotifyMask);
+    engine->xMapWindow(engine->display, window);
 
     return window;
 }
@@ -90,7 +91,7 @@ void rvResizeBackbuffer
 ){
     if(engine->backbuffer.pixmap)
     {
-        XFreePixmap(engine->display, engine->backbuffer.pixmap);
+        engine->xFreePixmap(engine->display, engine->backbuffer.pixmap);
     }
     engine->backbuffer.pixmap = engine->xCreatePixmap(engine->display, engine->window,
                                                       width, height, RV_PIXDEPTH);
@@ -106,7 +107,7 @@ void init
     engine->running = true;
     engine->planes  = planes;
 
-    engine->display = XOpenDisplay(0);
+    engine->display = engine->xOpenDisplay(0);
     if(!engine->display)
     {
         fprintf(stderr, "Failed to open default Display!\n");
@@ -124,7 +125,7 @@ void init
         fprintf(stderr, "No matching visual could be found.\n");
     }
 
-    engine->format = XRenderFindStandardFormat(engine->display, PictStandardARGB32);
+    engine->format = engine->xRenderFindStFormat(engine->display, PictStandardARGB32);
 
     if(!engine->format)
     {
@@ -141,7 +142,7 @@ void init
         fprintf(stderr, "\033[31m\nERROR: failed to create window!.\n\033[0m");
     }
 
-    engine->context = XCreateGC(engine->display, engine->window, 0, 0);
+    engine->context = engine->xCreateGC(engine->display, engine->window, 0, 0);
     if(!engine->context)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to Graphics Context!.\n\033[0m");
@@ -179,9 +180,9 @@ int32_t shutdown
 
     rvDestroyImage(&engine->backbuffer);
 
-    XFreeGC(engine->display, engine->context);
-    XDestroyWindow(engine->display, engine->window);
-    XCloseDisplay(engine->display);
+    engine->xFreeGC(engine->display, engine->context);
+    engine->xDestroyWindow(engine->display, engine->window);
+    engine->xCloseDisplay(engine->display);
 
     return 0;
 }
@@ -240,9 +241,9 @@ void compositeImage
         return;
     }
 
-    XRenderComposite(engine->display, pictop, src->picture, None, dst->picture,
-                     (int)offsetSrcX, (int)offsetSrcY, 0, 0,
-                     (int)offsetDstX, (int)offsetDstY, cropWidth, cropHeight);
+    engine->xRenderComp(engine->display, pictop, src->picture, None, dst->picture,
+                        (int)offsetSrcX, (int)offsetSrcY, 0, 0,
+                        (int)offsetDstX, (int)offsetDstY, cropWidth, cropHeight);
 }
 
 void bltBuffer
@@ -258,13 +259,13 @@ void bltBuffer
         {                  0, XDoubleToFixed(y_s),                   0},
         {                  0,                   0, XDoubleToFixed(1.0)}
     }};
-    XRenderSetPictureTransform(engine->display, engine->backbuffer.picture, &transform);
-    XRenderSetPictureFilter(engine->display, engine->backbuffer.picture,
-                            FilterNearest, 0, 0);
+    engine->xRenderSetPicTrans(engine->display, engine->backbuffer.picture, &transform);
+    engine->xRenderSetPicFilter(engine->display, engine->backbuffer.picture,
+                                FilterNearest, 0, 0);
 
-    XRenderComposite(engine->display, PictOpSrc, engine->backbuffer.picture, 0,
-                     engine->blitDstPict, 0, 0, 0, 0, 0, 0,
-                     engine->config.window_width, engine->config.window_height);
+    engine->xRenderComp(engine->display, PictOpSrc, engine->backbuffer.picture, 0,
+                        engine->blitDstPict, 0, 0, 0, 0, 0, 0,
+                        engine->config.window_width, engine->config.window_height);
 }
 
 void loadText

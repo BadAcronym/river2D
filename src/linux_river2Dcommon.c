@@ -60,7 +60,7 @@ void rvResolveFunctions
         resolve((void**)&engine->loadText,       software, "loadText",       &error);
         resolve((void**)&engine->bltBuffer,      software, "bltBuffer",      &error);
         resolve((void**)&engine->compositeImage, software, "compositeImage", &error);
-        dlclose(so);
+        dlclose(software);
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
@@ -94,13 +94,23 @@ void rvResolveFunctions
         fprintf(stderr, "\033[0m\n");
     }
 
-    resolve((void**)&engine->xPending,        x11, "XPending",             &error);
-    resolve((void**)&engine->xNextEvent,      x11, "XNextEvent",           &error);
-    resolve((void**)&engine->xInternAtom,     x11, "XInternAtom",          &error);
-    resolve((void**)&engine->xGetWinAttr,     x11, "XGetWindowAttributes", &error);
-    resolve((void**)&engine->xSetWMProtocols, x11, "XSetWMProtorols",      &error);
-    resolve((void**)&engine->xGetVisualInfo,  x11, "XGetVisualInfo",       &error);
-    resolve((void**)&engine->xKeySymToString, x11, "XKeysymToString",      &error);
+    resolve((void**)&engine->xPending,        x11, "XPending",              &error);
+    resolve((void**)&engine->xNextEvent,      x11, "XNextEvent",            &error);
+    resolve((void**)&engine->xOpenDisplay,    x11, "XOpenDisplay",          &error);
+    resolve((void**)&engine->xFree,           x11, "XFree",                 &error);
+    resolve((void**)&engine->xInternAtom,     x11, "XInternAtom",           &error);
+    resolve((void**)&engine->xGetWinAttr,     x11, "XGetWindowAttributes",  &error);
+    resolve((void**)&engine->xSetWMProtocols, x11, "XSetWMProtocols",       &error);
+    resolve((void**)&engine->xCreateColormap, x11, "XCreateColormap",       &error);
+    resolve((void**)&engine->xGetVisualInfo,  x11, "XGetVisualInfo",        &error);
+    resolve((void**)&engine->xKeySymToString, x11, "XKeysymToString",       &error);
+    resolve((void**)&engine->xCreateImage,    x11, "XCreateImage",          &error);
+    resolve((void**)&engine->xGetImage,       x11, "XGetImage",             &error);
+    resolve((void**)&engine->xPutImage,       x11, "XPutImage",             &error);
+    resolve((void**)&engine->xCreatePixmap,   x11, "XCreatePixmap",         &error);
+    resolve((void**)&engine->xFreePixmap,     x11, "XFreePixmap",           &error);
+    resolve((void**)&engine->xDefRootWindow,  x11, "XDefaultRootWindow",    &error);
+    resolve((void**)&engine->xkbcodeToKeysym, x11, "XkbKeycodeToKeysym",    &error);
 
     dlclose(x11);
 
@@ -116,7 +126,7 @@ void rvResolveFunctions
     }
 
     resolve((void**)&engine->xDefineCursor,  xcur, "XDefineCursor",          &error);
-    resolve((void**)&engine->xCursorImgLoad, xcur, "XCursorImageLoadCursor", &error);
+    resolve((void**)&engine->xCursorImgLoad, xcur, "XcursorImageLoadCursor", &error);
 
     dlclose(xcur);
 }
@@ -571,12 +581,12 @@ AsciiKey rvProcessXKey
     EngineData *engine,
     XEvent     *event
 ){
-    KeySym sym_key = engine->xkbKeycodeToKeysym(engine->display,
-                                                (KeyCode)event->xkey.keycode, 0, 0);
+    KeySym sym_key = engine->xkbcodeToKeysym(engine->display,
+                                             (KeyCode)event->xkey.keycode, 0, 0);
 
-    KeySym sym_raw = engine->xkbKeycodeToKeysym(engine->display,
-                                                (KeyCode)event->xkey.keycode, 0,
-                                                event->xkey.state & ShiftMask);
+    KeySym sym_raw = engine->xkbcodeToKeysym(engine->display,
+                                             (KeyCode)event->xkey.keycode, 0,
+                                             event->xkey.state & ShiftMask);
 
     return(AsciiKey)
     {

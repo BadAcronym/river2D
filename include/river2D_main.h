@@ -314,48 +314,81 @@ typedef struct EngineData
 
 #ifdef BUILD_LINUX
     // X11
-    int          (*xPending)        (Display *display);
-    int          (*xNextEvent)      (Display *display, XEvent *event);
+    int          (*xPending)           (Display *display);
+    int          (*xNextEvent)         (Display *display, XEvent *event);
 
-    Atom         (*xInternAtom)     (Display *display, const char *name,
-                                     Bool    only);
+    Display*     (*xOpenDisplay)       (const char *name);
 
-    Status       (*xGetWinAttr)     (Display           *display, Window w,
-                                     XWindowAttributes *wAttr);
+    int          (*xFree)              (void *data);
 
-    Status       (*xSetWMProtocols) (Display *display,   Window  w,
-                                     Atom    *protocols, int     count);
+    Atom         (*xInternAtom)        (Display *display, const char *name,
+                                        Bool    only);
 
-    XVisualInfo* (*xGetVisualInfo)  (Display     *display, long infoMask,
-                                     XVisualInfo *vInfo,   int  *nItems);
+    Status       (*xGetWinAttr)        (Display           *display, Window w,
+                                        XWindowAttributes *wAttr);
 
-    char*        (*xKeySymToString) (KeySym keysym);
+    Status       (*xSetWMProtocols)    (Display *display, Window  w,
+                                        Atom    *proto,   int32_t count);
 
-    XImage*      (*xCreateImage)    (Display  *display, Visual   *visual,
-                                     uint32_t depth,    int32_t  format,
-                                     int32_t  offset,   char     *data,
-                                     uint32_t width,    uint32_t height,
-                                     int32_t  bitPad,   int32_t  bytesPL);
+    Colormap     (*xCreateColormap)    (Display *display, Window  w,
+                                        Visual  *visual,  int32_t alloc);
 
-    XImage*      (*xGetImage)       (Display  *display, Drawable d,
-                                     int32_t  x,        int32_t  y,
-                                     uint32_t width,    uint32_t height,
-                                     uint64_t plane,    int32_t  format);
+    XVisualInfo* (*xGetVisualInfo)     (Display     *display, long infoMask,
+                                        XVisualInfo *vInfo,   int  *nItems);
 
-    int          (*xPutImage)       (Display  *display, Drawable d,
-                                     GC       gc,       XImage   *image,
-                                     int32_t  srcX,     int32_t  srcY,
-                                     int32_t  dstX,     int32_t  dstY,
-                                     uint32_t width,    uint32_t height);
+    char*        (*xKeySymToString)    (KeySym keysym);
 
-    Pixmap       (*xCreatePixmap)   (Display  *display, Drawable d,
-                                     uint32_t width,    uint32_t height,
-                                     uint32_t depth);
+    XImage*      (*xCreateImage)       (Display  *display, Visual   *visual,
+                                        uint32_t depth,    int32_t  format,
+                                        int32_t  offset,   char     *data,
+                                        uint32_t width,    uint32_t height,
+                                        int32_t  bitPad,   int32_t  bytesPL);
 
-    Window       (*xDefRootWindow)  (Display *display);
+    XImage*      (*xGetImage)          (Display  *display, Drawable d,
+                                        int32_t  x,        int32_t  y,
+                                        uint32_t width,    uint32_t height,
+                                        uint64_t plane,    int32_t  format);
 
-    KeySym       (*xkbKeycodeToKeysym) (Display *display, KeyCode kc,
+    int          (*xPutImage)          (Display  *display, Drawable d,
+                                        GC       gc,       XImage   *image,
+                                        int32_t  srcX,     int32_t  srcY,
+                                        int32_t  dstX,     int32_t  dstY,
+                                        uint32_t width,    uint32_t height);
+
+    Pixmap       (*xCreatePixmap)      (Display  *display, Drawable d,
+                                        uint32_t width,    uint32_t height,
+                                        uint32_t depth);
+
+    int          (*xFreePixmap)        (Display  *display, Pixmap pixmap);
+
+    Window       (*xDefRootWindow)     (Display *display);
+
+    KeySym       (*xkbcodeToKeysym)    (Display *display, KeyCode kc,
                                         int32_t group,    int32_t level);
+
+    Window       (*xCreateWindow)      (Display  *display, Window               parent,
+                                        int32_t  x,        int32_t              y,
+                                        uint32_t width,    uint32_t             height,
+                                        uint32_t borderW,  int32_t              depth,
+                                        uint32_t class,    Visual               *visual,
+                                        uint64_t mask,     XSetWindowAttributes *attr);
+
+    int          (*xStoreName)         (Display    *display, Window w,
+                                        const char *name);
+
+    int          (*xSelectInput)       (Display *display, Window w,
+                                        int64_t eventMask);
+
+    int          (*xMapWindow)         (Display *display, Window w);
+
+    GC           (*xCreateGC)          (Display  *display, Drawable  d,
+                                        uint64_t mask,     XGCValues *values);
+
+    int          (*xFreeGC)            (Display *display, GC gc);
+
+    int          (*xDestroyWindow)     (Display *display, Window w);
+
+    int          (*xCloseDisplay)      (Display *display);
 
     // Xcursor
     int    (*xDefineCursor)  (Display *display, Window w, Cursor cursor);
@@ -369,6 +402,23 @@ typedef struct EngineData
                                      const XRenderPictFormat        *format,
                                      unsigned long                  valuemask,
                                      const XRenderPictureAttributes *attributes);
+
+    XRenderPictFormat* (*xRenderFindStFormat) (Display *display, int format);
+
+    void (*xRenderComp) (Display *display,
+                         int      op,      Picture  src,
+                         Picture  mask,    Picture  dst,
+                         int32_t  src_x,   int32_t  src_y,
+                         int32_t  mask_x,  int32_t  mask_y,
+                         int32_t  dst_x,   int32_t  dst_y,
+                         uint32_t width,   uint32_t height);
+
+    void (*xRenderSetPicTrans)  (Display    *display, Picture picture,
+                                 XTransform *transform);
+
+    void (*xRenderSetPicFilter) (Display    *display, Picture picture,
+                                 const char *filter,  XFixed  *params,
+                                 int32_t    nparams);
 #endif
 }
 EngineData;
