@@ -326,15 +326,49 @@ typedef struct EngineData
     Status       (*xSetWMProtocols) (Display *display,   Window  w,
                                      Atom    *protocols, int     count);
 
-    XVisualInfo* (*XGetVisualInfo)  (Display     *display, long infoMask,
+    XVisualInfo* (*xGetVisualInfo)  (Display     *display, long infoMask,
                                      XVisualInfo *vInfo,   int  *nItems);
 
+    char*        (*xKeySymToString) (KeySym keysym);
+
+    XImage*      (*xCreateImage)    (Display  *display, Visual   *visual,
+                                     uint32_t depth,    int32_t  format,
+                                     int32_t  offset,   char     *data,
+                                     uint32_t width,    uint32_t height,
+                                     int32_t  bitPad,   int32_t  bytesPL);
+
+    XImage*      (*xGetImage)       (Display  *display, Drawable d,
+                                     int32_t  x,        int32_t  y,
+                                     uint32_t width,    uint32_t height,
+                                     uint64_t plane,    int32_t  format);
+
+    int          (*xPutImage)       (Display  *display, Drawable d,
+                                     GC       gc,       XImage   *image,
+                                     int32_t  srcX,     int32_t  srcY,
+                                     int32_t  dstX,     int32_t  dstY,
+                                     uint32_t width,    uint32_t height);
+
+    Pixmap       (*xCreatePixmap)   (Display  *display, Drawable d,
+                                     uint32_t width,    uint32_t height,
+                                     uint32_t depth);
+
+    Window       (*xDefRootWindow)  (Display *display);
+
+    KeySym       (*xkbKeycodeToKeysym) (Display *display, KeyCode kc,
+                                        int32_t group,    int32_t level);
+
     // Xcursor
-    int    (*xDefineCursor)  (Display *, Window w, Cursor cursor);
+    int    (*xDefineCursor)  (Display *display, Window w, Cursor cursor);
 
     Cursor (*xCursorImgLoad) (Display *display, XcursorImage *img);
 
     // XRender
+
+    Picture (*xRenderCreatePicture) (Display                        *display,
+                                     Drawable                       drawable,
+                                     const XRenderPictFormat        *format,
+                                     unsigned long                  valuemask,
+                                     const XRenderPictureAttributes *attributes);
 #endif
 }
 EngineData;

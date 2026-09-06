@@ -99,7 +99,8 @@ void rvResolveFunctions
     resolve((void**)&engine->xInternAtom,     x11, "XInternAtom",          &error);
     resolve((void**)&engine->xGetWinAttr,     x11, "XGetWindowAttributes", &error);
     resolve((void**)&engine->xSetWMProtocols, x11, "XSetWMProtorols",      &error);
-    resolve((void**)&engine->XGetVisualInfo,  x11, "XGetVisualInfo",       &error);
+    resolve((void**)&engine->xGetVisualInfo,  x11, "XGetVisualInfo",       &error);
+    resolve((void**)&engine->xKeySymToString, x11, "XKeysymToString",      &error);
 
     dlclose(x11);
 
@@ -132,20 +133,21 @@ void rvCreateImage
     image->width  = width;
     image->height = height;
 
-    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
-                                  image->width, image->height, 32);
-    XImage *img   = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                                 (char*)image->data, image->width, image->height,
-                                 32, 0);
+    image->pixmap = engine->xCreatePixmap(engine->display,
+                                          engine->xDefRootWindow(engine->display),
+                                          image->width, image->height, 32);
+    XImage *img   = engine->xCreateImage(engine->display, engine->visual,
+                                         32, ZPixmap, 0, (char*)image->data,
+                                         image->width, image->height, 32, 0);
 
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0,
-    0, image->width, image->height);
+    engine->xPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+                      image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
 
-    image->picture = XRenderCreatePicture(engine->display, image->pixmap,
-                                          engine->format, 0, 0);
+    image->picture = engine->xRenderCreatePicture(engine->display, image->pixmap,
+                                                  engine->format, 0, 0);
     if(!image->picture)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture.\n\033[0m");
@@ -186,13 +188,14 @@ void rvLoadImage_file
         return;
     }
 
-    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
-                                  image->width, image->height, 32);
+    image->pixmap = engine->xCreatePixmap(engine->display,
+                                          engine->xDefRootWindow(engine->display),
+                                          image->width, image->height, 32);
 
     rvSyncImage(engine, image, true);
 
-    image->picture = XRenderCreatePicture(engine->display, image->pixmap,
-                                          engine->format, 0, 0);
+    image->picture = engine->xRenderCreatePicture(engine->display, image->pixmap,
+                                                  engine->format, 0, 0);
     if(!image->picture)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from file: "
@@ -220,13 +223,14 @@ void rvLoadImage_ptr
     }
 
     image->path   = cstr_sv("rvLoadImage_ptr");
-    image->pixmap = XCreatePixmap(engine->display, XDefaultRootWindow(engine->display),
-                                  image->width, image->height, 32);
+    image->pixmap = engine->xCreatePixmap(engine->display,
+                                          engine->xDefRootWindow(engine->display),
+                                          image->width, image->height, 32);
 
     rvSyncImage(engine, image, true);
 
-    image->picture = XRenderCreatePicture(engine->display, image->pixmap,
-                                          engine->format, 0, 0);
+    image->picture = engine->xRenderCreatePicture(engine->display, image->pixmap,
+                                                  engine->format, 0, 0);
     if(!image->picture)
     {
         fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from pointer."
@@ -244,10 +248,11 @@ void rvClearImage
         image->data[i] = 0;
     }
 
-    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                               (char*)image->data, image->width, image->height, 32, 0);
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
-              image->width, image->height);
+    XImage *img = engine->xCreateImage(engine->display, engine->visual, 32,
+                                       ZPixmap, 0, (char*)image->data,
+                                       image->width, image->height, 32, 0);
+    engine->xPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+                      image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
@@ -271,9 +276,10 @@ RiverTime rvQueryTime
 
 f_internal uint8_t xkeyToAscii
 (
-    KeySym sym
+    EngineData *engine,
+    KeySym     sym
 ){
-    char *codeString = XKeysymToString(sym);
+    char *codeString = engine->xKeySymToString(sym);
     StringView sv    = cstr_sv(codeString);
 
     #ifdef DEBUG
@@ -565,16 +571,17 @@ AsciiKey rvProcessXKey
     EngineData *engine,
     XEvent     *event
 ){
-    KeySym sym_key = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode,
-                                        0, 0);
+    KeySym sym_key = engine->xkbKeycodeToKeysym(engine->display,
+                                                (KeyCode)event->xkey.keycode, 0, 0);
 
-    KeySym sym_raw = XkbKeycodeToKeysym(engine->display, (KeyCode)event->xkey.keycode,
-                                        0, event->xkey.state & ShiftMask);
+    KeySym sym_raw = engine->xkbKeycodeToKeysym(engine->display,
+                                                (KeyCode)event->xkey.keycode, 0,
+                                                event->xkey.state & ShiftMask);
 
     return(AsciiKey)
     {
-        .key = xkeyToAscii(sym_key),
-        .raw = xkeyToAscii(sym_raw)
+        .key = xkeyToAscii(engine, sym_key),
+        .raw = xkeyToAscii(engine, sym_raw)
     };
 }
 
@@ -669,19 +676,19 @@ void rvSyncImage
 ){
     if(CPU_to_GPU)
     {
-        XImage *ximg = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                                   (char*)image->data, image->width, image->height,
-                                    32, 0);
-        XPutImage(engine->display, image->pixmap, engine->context, ximg, 0, 0, 0, 0,
-                  image->width, image->height);
+        XImage *ximg = engine->xCreateImage(engine->display, engine->visual, 32,
+                                            ZPixmap, 0, (char*)image->data,
+                                            image->width, image->height, 32, 0);
+        engine->xPutImage(engine->display, image->pixmap, engine->context, ximg,
+                          0, 0, 0, 0, image->width, image->height);
 
         ximg->data = NULL;
         XDestroyImage(ximg);
         return;
     }
 
-    XImage *ximg = XGetImage(engine->display, image->pixmap, 0, 0, image->width,
-                             image->height, AllPlanes, ZPixmap);
+    XImage *ximg = engine->xGetImage(engine->display, image->pixmap, 0, 0,
+                                     image->width, image->height, AllPlanes, ZPixmap);
 
     if(!ximg)
     {

@@ -29,7 +29,7 @@ f_internal Visual* findVisual
     }
 
     XWindowAttributes rootAttributes = {0};
-    engine->xGetWinAttr(display, XDefaultRootWindow(display), &rootAttributes);
+    engine->xGetWinAttr(display, engine->xDefRootWindow(display), &rootAttributes);
 
     for(int i = 0; i < numVisuals; ++i)
     {
@@ -57,16 +57,16 @@ Window rvOpenWindow
     attributes.background_pixel  = BlackPixel(engine->display,
                                               DefaultScreen(engine->display));
     attributes.background_pixmap = 0;
-    attributes.border_pixel      = BlackPixel(engine->display,
-                                              DefaultScreen(engine->display));
-    attributes.border_pixmap     = 0;
-    attributes.colormap          = XCreateColormap(engine->display,
-                                                   XDefaultRootWindow(engine->display),
-                                                   engine->visual, AllocNone);
+    attributes.border_pixel = BlackPixel(engine->display,
+                                         DefaultScreen(engine->display));
+    attributes.border_pixmap = 0;
+    attributes.colormap = XCreateColormap(engine->display,
+                                          engine->xDefRootWindow(engine->display),
+                                          engine->visual, AllocNone);
     attributes.override_redirect = false;
 
     Window window = XCreateWindow(engine->display,
-                                  XDefaultRootWindow(engine->display), 0, 0,
+                                  engine->xDefRootWindow(engine->display), 0, 0,
                                   engine->config.window_width,
                                   engine->config.window_height,
                                   0, RV_PIXDEPTH, InputOutput,
@@ -92,8 +92,8 @@ void rvResizeBackbuffer
     {
         XFreePixmap(engine->display, engine->backbuffer.pixmap);
     }
-    engine->backbuffer.pixmap = XCreatePixmap(engine->display, engine->window,
-                                              width, height, RV_PIXDEPTH);
+    engine->backbuffer.pixmap = engine->xCreatePixmap(engine->display, engine->window,
+                                                      width, height, RV_PIXDEPTH);
     engine->backbuffer.width  = width;
     engine->backbuffer.height = height;
 }
@@ -164,8 +164,8 @@ void init
                 "for backbuffer.\n\033[0m");
     }
 
-    engine->blitDstPict = XRenderCreatePicture(engine->display, engine->window,
-                                               engine->format, 0, 0);
+    engine->blitDstPict = engine->xRenderCreatePicture(engine->display, engine->window,
+                                                       engine->format, 0, 0);
 }
 
 int32_t shutdown
@@ -360,10 +360,11 @@ void loadText
         }
     }
 
-    XImage *img = XCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
-                               (char*)image->data, image->width, image->height, 32, 0);
-    XPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
-              image->width, image->height);
+    XImage *img = engine->xCreateImage(engine->display, engine->visual, 32, ZPixmap, 0,
+                                       (char*)image->data, image->width, image->height,
+                                       32, 0);
+    engine->xPutImage(engine->display, image->pixmap, engine->context, img, 0, 0, 0, 0,
+                      image->width, image->height);
 
     img->data = NULL;
     XDestroyImage(img);
