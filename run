@@ -28,6 +28,10 @@ src/river2D_util.c \
 -c"
 
 args_software="src/linux_river2Dsoftware.c \
+./vendor/imgsurf/src/imgsurf_main.c \
+./vendor/imgsurf/src/imgsurf_format_bmp.c \
+./vendor/imgsurf/src/imgsurf_format_qoi.c \
+./vendor/imgsurf/src/imgsurf_format_png.c \
 -Lbin/$build/ \
 -lriver2Dcommon \
 -shared \
