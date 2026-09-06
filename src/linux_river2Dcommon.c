@@ -53,6 +53,7 @@ void rvResolveFunctions
                     "from specified folder: "PRI_SV"\n", ARG_SV(libpath));
             fputs(dlerror(), stderr);
             fprintf(stderr, "\033[0m\n");
+            return;
         }
 
         resolve((void**)&engine->init,           software, "init",           &error);
@@ -84,7 +85,6 @@ void rvResolveFunctions
     }
 
     const char *x11Path = "/usr/lib/libX11.so";
-
     void *x11 = dlopen(x11Path, RTLD_NOW);
     if(!x11)
     {
@@ -92,6 +92,7 @@ void rvResolveFunctions
                 "from path: '/usr/lib/libX11.so'");
         fputs(dlerror(), stderr);
         fprintf(stderr, "\033[0m\n");
+        return;
     }
 
     resolve((void**)&engine->xPending,        x11, "XPending",              &error);
@@ -123,7 +124,6 @@ void rvResolveFunctions
     dlclose(x11);
 
     const char *xcursorPath = "/usr/lib/libXcursor.so";
-
     void *xcur = dlopen(xcursorPath, RTLD_NOW);
     if(!xcur)
     {
@@ -137,6 +137,30 @@ void rvResolveFunctions
     resolve((void**)&engine->xCursorImgLoad, xcur, "XcursorImageLoadCursor", &error);
 
     dlclose(xcur);
+
+    const char *xrenderPath = "/usr/lib/libXrender.so";
+    void *xrender = dlopen(xrenderPath, RTLD_NOW);
+    if(!xrender)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: Xrender Library could not be loaded "
+                "from path: '/usr/lib/libXrender.so'");
+        fputs(dlerror(), stderr);
+        fprintf(stderr, "\033[0m\n");
+        return;
+    }
+
+    resolve((void**)&engine->xRenderCreatePicture, xrender,
+            "XRenderCreatePicture", &error);
+    resolve((void**)&engine->xRenderFindStFormat, xrender,
+            "XRenderFindStandardFormat", &error);
+    resolve((void**)&engine->xRenderComp, xrender,
+            "XRenderComposite", &error);
+    resolve((void**)&engine->xRenderSetPicTrans, xrender,
+            "XRenderSetPictureTransform", &error);
+    resolve((void**)&engine->xRenderSetPicFilter, xrender,
+            "XRenderSetPictureFilter", &error);
+
+    dlclose(xrender);
 }
 
 void rvCreateImage
