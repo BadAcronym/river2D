@@ -61,7 +61,6 @@ void rvResolveFunctions
         resolve((void**)&engine->loadText,       software, "loadText",       &error);
         resolve((void**)&engine->bltBuffer,      software, "bltBuffer",      &error);
         resolve((void**)&engine->compositeImage, software, "compositeImage", &error);
-        dlclose(software);
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
@@ -121,8 +120,6 @@ void rvResolveFunctions
     resolve((void**)&engine->xDestroyWindow,  x11, "XDestroyWindow",        &error);
     resolve((void**)&engine->xCloseDisplay,   x11, "XCloseDisplay",         &error);
 
-    dlclose(x11);
-
     const char *xcursorPath = "/usr/lib/libXcursor.so";
     void *xcur = dlopen(xcursorPath, RTLD_NOW);
     if(!xcur)
@@ -135,8 +132,6 @@ void rvResolveFunctions
 
     resolve((void**)&engine->xDefineCursor,  xcur, "XDefineCursor",          &error);
     resolve((void**)&engine->xCursorImgLoad, xcur, "XcursorImageLoadCursor", &error);
-
-    dlclose(xcur);
 
     const char *xrenderPath = "/usr/lib/libXrender.so";
     void *xrender = dlopen(xrenderPath, RTLD_NOW);
@@ -159,8 +154,6 @@ void rvResolveFunctions
             "XRenderSetPictureTransform", &error);
     resolve((void**)&engine->xRenderSetPicFilter, xrender,
             "XRenderSetPictureFilter", &error);
-
-    dlclose(xrender);
 }
 
 void rvCreateImage
