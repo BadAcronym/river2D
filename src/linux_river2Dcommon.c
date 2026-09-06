@@ -12,11 +12,11 @@
 f_internal void resolveFunction
 (
     void       **fptr,
-    void       *renderer,
+    void       *libPtr,
     const char *name,
     char       **error
 ){
-    *fptr = dlsym(renderer, name);
+    *fptr = dlsym(libPtr, name);
     if((*error = dlerror()))
     {
         fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol %s.\n", name);
@@ -26,21 +26,22 @@ f_internal void resolveFunction
     #ifdef DEBUG
     else
     {
-        fprintf(stderr, "Loaded symbol: %s at %p\n", name, *fptr);
+        fprintf(stderr, "Loaded symbol: %s from %s at %p\n", name, lib, *fptr);
     }
     #endif
 }
 
-void rvResolveRenderer
+void rvResolveFunctions
 (
     EngineData *engine,
     StringView libpath,
     uint8_t    renderer
 ){
+    char *error = 0;
+
     if(renderer == RV_RENDERER_SOFTWARE)
     {
         char so[4096] = {0};
-        char *error   = 0;
 
         StringView sv_file = cstr_sv("/libriver2Dsoftware.so");
         sv_concat(libpath, sv_file, so);
@@ -60,6 +61,7 @@ void rvResolveRenderer
         resolveFunction((void**)&engine->bltBuffer, software, "bltBuffer", &error);
         resolveFunction((void**)&engine->compositeImage,
                         software, "compositeImage", &error);
+        dlclose(so);
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
@@ -79,8 +81,23 @@ void rvResolveRenderer
     else
     {
         fprintf(stderr, "\033[31m\nERROR: invalid renderer specified "
-                "in rvResolveRenderer.\033[0m");
+                "in rvResolveFunctions.\033[0m");
     }
+
+    const char *x11_path = "/usr/lib/libX11.so";
+
+    void *x11 = dlopen(x11_path, RTLD_NOW);
+    if(!x11)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: X11 Library could not be loaded "
+                "from path: "PRI_SV"\n", ARG_SV(libpath));
+        fputs(dlerror(), stderr);
+        fprintf(stderr, "\033[0m\n");
+    }
+
+    resolveFunction((void**)&engine->xNextEvent, x11, "XNextEvent", &error);
+
+    dlclose(x11);
 }
 
 void rvCreateImage

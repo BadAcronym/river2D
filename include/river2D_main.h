@@ -311,6 +311,10 @@ typedef struct EngineData
                                uint32_t          offsetSrcX, uint32_t   offsetSrcY,
                                uint32_t          offsetDstX, uint32_t   offsetDstY,
                                uint32_t          cropWidth,  uint32_t   cropHeight);
+
+    #ifdef BUILD_LINUX
+    int (*xNextEvent) (Display *display, XEvent *event);
+    #endif
 }
 EngineData;
 
@@ -458,7 +462,7 @@ extern void rvSaveTilemap
     rvSaveMapSettings *set
 );
 
-extern void rvResolveRenderer
+extern void rvResolveFunctions
 (
     EngineData *engine,
     StringView libpath,
