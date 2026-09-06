@@ -9,7 +9,7 @@
 #include <dlfcn.h>
 #include <stdio.h>
 
-f_internal void resolveFunction
+f_internal void resolve
 (
     void       **fptr,
     void       *libPtr,
@@ -26,7 +26,7 @@ f_internal void resolveFunction
     #ifdef DEBUG
     else
     {
-        fprintf(stderr, "Loaded symbol: %s from %s at %p\n", name, lib, *fptr);
+        fprintf(stderr, "Loaded symbol: %s from %p at %p\n", name, libPtr, *fptr);
     }
     #endif
 }
@@ -55,12 +55,11 @@ void rvResolveFunctions
             fprintf(stderr, "\033[0m\n");
         }
 
-        resolveFunction((void**)&engine->init,      software, "init",      &error);
-        resolveFunction((void**)&engine->shutdown,  software, "shutdown",  &error);
-        resolveFunction((void**)&engine->loadText,  software, "loadText",  &error);
-        resolveFunction((void**)&engine->bltBuffer, software, "bltBuffer", &error);
-        resolveFunction((void**)&engine->compositeImage,
-                        software, "compositeImage", &error);
+        resolve((void**)&engine->init,           software, "init",           &error);
+        resolve((void**)&engine->shutdown,       software, "shutdown",       &error);
+        resolve((void**)&engine->loadText,       software, "loadText",       &error);
+        resolve((void**)&engine->bltBuffer,      software, "bltBuffer",      &error);
+        resolve((void**)&engine->compositeImage, software, "compositeImage", &error);
         dlclose(so);
     }
     else if(renderer == RV_RENDERER_OPENGL)
@@ -84,20 +83,41 @@ void rvResolveFunctions
                 "in rvResolveFunctions.\033[0m");
     }
 
-    const char *x11_path = "/usr/lib/libX11.so";
+    const char *x11Path = "/usr/lib/libX11.so";
 
-    void *x11 = dlopen(x11_path, RTLD_NOW);
+    void *x11 = dlopen(x11Path, RTLD_NOW);
     if(!x11)
     {
         fprintf(stderr, "\033[31;1;7mERROR: X11 Library could not be loaded "
-                "from path: "PRI_SV"\n", ARG_SV(libpath));
+                "from path: '/usr/lib/libX11.so'");
         fputs(dlerror(), stderr);
         fprintf(stderr, "\033[0m\n");
     }
 
-    resolveFunction((void**)&engine->xNextEvent, x11, "XNextEvent", &error);
+    resolve((void**)&engine->xPending,        x11, "XPending",             &error);
+    resolve((void**)&engine->xNextEvent,      x11, "XNextEvent",           &error);
+    resolve((void**)&engine->xInternAtom,     x11, "XInternAtom",          &error);
+    resolve((void**)&engine->xGetWinAttr,     x11, "XGetWindowAttributes", &error);
+    resolve((void**)&engine->xSetWMProtocols, x11, "XSetWMProtorols",      &error);
+    resolve((void**)&engine->XGetVisualInfo,  x11, "XGetVisualInfo",       &error);
 
     dlclose(x11);
+
+    const char *xcursorPath = "/usr/lib/libXcursor.so";
+
+    void *xcur = dlopen(xcursorPath, RTLD_NOW);
+    if(!xcur)
+    {
+        fprintf(stderr, "\033[31;1;7mERROR: Xcursor Library could not be loaded "
+                "from path: '/usr/lib/libXcursor.so'");
+        fputs(dlerror(), stderr);
+        fprintf(stderr, "\033[0m\n");
+    }
+
+    resolve((void**)&engine->xDefineCursor,  xcur, "XDefineCursor",          &error);
+    resolve((void**)&engine->xCursorImgLoad, xcur, "XCursorImageLoadCursor", &error);
+
+    dlclose(xcur);
 }
 
 void rvCreateImage
@@ -563,7 +583,7 @@ Dimensions rvGetWindowSize
     EngineData *engine
 ){
     XWindowAttributes attr;
-    XGetWindowAttributes(engine->display, engine->window, &attr);
+    engine->xGetWinAttr(engine->display, engine->window, &attr);
 
     Dimensions dim =
     {
@@ -589,9 +609,9 @@ void rvChangeCursor
     ximg.width        = image->width;
     ximg.height       = image->height;
 
-    Cursor cursor = XcursorImageLoadCursor(engine->display, &ximg);
+    Cursor cursor = engine->xCursorImgLoad(engine->display, &ximg);
 
-    XDefineCursor(engine->display, engine->window, cursor);
+    engine->xDefineCursor(engine->display, engine->window, cursor);
     engine->currentCursor = image;
 }
 

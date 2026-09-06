@@ -297,7 +297,7 @@ typedef struct EngineData
     HCURSOR            hCursor;
 #endif
 
-    void    (*init)           (struct EngineData *engine,    RiverImage *planes);
+    void    (*init)           (struct EngineData *engine, RiverImage *planes);
     int32_t (*shutdown)       (struct EngineData *engine);
     void    (*bltBuffer)      (struct EngineData *engine);
 
@@ -312,9 +312,30 @@ typedef struct EngineData
                                uint32_t          offsetDstX, uint32_t   offsetDstY,
                                uint32_t          cropWidth,  uint32_t   cropHeight);
 
-    #ifdef BUILD_LINUX
-    int (*xNextEvent) (Display *display, XEvent *event);
-    #endif
+#ifdef BUILD_LINUX
+    // X11
+    int          (*xPending)        (Display *display);
+    int          (*xNextEvent)      (Display *display, XEvent *event);
+
+    Atom         (*xInternAtom)     (Display *display, const char *name,
+                                     Bool    only);
+
+    Status       (*xGetWinAttr)     (Display           *display, Window w,
+                                     XWindowAttributes *wAttr);
+
+    Status       (*xSetWMProtocols) (Display *display,   Window  w,
+                                     Atom    *protocols, int     count);
+
+    XVisualInfo* (*XGetVisualInfo)  (Display     *display, long infoMask,
+                                     XVisualInfo *vInfo,   int  *nItems);
+
+    // Xcursor
+    int    (*xDefineCursor)  (Display *, Window w, Cursor cursor);
+
+    Cursor (*xCursorImgLoad) (Display *display, XcursorImage *img);
+
+    // XRender
+#endif
 }
 EngineData;
 

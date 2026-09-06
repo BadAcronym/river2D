@@ -7,10 +7,11 @@
 
 f_internal Visual* findVisual
 (
-    Display *display,
-    uint8_t depth
+    EngineData *engine,
+    uint8_t    depth
 ){
-    Visual *visual = {0};
+    Visual  *visual  = {0};
+    Display *display = engine->display;
 
     XVisualInfo visualInfo = {0};
     visualInfo.screen = DefaultScreen(display);
@@ -28,7 +29,7 @@ f_internal Visual* findVisual
     }
 
     XWindowAttributes rootAttributes = {0};
-    XGetWindowAttributes(display, XDefaultRootWindow(display), &rootAttributes);
+    engine->xGetWinAttr(display, XDefaultRootWindow(display), &rootAttributes);
 
     for(int i = 0; i < numVisuals; ++i)
     {
@@ -117,7 +118,7 @@ void init
         fprintf(stderr, "Failed to get default screen!\n");
     }
 
-    engine->visual = findVisual(engine->display, RV_PIXDEPTH);
+    engine->visual = findVisual(engine, RV_PIXDEPTH);
     if(!engine->visual)
     {
         fprintf(stderr, "No matching visual could be found.\n");
