@@ -7,6 +7,11 @@ then
     rm ./bin/ -rf
 fi
 
+if [[ -f ./a.out ]]
+then
+    rm ./a.out
+fi
+
 for file in *.o
 do
     if [[ ! -f $file ]]
