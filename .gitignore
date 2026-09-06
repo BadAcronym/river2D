@@ -1,9 +1,8 @@
 BuildRules*
 .cache*
 
-build/
 bin/
-obj/
+*.o
 
 compile_commands*
 compile_flags*
