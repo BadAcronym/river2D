@@ -17,8 +17,11 @@ args_always="-DBUILD_LINUX \
 -I/usr/include/ \
 -Ivendor/imgsurf/include/ \
 -Ivendor/imgsurf/vendor/puddle/include/ \
+-Ivendor/imgsurf/vendor/datasurf/include/ \
 ./vendor/imgsurf/vendor/puddle/src/string_view.c \
 ./vendor/imgsurf/vendor/puddle/src/linux_pd_path.c \
+./vendor/imgsurf/vendor/datasurf/src/datasurf_formats.c \
+./vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c \
 -Wextra -Wall -Wpedantic -Wconversion -Wshadow -Wsign-compare -Wtype-limits -Wunused
 -fPIC"
 
