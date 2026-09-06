@@ -19,19 +19,19 @@ args_always="-DBUILD_LINUX \
 -Ivendor/imgsurf/vendor/puddle/include/ \
 ./vendor/imgsurf/vendor/puddle/src/string_view.c \
 ./vendor/imgsurf/vendor/puddle/src/linux_pd_path.c \
--Wextra -Wall -Wpedantic -Wconversion -Wshadow -Wsign-compare -Wtype-limits -Wunused \
--lm"
+-Wextra -Wall -Wpedantic -Wconversion -Wshadow -Wsign-compare -Wtype-limits -Wunused
+-fPIC"
 
 args_common="src/river2Dcommon_main.c \
 src/linux_river2Dcommon.c \
 src/river2D_util.c \
 -c"
 
-args_software="src/river2D_* \
-src/linux_river2Dsoftware.c \
+args_software="src/linux_river2Dsoftware.c \
 -Lbin/$build/ \
 -lriver2Dcommon \
--shared"
+-shared \
+-fuse-ld=mold"
 
 args_release="-O2"
 
@@ -41,7 +41,6 @@ args_asan="$args_debug -DASAN \
 -fsanitize=address,leak,undefined \
 -fno-omit-frame-pointer \
 -static-libasan \
--fPIC \
 -O0"
 
 function compile()
@@ -80,7 +79,12 @@ function compile()
         echo -e "\033[31m\nERROR: $compiler failed to compile river2Dcommon.\n\033[0m"
         exit -1
     fi
-    mv ./a.out ./bin/$build/libriver2Dcommon.a
+
+    echo ""
+    echo -e "\033[36mcreating static libary libriver2Dcommon.a...\033[0m"
+    echo ""
+    ar rcs ./bin/$build/libriver2Dcommon.a river2D_util.o string_view.o \
+    river2Dcommon_main.o linux_river2Dcommon.o linux_pd_path.o
 
     echo ""
     echo -e "\033[36mcompiling river2Dsoftware...\033[0m"
