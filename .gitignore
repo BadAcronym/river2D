@@ -3,6 +3,8 @@ BuildRules*
 
 bin/
 *.o
+*.exe
+*.lib
 
 compile_commands*
 compile_flags*
