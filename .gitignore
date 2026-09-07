@@ -5,6 +5,7 @@ bin/
 *.o
 *.obj
 *.exe
+*.dll
 *.lib
 
 compile_commands*
