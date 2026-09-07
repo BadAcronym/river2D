@@ -16,12 +16,12 @@ args_always="-DBUILD_LINUX \
 -Iinclude/ \
 -I/usr/include/ \
 -Ivendor/imgsurf/include/ \
--Ivendor/imgsurf/vendor/puddle/include/ \
 -Ivendor/imgsurf/vendor/datasurf/include/ \
-./vendor/imgsurf/vendor/puddle/src/string_view.c \
-./vendor/imgsurf/vendor/puddle/src/linux_pd_path.c \
-./vendor/imgsurf/vendor/datasurf/src/datasurf_formats.c \
-./vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c \
+-Ivendor/imgsurf/vendor/datasurf/vendor/puddle/include/ \
+vendor/imgsurf/vendor/datasurf/src/datasurf_formats.c \
+vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c \
+vendor/imgsurf/vendor/datasurf/vendor/puddle/src/string_view.c \
+vendor/imgsurf/vendor/datasurf/vendor/puddle/src/linux_pd_path.c \
 -Wextra -Wall -Wpedantic -Wconversion -Wshadow -Wsign-compare -Wtype-limits -Wunused
 -fPIC"
 
