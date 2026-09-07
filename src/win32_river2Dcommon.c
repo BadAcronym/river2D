@@ -166,58 +166,62 @@ RiverTime rvQueryTime
     return time;
 }
 
-AsciiKey rvProcessWParam
+AsciiKey rvProcessWin32Key
 (
-    WPARAM wParam
+    WPARAM  wParam,
+    uint8_t ascii
 ){
     AsciiKey key = {0};
     key.key = (uint8_t)wParam;
-    key.raw = (uint8_t)wParam;
+    key.raw = ascii;
 
     if(key.key > 0x40 && key.key < 0x5B)
     {
         key.key += 0x20;
-        key.raw += 0x20;
     }
     else if(key.key == RV_WIN32_UP)
     {
         key.key = RV_ASCII_UP;
-        key.raw = 0;
     }
     else if(key.key == RV_WIN32_DOWN)
     {
         key.key = RV_ASCII_DOWN;
-        key.raw = 0;
     }
     else if(key.key == RV_WIN32_LEFT)
     {
         key.key = RV_ASCII_LEFT;
-        key.raw = 0;
     }
     else if(key.key == RV_WIN32_RIGHT)
     {
         key.key = RV_ASCII_RIGHT;
-        key.raw = 0;
     }
     else if(key.key == RV_WIN32_ENTER)
     {
         key.key = RV_ASCII_ENTER;
-        key.raw = 0;
     }
     else if(key.key == RV_WIN32_LSHIFT)
     {
         key.key = RV_ASCII_LSHIFT;
-        key.raw = 0;
+    }
+    else if(key.key == RV_WIN32_COLON)
+    {
+        key.key = ':';
     }
     else if(key.key == RV_WIN32_COMMA)
     {
         key.key = ',';
-        key.raw = ',';
     }
     else if(key.key == RV_WIN32_DOT)
     {
         key.key = '.';
-        key.raw = '.';
+    }
+    else if(key.key == RV_WIN32_SLASH)
+    {
+        key.key = '/';
+    }
+    else if(key.key == RV_WIN32_BACKSLASH)
+    {
+        key.key = '\\';
     }
 
     return key;

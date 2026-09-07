@@ -108,8 +108,11 @@
 #define RV_WIN32_LALT
 #define RV_WIN32_ALTGR
 #define RV_WIN32_DELETE             0x2E
+#define RV_WIN32_COLON              0xBA
 #define RV_WIN32_COMMA              0xBC
 #define RV_WIN32_DOT                0xBE
+#define RV_WIN32_SLASH              0xBF
+#define RV_WIN32_BACKSLASH          0xDC
 
 #define RV_CHANNELS_RGBA            0
 #define RV_CHANNELS_BGRA            1
@@ -599,9 +602,10 @@ extern AsciiKey rvProcessXKey
 #endif
 
 #ifdef BUILD_WINDOWS
-extern AsciiKey rvProcessWParam
+extern AsciiKey rvProcessWin32Key
 (
-    WPARAM wParam
+    WPARAM  wParam,
+    uint8_t ascii
 );
 #endif
 
