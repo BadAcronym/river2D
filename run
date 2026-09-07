@@ -92,6 +92,11 @@ function compile()
     echo ""
     ar rcs ./bin/$build/libriver2Dcommon.a river2D_util.o string_view.o \
     river2Dcommon_main.o linux_river2Dcommon.o linux_pd_path.o
+    if [[ $? != 0 ]]
+    then
+        echo -e "\033[31m\nERROR: ar failed to create static library.\n\033[0m"
+        exit -1
+    fi
 
     echo ""
     echo -e "\033[36mcompiling river2Dsoftware...\033[0m"
