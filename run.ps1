@@ -17,8 +17,6 @@ if($build -eq $null -or $build -eq "")
 $args_always=@("-DBUILD_WINDOWS",
 "vendor/imgsurf/vendor/datasurf/src/datasurf_formats.c",
 "vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c",
-"vendor/imgsurf/vendor/datasurf/vendor/puddle/src/win32_pd_path.c",
-"vendor/imgsurf/vendor/datasurf/vendor/puddle/src/string_view.c",
 "-Iinclude",
 "-Ivendor/imgsurf/include",
 "-Ivendor/imgsurf/vendor/datasurf/include",
@@ -32,6 +30,8 @@ $args_always=@("-DBUILD_WINDOWS",
 $args_common=@("src/river2Dcommon_main.c",
 "src/win32_river2Dcommon.c",
 "src/river2D_util.c",
+"vendor/imgsurf/vendor/datasurf/vendor/puddle/src/win32_pd_path.c",
+"vendor/imgsurf/vendor/datasurf/vendor/puddle/src/string_view.c",
 "-c")
 
 $args_software=@("src/win32_river2Dsoftware.c",
@@ -51,8 +51,10 @@ $args_debug=@("-DDEBUG", "-gcodeview", "-O0")
 $args_debug_cl=@("/DDEBUG", "/Zi", "/Od")
 
 $args_asan=$args_debug_cl+@("/clang:-std=c99", "/DASAN",
-"/fsanitize=address", "/MD",
-"/link", "/SUBSYSTEM:CONSOLE")
+"/fsanitize=address", "/MD")
+
+$args_asan_software=@("/LD", "/Fe:bin/$build/river2Dsoftware.dll", "/link",
+"/LIBPATH:bin/$build", "gdi32.lib", "user32.lib", "river2Dcommon.lib")
 
 function compile
 {
@@ -93,7 +95,7 @@ function compile
     Write-Host ""
 
     Write-Host "compiling $build build with the following command:"
-    $final=($1 + $args_common)
+    $final=($args_common + $1)
     Write-Host "$script:compiler $final"
     &$script:compiler @final
     if($LASTEXITCODE -ne 0)
@@ -104,7 +106,14 @@ function compile
     Write-Host ""
     Write-Host "creating static library river2Dcommon.lib..." -Fore Cyan
     Write-Host ""
-    &ar rcs ./bin/$build/river2Dcommon.lib river2D_util.o string_view.o river2Dcommon_main.o win32_river2Dcommon.o win32_pd_path.o
+    if($build -eq "asan")
+    {
+        &ar rcs ./bin/$build/river2Dcommon.lib river2D_util.obj string_view.obj river2Dcommon_main.obj win32_river2Dcommon.obj win32_pd_path.obj
+    }
+    else
+    {
+        &ar rcs ./bin/$build/river2Dcommon.lib river2D_util.o string_view.o river2Dcommon_main.o win32_river2Dcommon.o win32_pd_path.o
+    }
     if($LASTEXITCODE -ne 0)
     {
         Write-Host "`nERROR: ar failed to create static library.`n" -Fore Red
@@ -115,13 +124,21 @@ function compile
     Write-Host "compiling river2Dsoftware..." -Fore Cyan
     Write-Host ""
     Write-Host "compiling $build build with the following command:"
-    $final=($1 + $args_software)
+    $final=($args_software + $1)
+    if($build -eq "asan")
+    {
+        $final=($final + $args_asan_software)
+    }
     Write-Host "$script:compiler $final"
     &$script:compiler @final
     if($LASTEXITCODE -ne 0)
     {
         Write-Host "`nERROR: $script:compiler failed to compile river2Dsoftware.`n" -Fore Red
         exit -1
+    }
+    if($build -eq "asan")
+    {
+        return;
     }
     Move-Item ./a.exe ./bin/$build/river2Dsoftware.dll -Force
     Move-Item ./a.lib ./bin/$build/river2Dsoftware.lib -Force
