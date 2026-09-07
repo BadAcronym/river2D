@@ -172,39 +172,52 @@ AsciiKey rvProcessWParam
 ){
     AsciiKey key = {0};
     key.key = (uint8_t)wParam;
+    key.raw = (uint8_t)wParam;
 
     if(key.key > 0x40 && key.key < 0x5B)
     {
         key.key += 0x20;
-        key.raw =  key.key;
-    }
-    if(key.key > 0x60 && key.key < 0x7B)
-    {
-        key.raw = key.key;
+        key.raw += 0x20;
     }
     else if(key.key == RV_WIN32_UP)
     {
         key.key = RV_ASCII_UP;
+        key.raw = 0;
     }
     else if(key.key == RV_WIN32_DOWN)
     {
         key.key = RV_ASCII_DOWN;
+        key.raw = 0;
     }
     else if(key.key == RV_WIN32_LEFT)
     {
         key.key = RV_ASCII_LEFT;
+        key.raw = 0;
     }
     else if(key.key == RV_WIN32_RIGHT)
     {
         key.key = RV_ASCII_RIGHT;
+        key.raw = 0;
     }
     else if(key.key == RV_WIN32_ENTER)
     {
         key.key = RV_ASCII_ENTER;
+        key.raw = 0;
     }
     else if(key.key == RV_WIN32_LSHIFT)
     {
         key.key = RV_ASCII_LSHIFT;
+        key.raw = 0;
+    }
+    else if(key.key == RV_WIN32_COMMA)
+    {
+        key.key = ',';
+        key.raw = ',';
+    }
+    else if(key.key == RV_WIN32_DOT)
+    {
+        key.key = '.';
+        key.raw = '.';
     }
 
     return key;
