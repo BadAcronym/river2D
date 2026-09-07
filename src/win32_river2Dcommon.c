@@ -18,12 +18,12 @@ f_internal void resolveFunction
     #ifdef DEBUG
     else
     {
-        fprintf(stderr, "Loaded symbol: %s at 0x%x\n", name, *fptr);
+        fprintf(stderr, "Loaded symbol: %s at %p\n", name, *fptr);
     }
     #endif
 }
 
-void rvResolveRenderer
+void rvResolveFunctions
 (
     EngineData *engine,
     StringView libpath,
@@ -70,7 +70,7 @@ void rvResolveRenderer
     else
     {
         fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in "
-                "rvResolveRenderer.\033[0m");
+                "rvResolveFunctions.\033[0m");
     }
 }
 
