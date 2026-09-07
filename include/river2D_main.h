@@ -99,7 +99,6 @@
 #define RV_WIN32_DOWN               0x28
 #define RV_WIN32_LEFT               0x25
 #define RV_WIN32_RIGHT              0x26
-#define RV_WIN32_BACKSPACE
 #define RV_WIN32_TAB
 #define RV_WIN32_ENTER              0x0D
 #define RV_WIN32_LSHIFT             0x10
@@ -108,7 +107,9 @@
 #define RV_WIN32_RCTRL
 #define RV_WIN32_LALT
 #define RV_WIN32_ALTGR
-#define RV_WIN32_DELETE
+#define RV_WIN32_DELETE             0x2E
+#define RV_WIN32_COMMA              0xBC
+#define RV_WIN32_DOT                0xBE
 
 #define RV_CHANNELS_RGBA            0
 #define RV_CHANNELS_BGRA            1
