@@ -207,11 +207,11 @@ void _loadText
     }
 
     uint32_t fontImgWidth = engine->planes[font].width;
-    uint32_t imageChars = (image->width) / ((charsize + spacing));
+    uint32_t imageChars   = (image->width) / ((charsize + spacing));
 
     for(uint32_t i = 0; i < imageChars; ++i)
     {
-        char character = 0x7F;
+        char character = 0x20;
         if(i < sv->size)
         {
             character = sv->data[i];
