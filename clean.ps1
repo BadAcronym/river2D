@@ -1,4 +1,11 @@
-Write-Host "cleaning up imgsurf builds..." -Fore Yellow
+if(Test-Path "./vendor/imgsurf/clean.ps1")
+{
+    pushd "./vendor/imgsurf/"
+    &./clean.ps1
+    popd
+}
+
+Write-Host "cleaning up river2D builds..." -Fore Yellow
 
 if(Test-Path "./bin")
 {
@@ -45,4 +52,4 @@ foreach($file in (gci *.pdb))
     }
 }
 
-Write-Host "cleaned puddle!`n" -Fore Green
+Write-Host "cleaned river2D!`n" -Fore Green
