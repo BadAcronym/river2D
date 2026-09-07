@@ -95,6 +95,21 @@
 #define RV_ASCII_ESCAPE             0x1B
 #define RV_ASCII_DELETE             0x7F
 
+#define RV_WIN32_UP                 0x26
+#define RV_WIN32_DOWN               0x28
+#define RV_WIN32_LEFT               0x25
+#define RV_WIN32_RIGHT              0x26
+#define RV_WIN32_BACKSPACE
+#define RV_WIN32_TAB
+#define RV_WIN32_ENTER              0x0D
+#define RV_WIN32_LSHIFT             0x10
+#define RV_WIN32_RSHIFT
+#define RV_WIN32_LCTRL
+#define RV_WIN32_RCTRL
+#define RV_WIN32_LALT
+#define RV_WIN32_ALTGR
+#define RV_WIN32_DELETE
+
 #define RV_CHANNELS_RGBA            0
 #define RV_CHANNELS_BGRA            1
 #define RV_CHANNELS_RGB             2
