@@ -582,6 +582,13 @@ extern AsciiKey rvProcessXKey
 );
 #endif
 
+#ifdef BUILD_WINDOWS
+extern AsciiKey rvProcessWParam
+(
+    WPARAM wParam
+);
+#endif
+
 extern void rvLoadConfig
 (
     RiverConfig *config

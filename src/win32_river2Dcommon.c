@@ -1,8 +1,8 @@
 #include "river2D_main.h"
 #include "imgsurf_main.h"
+#include "pd_print_macros.h"
 
 #include <sys/stat.h>
-#include <stdio.h>
 
 f_internal void resolveFunction
 (
@@ -13,14 +13,10 @@ f_internal void resolveFunction
     *fptr = GetProcAddress(renderer, name);
     if(!(*fptr))
     {
-        fprintf(stderr, "\033[31;1;7mERROR: Unable to load symbol %s!\033[0m\n", name);
+        PD_ERROR("unable to load symbol: '%s'", name);
+        return;
     }
-    #ifdef DEBUG
-    else
-    {
-        fprintf(stderr, "Loaded symbol: %s at %p\n", name, *fptr);
-    }
-    #endif
+    PD_DEBUG("Loaded symbol: %s at %p", name, *fptr);
 }
 
 void rvResolveFunctions
@@ -161,16 +157,33 @@ RiverTime rvQueryTime
     LARGE_INTEGER counter;
     QueryPerformanceCounter(&counter);
 
-    uint64_t seconds = counter.QuadPart / freq.QuadPart;
-    uint64_t remainder = counter.QuadPart % freq.QuadPart;
+    int64_t seconds   = (int64_t)(counter.QuadPart / freq.QuadPart);
+    int64_t remainder = (int64_t)(counter.QuadPart % freq.QuadPart);
 
-    uint64_t nanoseconds = (remainder * 1000000000ULL) / freq.QuadPart;
+    int64_t nanoseconds = (int64_t)(((float)remainder * 1000000000.0f) /
+                                    (float)freq.QuadPart);
 
     RiverTime time;
     time.s  = seconds;
     time.ns = nanoseconds;
 
     return time;
+}
+
+AsciiKey rvProcessWParam
+(
+    WPARAM wParam
+){
+    AsciiKey key = {0};
+    key.key = (uint8_t)wParam;
+    key.raw = (uint8_t)wParam;
+
+    if(key.key > 0x40 && key.key < 0x5B)
+    {
+        key.key += 0x20;
+    }
+
+    return key;
 }
 
 uint8_t rvCharToKey
