@@ -3,6 +3,7 @@ BuildRules*
 
 bin/
 *.o
+*.obj
 *.exe
 *.lib
 
