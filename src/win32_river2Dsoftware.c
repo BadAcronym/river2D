@@ -125,6 +125,9 @@ void _compositeImage
     uint8_t *dstData = dst->data + offsetDstY * bufWidth  + offsetDstX * RV_BPP;
     uint8_t *srcData = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
 
+    uint8_t *maxDst = dst->data + dst->width * dst->height * RV_BPP - 1;
+    uint8_t *maxSrc = src->data + src->width * src->height * RV_BPP - 1;
+
     cropWidth *= RV_BPP;
     for(uint32_t y = 0; y < cropHeight; ++y)
     {
@@ -133,8 +136,11 @@ void _compositeImage
             uint64_t srcIndex = y * copyWidth + x;
             uint64_t dstIndex = y * bufWidth  + x;
 
-            // should check here whether access is safe. if indices are over xyz value,
-            // just skip an iteration
+            if(dstData + dstIndex > maxDst ||
+               srcData + srcIndex > maxSrc
+            ){
+                break;
+            }
 
             if(srcData[srcIndex + 3])
             {
@@ -207,23 +213,33 @@ void _loadText
     }
 
     uint32_t fontImgWidth = engine->planes[font].width;
-    uint32_t imageChars   = (image->width) / ((charsize + spacing));
+    uint32_t imageChars = (image->width) / ((charsize + spacing));
 
     for(uint32_t i = 0; i < imageChars; ++i)
     {
         char character = 0x20;
-        if(i < sv->size)
+        if(i < sv->size && sv->data[i])
         {
             character = sv->data[i];
         }
 
-        if(character < 0x21)
+        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
+        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
+
+        if(character == 0x20)
+        {
+            charBigX = (uint32_t)(0x5F) * charsize % fontImgWidth;
+            charBigY = (uint32_t)(0x5F) * charsize / fontImgWidth;
+        }
+        else if(character == RV_ASCII_CURSOR)
+        {
+            charBigX = (uint32_t)(0x5E) * charsize % fontImgWidth;
+            charBigY = (uint32_t)(0x5E) * charsize / fontImgWidth;
+        }
+        else if(character < 0x20)
         {
             continue;
         }
-
-        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
-        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
 
         uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
                                  RV_BPP;
