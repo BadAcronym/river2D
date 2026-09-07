@@ -1,24 +1,40 @@
-if(Test-Path "vendor/imgsurf")
+Write-Host "cleaning up imgsurf builds..." -Fore Yellow
+
+if(Test-Path "./bin")
 {
-    Push-Location "vendor/imgsurf"
-    &./clean.ps1
-    Pop-Location
+    rm "./bin/" -Recurse -Force
 }
 
-$toDelete =
-    "./build/",
-    "./bin/",
-    "./obj/",
-    "./log/"
-
-Write-Host "cleaning the build..."
-
-foreach($folder in $toDelete)
+foreach($file in (gci *.o))
 {
-    if(Test-Path $folder)
+    if(Test-Path $file)
     {
-        Remove-Item $folder -Recurse -Force
+        Remove-Item $file
     }
 }
 
-Write-Host "all clean!" -ForegroundColor Green
+foreach($file in (gci *.exe))
+{
+    if(Test-Path $file)
+    {
+        Remove-Item $file
+    }
+}
+
+foreach($file in (gci *.lib))
+{
+    if(Test-Path $file)
+    {
+        Remove-Item $file
+    }
+}
+
+foreach($file in (gci *.pdb))
+{
+    if(Test-Path $file)
+    {
+        Remove-Item $file
+    }
+}
+
+Write-Host "cleaned puddle!`n" -Fore Green
