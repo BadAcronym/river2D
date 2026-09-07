@@ -2,7 +2,7 @@
 
 #include "win32_river2Dsoftware_platform.h"
 
-#include <stdio.h>
+#include "pd_print_macros.h"
 
 void rvResizeBackbuffer
 (
@@ -29,7 +29,7 @@ void rvResizeBackbuffer
                                            MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if(!engine->backbuffer.data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: failed to resize backbuffer.\033[0m");
+        PD_ERROR("failed to resize backbuffer.");
     }
 }
 
@@ -83,30 +83,29 @@ void _compositeImage
 ){
     if(pictop != RV_PICTOP_OVER)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: pictop %u not impletmented on windows."
-                "\033[0m\n", pictop);
+        PD_ERROR("pictop %u not implemented on windows.", pictop);
         return;
     }
 
     if(!src)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
+        PD_ERROR("no image to composite with.");
         return;
     }
     if(!src->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: src->data is nullptr.\033[0m\n");
+        PD_ERROR("src->data is nullptr.");
         return;
     }
 
     if(!dst)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: no image to composite onto.\033[0m\n");
+        PD_ERROR("no image to composite onto.");
         return;
     }
     if(!dst->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: dst->data is nullptr.\033[0m\n");
+        PD_ERROR("dst->data is nullptr.");
         return;
     }
 
@@ -174,14 +173,13 @@ void _loadText
 ){
     if(!engine->planes[font].data)
     {
-        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes."
-                "\033[0m\n");
+        PD_ERROR("font not found. Check loaded planes.");
         return;
     }
 
     if(!image)
     {
-        fprintf(stderr, "\033[31;3;1mERROR: Destination image is null.\033[0m\n");
+        PD_ERROR("destination image is null.");
         return;
     }
 
@@ -199,12 +197,12 @@ void _loadText
 
     if(offsetX > image->width)
     {
-        fprintf(stderr, "offsetX too large.\n");
+        PD_ERROR("offsetX too large.");
         return;
     }
     if(offsetY > image->height)
     {
-        fprintf(stderr, "offsetY too large.\n");
+        PD_ERROR("offsetY too large.");
         return;
     }
 
