@@ -50,23 +50,19 @@ void rvResolveFunctions
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
-        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for "
-                "river2D.\033[0m");
+        PD_WARN("OpenGL renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_VULKAN)
     {
-        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for "
-                "river2D.\033[0m");
+        PD_WARN("Vulkan renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_DIRECTX)
     {
-        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for "
-                "river2D.\033[0m");
+        PD_WARN("DirectX renderer not built yet for river2D.");
     }
     else
     {
-        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified in "
-                "rvResolveFunctions.\033[0m");
+        PD_ERROR("invalid renderer specified in rvResolveFunctions.");
     }
 }
 
@@ -98,7 +94,7 @@ void rvLoadImage_file
 
     if(!image->data)
     {
-        fprintf(stderr, "Failed to load image from file: '%s'\n", path_buf);
+        PD_ERROR("failed to load image from file: '%s'", path_buf);
         writeMissingTexture(image);
     }
 }
@@ -115,7 +111,7 @@ void rvLoadImage_ptr
                             channels, bitdepth);
     if(!image->data)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to load image to pointer.\n\033[0m");
+        PD_ERROR("failed to load image to pointer.");
     }
 
     image->path = cstr_sv("rvLoadImage_ptr");
@@ -186,30 +182,30 @@ AsciiKey rvProcessWParam
     return key;
 }
 
-uint8_t rvCharToKey
-(
-    char inp
-){
-    if(inp >= 'a' && inp <= 'z')
-    {
-        return inp - 0x20;
-    }
-
-    if(inp == RV_ASCII_LSHIFT)
-    {
-        return 0x10;
-    }
-    else if(inp == '-')
-    {
-        return 0xC0;
-    }
-    else if(inp == '=')
-    {
-        return 0xBB;
-    }
-
-    return inp;
-}
+// uint8_t rvCharToKey
+// (
+//     char inp
+// ){
+//     if(inp >= 'a' && inp <= 'z')
+//     {
+//         return inp - 0x20;
+//     }
+//
+//     if(inp == RV_ASCII_LSHIFT)
+//     {
+//         return 0x10;
+//     }
+//     else if(inp == '-')
+//     {
+//         return 0xC0;
+//     }
+//     else if(inp == '=')
+//     {
+//         return 0xBB;
+//     }
+//
+//     return inp;
+// }
 
 Dimensions rvGetWindowSize
 (
@@ -220,8 +216,8 @@ Dimensions rvGetWindowSize
 
     GetWindowRect(engine->window, &rect);
 
-    dim.width  = rect.right  - rect.left;
-    dim.height = rect.bottom - rect.top;
+    dim.width  = (uint32_t)(rect.right  - rect.left);
+    dim.height = (uint32_t)(rect.bottom - rect.top);
 
     return dim;
 }
@@ -242,8 +238,8 @@ void rvChangeCursor
 
     BITMAPINFO bmi              = {0};
     bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth       = image->width;
-    bmi.bmiHeader.biHeight      = -((LONG)image->height);
+    bmi.bmiHeader.biWidth       = (int32_t)image->width;
+    bmi.bmiHeader.biHeight      = -((int32_t)image->height);
     bmi.bmiHeader.biPlanes      = 1;
     bmi.bmiHeader.biBitCount    = 32;
     bmi.bmiHeader.biSizeImage   = 0;
@@ -263,7 +259,8 @@ void rvChangeCursor
         }
     }
 
-    engine->cursorMask = CreateBitmap(image->width, image->height, 1, 1, 0);
+    engine->cursorMask = CreateBitmap((int32_t)image->width, (int32_t)image->height,
+                                      1, 1, 0);
 
     ICONINFO iconInfo = {0};
     iconInfo.hbmColor = engine->cursorBitmap;
