@@ -32,11 +32,10 @@
     #define  RV_CONFIG_PATH "./.river2Dconf"
 
     #define RV_MOUSE1 Button1
-    #define RV_MOUSE2 Button2
-    #define RV_MOUSE3 Button3
+    #define RV_MOUSE2 Button3
+    #define RV_MOUSE3 Button2
     #define RV_MOUSE4 Button4
     #define RV_MOUSE5 Button5
-
 #endif
 
 #ifdef BUILD_WINDOWS
