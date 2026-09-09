@@ -113,6 +113,8 @@
 #define RV_WIN32_DOT                0xBE
 #define RV_WIN32_SLASH              0xBF
 #define RV_WIN32_BACKSLASH          0xDC
+#define RV_WIN32_EQUALS             0xBB
+#define RV_WIN32_MINUS              0xBD
 
 #define RV_CHANNELS_RGBA            0
 #define RV_CHANNELS_BGRA            1

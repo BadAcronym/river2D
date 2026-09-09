@@ -223,6 +223,14 @@ AsciiKey rvProcessWin32Key
     {
         key.key = '\\';
     }
+    else if(key.key == RV_WIN32_EQUALS)
+    {
+        key.key = '=';
+    }
+    else if(key.key == RV_WIN32_MINUS)
+    {
+        key.key = '-';
+    }
 
     return key;
 }
