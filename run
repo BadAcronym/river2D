@@ -14,6 +14,7 @@ fi
 
 args_always="-DBUILD_LINUX \
 -Iinclude/ \
+-std=c99 \
 -I/usr/include/ \
 -Ivendor/imgsurf/include/ \
 -Ivendor/imgsurf/vendor/datasurf/include/ \
