@@ -23,8 +23,8 @@ f_internal Visual* findVisual
                                                 &visualInfo, &numVisuals);
     if(!found)
     {
-        fprintf(stderr, "No valid visuals could be found "
-                "for the desired depth of %i.\n", visualInfo.depth);
+        PD_ERROR("No valid visuals could be found for the desired depth of %i.",
+                 visualInfo.depth);
       return 0;
     }
 
@@ -110,26 +110,26 @@ void init
     engine->display = engine->xOpenDisplay(0);
     if(!engine->display)
     {
-        fprintf(stderr, "Failed to open default Display!\n");
+        PD_ERROR("failed to open default display.");
     }
 
     engine->screen = DefaultScreenOfDisplay(engine->display);
     if(!engine->screen)
     {
-        fprintf(stderr, "Failed to get default screen!\n");
+        PD_ERROR("failed to get default screen.");
     }
 
     engine->visual = findVisual(engine, RV_PIXDEPTH);
     if(!engine->visual)
     {
-        fprintf(stderr, "No matching visual could be found.\n");
+        PD_ERROR("no matching visual could be found.");
     }
 
     engine->format = engine->xRenderFindStFormat(engine->display, PictStandardARGB32);
 
     if(!engine->format)
     {
-        fprintf(stderr, "No matching format could be found.\n");
+        PD_ERROR("no matching format could be found.");
     }
 
     if(!engine->windowName)
@@ -139,13 +139,13 @@ void init
     engine->window = rvOpenWindow(engine);
     if(!engine->window)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create window!.\n\033[0m");
+        PD_ERROR("failed to create window.");
     }
 
     engine->context = engine->xCreateGC(engine->display, engine->window, 0, 0);
     if(!engine->context)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to Graphics Context!.\n\033[0m");
+        PD_ERROR("failed to create GC.");
     }
 
     if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
@@ -161,8 +161,7 @@ void init
 
     if(!engine->backbuffer.picture)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture "
-                "for backbuffer.\n\033[0m");
+        PD_ERROR("failed to create XRenderPicture for backbuffer.");
     }
 
     engine->blitDstPict = engine->xRenderCreatePicture(engine->display, engine->window,
@@ -202,42 +201,42 @@ void compositeImage
 ){
     if(!src)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: no image to composite with.\033[0m\n");
+        PD_ERROR("no image to composite with.");
         return;
     }
     if(!src->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: src->data is nullptr.\033[0m\n");
+        PD_ERROR("src->data is nullptr.");
         return;
     }
 
     if(!dst)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: no image to composite onto.\033[0m\n");
+        PD_ERROR("no image to composite onto.");
         return;
     }
     if(!dst->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: dst->data is nullptr.\033[0m\n");
+        PD_ERROR("dst->data is nullptr.");
         return;
     }
 
     if(!src->picture)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: src was created incorrectly.\033[0m\n");
-        fprintf(stderr, "image->path: "PRI_SV"\n", ARG_SV(src->path));
-        fprintf(stderr, "image->picture: %lu\n",   src->picture);
-        fprintf(stderr, "image->width: %u\n",      src->width);
-        fprintf(stderr, "image->height: %u\n",     src->height);
+        PD_ERROR("src image was created incorrectly.");
+        PD_DEBUG("image->path:    "PRI_SV, ARG_SV(src->path));
+        PD_DEBUG("image->picture: %lu",    src->picture);
+        PD_DEBUG("image->width:   %u",     src->width);
+        PD_DEBUG("image->height:  %u",     src->height);
         return;
     }
     if(!dst->picture)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: dst was created incorrectly.\033[0m\n");
-        fprintf(stderr, "image->path: "PRI_SV"\n", ARG_SV(dst->path));
-        fprintf(stderr, "image->picture: %lu\n",   dst->picture);
-        fprintf(stderr, "image->width: %u\n",      dst->width);
-        fprintf(stderr, "image->height: %u\n",     dst->height);
+        PD_ERROR("dst image was created incorrectly.");
+        PD_DEBUG("image->path:    "PRI_SV, ARG_SV(dst->path));
+        PD_DEBUG("image->picture: %lu",    dst->picture);
+        PD_DEBUG("image->width:   %u",     dst->width);
+        PD_DEBUG("image->height:  %u",     dst->height);
         return;
     }
 
@@ -281,14 +280,13 @@ void loadText
 ){
     if(!engine->planes[font].data)
     {
-        fprintf(stderr, "\033[31;3;1mERROR: Font not found. Check loaded planes."
-                "\033[0m\n");
+        PD_ERROR("font not found. check loaded planes.");
         return;
     }
 
     if(!image)
     {
-        fprintf(stderr, "\033[31;3;1mERROR: Destination image is null.\033[0m\n");
+        PD_ERROR("destination image is null.");
         return;
     }
 
@@ -306,12 +304,12 @@ void loadText
 
     if(offsetX > image->width)
     {
-        fprintf(stderr, "offsetX too large.\n");
+        PD_ERROR("offsetX too large.");
         return;
     }
     if(offsetY > image->height)
     {
-        fprintf(stderr, "offsetY too large.\n");
+        PD_ERROR("offsetY too large.");
         return;
     }
 

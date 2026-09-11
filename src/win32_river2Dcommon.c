@@ -35,10 +35,8 @@ void rvResolveFunctions
         HMODULE software = LoadLibraryA("river2Dsoftware.dll");
         if(!software)
         {
-            fprintf(stderr, "\n\033[31;1;7mERROR: Unable to load software renderer!\n");
-            fprintf(stderr, "Tried to load from library path: '"PRI_SV"'",
-                    ARG_SV(libpath));
-            fprintf(stderr, "\033[0m\n");
+            PD_ERROR("unable to load software renderer. Tried to load from libpath: '"
+                     PRI_SV"'.", libpath);
             return;
         }
 

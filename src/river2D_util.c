@@ -12,7 +12,7 @@ void rvLoadConfig
 ){
     if(!config)
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: *config is nullptr.\033[0m\n");
+        PD_ERROR("*config is nullptr.");
         return;
     }
     uint32_t parsedWidth_canvas  = 0;
