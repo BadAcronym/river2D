@@ -1,7 +1,7 @@
 #include "river2D_main.h"
 #include "imgsurf_main.h"
+#include "pd_print_macros.h"
 
-#include <stdio.h>
 #include <memory.h>
 #include <pthread.h>
 
