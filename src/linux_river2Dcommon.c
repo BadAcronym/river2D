@@ -1,5 +1,6 @@
 #include "river2D_main.h"
 #include "imgsurf_main.h"
+#include "pd_print_macros.h"
 
 #include "string_view.h"
 
@@ -19,16 +20,12 @@ f_internal void resolve
     *fptr = dlsym(libPtr, name);
     if((*error = dlerror()))
     {
-        fprintf(stderr, "\033[31;1;7mERROR: Error while loading symbol %s.\n", name);
-        fputs(*error, stderr);
-        fprintf(stderr, "\033[0m\n");
+        PD_ERROR("could not load symbol: '%s': %s", name, *error);
     }
-    #ifdef DEBUG
     else
     {
-        fprintf(stderr, "Loaded symbol: %s from %p at %p\n", name, libPtr, *fptr);
+        PD_DEBUG("Loaded symbol: %s from %p at %p", name, libPtr, *fptr);
     }
-    #endif
 }
 
 void rvResolveFunctions
@@ -49,10 +46,8 @@ void rvResolveFunctions
         void *software = dlopen(so, RTLD_NOW);
         if(!software)
         {
-            fprintf(stderr, "\033[31;1;7mERROR: Software renderer could not be loaded "
-                    "from specified folder: "PRI_SV"\n", ARG_SV(libpath));
-            fputs(dlerror(), stderr);
-            fprintf(stderr, "\033[0m\n");
+            PD_ERROR("Software renderer could not be loaded from specified folder: '"
+                     PRI_SV"'. dlerror: %s", ARG_SV(libpath), dlerror());
             return;
         }
 
@@ -64,33 +59,27 @@ void rvResolveFunctions
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
-        fprintf(stderr, "\033[33m\nWARNING: OpenGL renderer not built yet for river2D."
-                "\033[0m");
+        PD_WARN("OpenGL renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_VULKAN)
     {
-        fprintf(stderr, "\033[33m\nWARNING: Vulkan renderer not built yet for river2D."
-                "\033[0m");
+        PD_WARN("Vulkan renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_DIRECTX)
     {
-        fprintf(stderr, "\033[33m\nWARNING: DirectX renderer not built yet for river2D."
-                "\033[0m");
+        PD_ERROR("DirectX renderer not supported on linux.");
     }
     else
     {
-        fprintf(stderr, "\033[31m\nERROR: invalid renderer specified "
-                "in rvResolveFunctions.\033[0m");
+        PD_ERROR("unknown renderer specified in rvResolveFunctions.");
     }
 
     const char *x11Path = "/usr/lib/libX11.so";
     void *x11 = dlopen(x11Path, RTLD_NOW);
     if(!x11)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: X11 Library could not be loaded "
-                "from path: '/usr/lib/libX11.so'");
-        fputs(dlerror(), stderr);
-        fprintf(stderr, "\033[0m\n");
+        PD_ERROR("X11 library could not be loaded from path: '/usr/lib/libX11.so'."
+                 "dlerror: %s", dlerror());
         return;
     }
 
@@ -124,10 +113,8 @@ void rvResolveFunctions
     void *xcur = dlopen(xcursorPath, RTLD_NOW);
     if(!xcur)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: Xcursor Library could not be loaded "
-                "from path: '/usr/lib/libXcursor.so'");
-        fputs(dlerror(), stderr);
-        fprintf(stderr, "\033[0m\n");
+        PD_ERROR("Xcursor library could not be loaded from path: "
+                 "'/usr/lib/libXcursor.so'. dlerror: %s", dlerror());
     }
 
     resolve((void**)&engine->xDefineCursor,  xcur, "XDefineCursor",          &error);
@@ -137,10 +124,8 @@ void rvResolveFunctions
     void *xrender = dlopen(xrenderPath, RTLD_NOW);
     if(!xrender)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: Xrender Library could not be loaded "
-                "from path: '/usr/lib/libXrender.so'");
-        fputs(dlerror(), stderr);
-        fprintf(stderr, "\033[0m\n");
+        PD_ERROR("Xrender library could not be loaded from path: "
+                 "'/usr/lib/libXrender.so'. dlerror: %s", dlerror());
         return;
     }
 
@@ -185,7 +170,7 @@ void rvCreateImage
                                                   engine->format, 0, 0);
     if(!image->picture)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture.\n\033[0m");
+        PD_ERROR("failed to create XRenderPicture.");
     }
 }
 
@@ -218,7 +203,7 @@ void rvLoadImage_file
 
     if(!image->data)
     {
-        fprintf(stderr, "Failed to load image from file: %s\n", path_cstr);
+        PD_WARN("failed to load image from file: '%s'.", path_cstr);
         writeMissingTexture(image);
         return;
     }
@@ -233,8 +218,7 @@ void rvLoadImage_file
                                                   engine->format, 0, 0);
     if(!image->picture)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from file: "
-                "%s!.\n\033[0m", path_cstr);
+        PD_WARN("failed to create XRenderPicture from file: '%s'.", path_cstr);
     }
 }
 
@@ -252,7 +236,7 @@ void rvLoadImage_ptr
 
     if(!image->data)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to load image to pointer.\n\033[0m");
+        PD_WARN("failed to load image from pointer: %p.", file);
         writeMissingTexture(image);
         return;
     }
@@ -268,8 +252,7 @@ void rvLoadImage_ptr
                                                   engine->format, 0, 0);
     if(!image->picture)
     {
-        fprintf(stderr, "\033[31m\nERROR: failed to create XRenderPicture from pointer."
-                "\n\033[0m");
+        PD_WARN("failed to create XRenderPicture from pointer: %p.", file);
     }
 }
 
@@ -317,9 +300,7 @@ f_internal uint8_t xkeyToAscii
     char *codeString = engine->xKeySymToString(sym);
     StringView sv    = cstr_sv(codeString);
 
-    #ifdef DEBUG
-    fprintf(stderr, "codeString: "PRI_SV"\n", ARG_SV(sv));
-    #endif
+    PD_DEBUG("codeString: '"PRI_SV"'", ARG_SV(sv));
 
     if(sv.size == 0)
     {
@@ -595,9 +576,7 @@ f_internal uint8_t xkeyToAscii
         return '_';
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "Key not evaluated: "PRI_SV"\n", ARG_SV(sv));
-#endif
+    PD_DEBUG("Key not evaluated: '"PRI_SV"'", ARG_SV(sv));
     return 0;
 }
 
@@ -727,7 +706,7 @@ void rvSyncImage
 
     if(!ximg)
     {
-        fprintf(stderr, "\n\033[31;1;7mERROR: failed to sync ximg.\033[0m\n");
+        PD_WARN("failed to sync ximg.");
     }
 
     if(image->data)

@@ -1,5 +1,6 @@
 #include "river2D_main.h"
 #include "imgsurf_main.h"
+#include "pd_print_macros.h"
 
 #include <stdlib.h>
 
@@ -14,11 +15,11 @@ f_internal void calcDelta
 ){
     if(time1->ns > BILLION)
     {
-        fprintf(stderr, "\033[31mERROR: timestamp 0 is malformed.\033[0m\n");
+        PD_WARN("time1 is malformed.");
     }
     if(time2->ns > BILLION)
     {
-        fprintf(stderr, "\033[31mERROR: timestamp 1 is malformed.\033[0m\n");
+        PD_WARN("time2 is malformed.");
     }
 
     // uninitialized times
@@ -54,7 +55,7 @@ RiverTime rvDeltaTime
 ){
     if(!time1 || !time2)
     {
-        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
+        PD_WARN("passed uninitialized timestamp.");
         RiverTime time = {0, 0};
         return time;
     }
@@ -74,8 +75,8 @@ float rvDeltaTime_ms
 ){
     if(!time1 || !time2)
     {
-        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        return -1;
+        PD_WARN("passed uninitialized timestamp.");
+        return 0;
     }
 
     int64_t deltaS  = 0;
@@ -92,8 +93,8 @@ int64_t rvDeltaTime_ns
 ){
     if(!time1 || !time2)
     {
-        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        return -1;
+        PD_WARN("passed uninitialized timestamp.");
+        return 0;
     }
 
     int64_t deltaS  = 0;
@@ -109,8 +110,8 @@ RiverTime rvDeltaTime_now
 ){
     if(!time || !time->s)
     {
-        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        RiverTime result = {-1, -1};
+        PD_WARN("passed uninitialized timestamp.");
+        RiverTime result = {0, 0};
         return result;
     }
 
@@ -120,7 +121,7 @@ RiverTime rvDeltaTime_now
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
+        PD_ERROR("timestamp lies in the future.");
         RiverTime result = {0, 0};
         return result;
     }
@@ -137,8 +138,8 @@ float rvDeltaTime_now_ms
 ){
     if(!time)
     {
-        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        return -1;
+        PD_ERROR("passed uninitialized timestamp.");
+        return 0;
     }
 
     RiverTime current = rvQueryTime();
@@ -147,8 +148,8 @@ float rvDeltaTime_now_ms
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
-        return -2;
+        PD_ERROR("timestamp lies in the future.");
+        return 0;
     }
 
     calcDelta(time, &current, &deltaS, &deltaNS);
@@ -162,8 +163,8 @@ uint64_t rvDeltaTime_now_ns
 ){
     if(!time)
     {
-        fprintf(stderr, "\033[31mERROR: passed uninitialized timestamp.\033[0m\n");
-        return BILLION + 1;
+        PD_ERROR("passed uninitialized timestamp.");
+        return 0;
     }
 
     RiverTime current = rvQueryTime();
@@ -172,8 +173,8 @@ uint64_t rvDeltaTime_now_ns
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        fprintf(stderr, "\033[31mERROR: timestamp lies in the future.\033[0m\n");
-        return BILLION + 2;
+        PD_ERROR("timestamp lies in the future.");
+        return 0;
     }
 
     calcDelta(time, &current, &deltaS, &deltaNS);
@@ -214,7 +215,7 @@ void rvAppendImage
     }
     else
     {
-        fprintf(stderr, "\033[31m\nERROR: unkown direction, cannot append.\n\033[0m");
+        PD_ERROR("unknown direction, cannot append.");
         return;
     }
 
@@ -261,7 +262,7 @@ void rvDestroyImage
 ){
     if(!image)
     {
-        fprintf(stderr, "No image to be freed.\n");
+        PD_WARN("No image to free.");
         return;
     }
 
@@ -308,8 +309,7 @@ TileMap rvLoadTilemap
 
     if(!set->tilesheet->data)
     {
-        fprintf(stderr, "\033[31;1;7mERROR: failed to load tilesheet into ptr."
-                "\033[0m\n");
+        PD_WARN("failed to load tilesheet from pointer: %p", (void*)set->file);
         set->errorcode = RV_ERROR_LOADIMAGE_PTR;
         return (TileMap){0};
     }
