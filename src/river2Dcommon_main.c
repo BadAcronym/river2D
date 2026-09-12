@@ -278,6 +278,19 @@ TileMap rvLoadTilemap
     EngineData        *engine,
     rvLoadMapSettings *set
 ){
+    if(!set)
+    {
+        PD_ERROR("set cannot be null.");
+        set->errorcode = RV_ERROR_NULLPTR;
+        return (TileMap){0};
+    }
+    if(!set->file)
+    {
+        PD_ERROR("file is not open. cannot read from nullptr.");
+        set->errorcode = RV_ERROR_NULLPTR;
+        return (TileMap){0};
+    }
+
     const char header[9] = "r2Dtiles";
     int byte;
 
@@ -297,6 +310,7 @@ TileMap rvLoadTilemap
        ((elements = fread(set->mapHeight, 4, 1, set->file)) != 1) ||
        ((elements = fread(set->mapLayers, 1, 1, set->file)) != 1)
     ){
+        PD_ERROR("could not validate .rte header.");
         set->errorcode = RV_ERROR_INVALID_HEADER;
         return (TileMap){0};
     }
