@@ -47,6 +47,7 @@
     #define RV_MOUSE3 0x10
 #endif
 
+#define RV_SUCCESS                0
 #define RV_ERROR_LOADIMAGE_PTR    1
 #define RV_ERROR_LOADIMAGE_FILE   2
 #define RV_ERROR_INVALID_HEADER   3
@@ -54,7 +55,7 @@
 #define RV_ERROR_INVALID_INDICES  5
 #define RV_ERROR_WRITE_METADATA   6
 #define RV_ERROR_WRITE_INDICES    7
-#define RV_SUCCESS                128
+#define RV_ERROR_NULLPTR          8
 
 #define RV_TILE_BIT_ANIMATED      0x01
 #define RV_TILE_BIT_COLLISION     0x02
