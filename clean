@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ -f "./vendor/imgsurf/clean" ]]
+then
+    pushd "./vendor/imgsurf/" > /dev/null
+    ./clean
+    popd > /dev/null
+fi
+
 echo -e "\033[33mcleaning up river2D builds...\033[0m"
 
 if [[ -d ./bin/ ]]
@@ -22,4 +29,4 @@ do
     rm $file
 done
 
-echo -e "\033[32mcleaned imgsurf!\n\033[0m"
+echo -e "\033[32mcleaned river2D!\n\033[0m"
