@@ -74,7 +74,7 @@ void rvLoadConfig
                 }
 
                 PD_DEBUG("parsed result: canvas_width: %u", parsedWidth_canvas);
-                config->canvas_width = parsedWidth_canvas;
+                config->canvasWidth = parsedWidth_canvas;
                 continue;
             }
 
@@ -99,7 +99,7 @@ void rvLoadConfig
                 }
 
                 PD_DEBUG("parsed result: canvas_height: %u", parsedHeight_canvas);
-                config->canvas_height = parsedHeight_canvas;
+                config->canvasHeight = parsedHeight_canvas;
                 continue;
             }
 
@@ -124,7 +124,7 @@ void rvLoadConfig
                 }
 
                 PD_DEBUG("parsed result: window_width: %u", parsedWidth_window);
-                config->window_width = parsedWidth_window;
+                config->windowWidth = parsedWidth_window;
                 continue;
             }
 
@@ -149,7 +149,7 @@ void rvLoadConfig
                 }
 
                 PD_DEBUG("parsed result: window_height: %u", parsedHeight_window);
-                config->window_height = parsedHeight_window;
+                config->windowHeight = parsedHeight_window;
                 continue;
             }
         }
@@ -171,19 +171,19 @@ void rvLoadConfig
 
     if(!parsedWidth_canvas)
     {
-        config->canvas_width = 1280;
+        config->canvasWidth = 1280;
     }
     if(!parsedHeight_canvas)
     {
-        config->canvas_height = 720;
+        config->canvasHeight = 720;
     }
     if(!parsedWidth_window)
     {
-        config->window_width = 1920;
+        config->windowWidth = 1920;
     }
     if(!parsedHeight_window)
     {
-        config->window_height = 1080;
+        config->windowHeight = 1080;
     }
 }
 

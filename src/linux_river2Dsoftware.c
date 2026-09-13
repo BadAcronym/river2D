@@ -68,8 +68,8 @@ Window rvOpenWindow
     Window window = engine->xCreateWindow(engine->display,
                                           engine->xDefRootWindow(engine->display),
                                           0, 0,
-                                          engine->config.window_width,
-                                          engine->config.window_height,
+                                          engine->config.windowWidth,
+                                          engine->config.windowHeight,
                                           0, RV_PIXDEPTH, InputOutput,
                                           engine->visual, valuemask, &attr);
 
@@ -150,13 +150,13 @@ void init
 
     if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
     {
-        rvCreateImage(engine, &engine->backbuffer, engine->config.canvas_width,
-                      engine->config.canvas_height);
+        rvCreateImage(engine, &engine->backbuffer, engine->config.canvasWidth,
+                      engine->config.canvasHeight);
     }
     else
     {
-        rvCreateImage(engine, &engine->backbuffer, engine->config.window_width,
-                      engine->config.window_height);
+        rvCreateImage(engine, &engine->backbuffer, engine->config.windowWidth,
+                      engine->config.windowHeight);
     }
 
     if(!engine->backbuffer.picture)
@@ -249,8 +249,8 @@ void bltBuffer
 (
     EngineData *engine
 ){
-    float x_s = (float)engine->backbuffer.width  / (float)engine->config.window_width;
-    float y_s = (float)engine->backbuffer.height / (float)engine->config.window_height;
+    float x_s = (float)engine->backbuffer.width  / (float)engine->config.windowWidth;
+    float y_s = (float)engine->backbuffer.height / (float)engine->config.windowHeight;
 
     XTransform transform =
     {{
@@ -264,7 +264,7 @@ void bltBuffer
 
     engine->xRenderComp(engine->display, PictOpSrc, engine->backbuffer.picture, 0,
                         engine->blitDstPict, 0, 0, 0, 0, 0, 0,
-                        engine->config.window_width, engine->config.window_height);
+                        engine->config.windowWidth, engine->config.windowHeight);
 }
 
 void loadText

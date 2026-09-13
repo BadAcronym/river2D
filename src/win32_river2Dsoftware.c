@@ -49,12 +49,12 @@ void _init
     if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
     {
         rvCreateImage(engine, &engine->backbuffer,
-                            engine->config.canvas_width, engine->config.canvas_height);
+                            engine->config.canvasWidth, engine->config.canvasHeight);
     }
     else
     {
         rvCreateImage(engine, &engine->backbuffer,
-                            engine->config.window_width, engine->config.window_height);
+                            engine->config.windowWidth, engine->config.windowHeight);
     }
 }
 
