@@ -16,18 +16,18 @@
 #define f_internal    static
 
 #ifdef BUILD_LINUX
-    #include "X11/Xlib.h"
-    #include "X11/Xutil.h"
-    #include "X11/XKBlib.h"
-    #include "X11/Xcursor/Xcursor.h"
-    #include "X11/extensions/Xrender.h"
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
+    #include <X11/XKBlib.h>
+    #include <X11/Xcursor/Xcursor.h>
+    #include <X11/extensions/Xrender.h>
 
     #ifndef  __USE_POSIX199309
         #define __USE_POSIX199309
     #endif
     #include <time.h>
 
-    #include "pthread.h"
+    #include <pthread.h>
     #define  RV_SCANLINE 32
     #define  RV_CONFIG_PATH "./.river2Dconf"
 
@@ -39,7 +39,7 @@
 #endif
 
 #ifdef BUILD_WINDOWS
-    #include "Windows.h"
+    #include <Windows.h>
     #define  RV_CONFIG_PATH "./river2D.ini"
 
     #define RV_MOUSE1 0x01
@@ -168,10 +168,10 @@ typedef struct RiverConfig
 {
     uint8_t  renderer;
     uint8_t  backgrounds;
-    uint32_t window_width;
-    uint32_t window_height;
-    uint32_t canvas_width;
-    uint32_t canvas_height;
+    uint32_t windowWidth;
+    uint32_t windowHeight;
+    uint32_t canvasWidth;
+    uint32_t canvasHeight;
     uint32_t choices;
 }
 RiverConfig;
