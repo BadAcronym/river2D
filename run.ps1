@@ -16,6 +16,7 @@ if($build -eq $null -or $build -eq "")
 
 $args_always=@("-DBUILD_WINDOWS",
 "vendor/imgsurf/vendor/datasurf/src/datasurf_formats.c",
+"vendor/imgsurf/vendor/datasurf/src/datasurf_huffman.c",
 "vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c",
 "-Iinclude",
 "-Ivendor/imgsurf/include",
