@@ -19,7 +19,7 @@ args_always="-DBUILD_LINUX \
 -Ivendor/imgsurf/include/ \
 -Ivendor/imgsurf/vendor/datasurf/include/ \
 -Ivendor/imgsurf/vendor/datasurf/vendor/puddle/include/ \
-vendor/imgsurf/vendor/datasurf/src/datasurf_formats.c \
+vendor/imgsurf/vendor/datasurf/src/datasurf_zlib.c \
 vendor/imgsurf/vendor/datasurf/src/datasurf_huffman.c \
 vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c \
 vendor/imgsurf/vendor/datasurf/vendor/puddle/src/string_view.c \
