@@ -13,30 +13,30 @@ else
 fi
 
 args_always="-DBUILD_LINUX \
--Iinclude/ \
 -std=c99 \
+-Iinclude/ \
 -I/usr/include/ \
 -Ivendor/imgsurf/include/ \
 -Ivendor/imgsurf/vendor/datasurf/include/ \
 -Ivendor/imgsurf/vendor/datasurf/vendor/puddle/include/ \
-vendor/imgsurf/vendor/datasurf/src/datasurf_zlib.c \
-vendor/imgsurf/vendor/datasurf/src/datasurf_huffman.c \
-vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c \
-vendor/imgsurf/vendor/datasurf/vendor/puddle/src/string_view.c \
-vendor/imgsurf/vendor/datasurf/vendor/puddle/src/linux_pd_path.c \
 -Wextra -Wall -Wpedantic -Wconversion -Wshadow -Wsign-compare -Wtype-limits -Wunused
 -fPIC"
 
 args_common="src/river2Dcommon_main.c \
 src/linux_river2Dcommon.c \
 src/river2D_util.c \
+vendor/imgsurf/src/imgsurf_main.c \
+vendor/imgsurf/src/imgsurf_format_bmp.c \
+vendor/imgsurf/src/imgsurf_format_qoi.c \
+vendor/imgsurf/src/imgsurf_format_png.c \
+vendor/imgsurf/vendor/datasurf/src/datasurf_zlib.c \
+vendor/imgsurf/vendor/datasurf/src/datasurf_huffman.c \
+vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c \
+vendor/imgsurf/vendor/datasurf/vendor/puddle/src/string_view.c \
+vendor/imgsurf/vendor/datasurf/vendor/puddle/src/linux_pd_path.c \
 -c"
 
 args_software="src/linux_river2Dsoftware.c \
-./vendor/imgsurf/src/imgsurf_main.c \
-./vendor/imgsurf/src/imgsurf_format_bmp.c \
-./vendor/imgsurf/src/imgsurf_format_qoi.c \
-./vendor/imgsurf/src/imgsurf_format_png.c \
 -Lbin/$build/ \
 -lriver2Dcommon \
 -shared \
@@ -49,8 +49,9 @@ args_debug="-DDEBUG -g -O0"
 args_asan="$args_debug -DASAN \
 -fsanitize=address,leak,undefined \
 -fno-omit-frame-pointer \
--static-libasan \
--O0"
+-static-libasan"
+
+args_trace="$args_debug -DTRACE"
 
 function compile()
 {
@@ -92,8 +93,10 @@ function compile()
     echo ""
     echo -e "\033[36mcreating static libary libriver2Dcommon.a...\033[0m"
     echo ""
-    ar rcs ./bin/$build/libriver2Dcommon.a river2D_util.o string_view.o \
-    river2Dcommon_main.o linux_river2Dcommon.o linux_pd_path.o
+    ar rcs ./bin/$build/libriver2Dcommon.a datasurf_algo_deflate.o datasurf_huffman.o  \
+        datasurf_zlib.o imgsurf_format_bmp.o imgsurf_format_png.o imgsurf_format_qoi.o \
+        imgsurf_main.o river2D_util.o string_view.o river2Dcommon_main.o               \
+        linux_river2Dcommon.o linux_pd_path.o
     if [[ $? != 0 ]]
     then
         echo -e "\033[31m\nERROR: ar failed to create static library.\n\033[0m"
@@ -127,8 +130,13 @@ if [[ $build = "asan" ]]
 then
     compile "$args_always $args_asan"
 else
+if [[ $build = "trace" ]]
+then
+    compile "$args_always $args_trace"
+else
     echo -e "\033[31m\nERROR: invalid make config: $build.\033[0m"
     exit 3;
+fi
 fi
 fi
 fi
