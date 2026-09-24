@@ -300,7 +300,7 @@ f_internal uint8_t xkeyToAscii
     char *codeString = engine->xKeySymToString(sym);
     StringView sv    = cstr_sv(codeString);
 
-    PD_DEBUG("codeString: '"PRI_SV"'", ARG_SV(sv));
+    PD_TRACE("codeString: '"PRI_SV"'", ARG_SV(sv));
 
     if(sv.size == 0)
     {
