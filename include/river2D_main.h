@@ -2,7 +2,7 @@
 #define RV_HEADER
 
 #include "pd_path.h"
-#include "string_view.h"
+#include "pd_string_view.h"
 
 #include <stdint.h>
 #include <stdio.h>

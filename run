@@ -32,7 +32,7 @@ vendor/imgsurf/src/imgsurf_format_png.c \
 vendor/imgsurf/vendor/datasurf/src/datasurf_zlib.c \
 vendor/imgsurf/vendor/datasurf/src/datasurf_huffman.c \
 vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c \
-vendor/imgsurf/vendor/datasurf/vendor/puddle/src/string_view.c \
+vendor/imgsurf/vendor/datasurf/vendor/puddle/src/pd_string_view.c \
 vendor/imgsurf/vendor/datasurf/vendor/puddle/src/linux_pd_path.c \
 -c"
 
@@ -95,7 +95,7 @@ function compile()
     echo ""
     ar rcs ./bin/$build/libriver2Dcommon.a datasurf_algo_deflate.o datasurf_huffman.o  \
         datasurf_zlib.o imgsurf_format_bmp.o imgsurf_format_png.o imgsurf_format_qoi.o \
-        imgsurf_main.o river2D_util.o string_view.o river2Dcommon_main.o               \
+        imgsurf_main.o river2D_util.o pd_string_view.o river2Dcommon_main.o            \
         linux_river2Dcommon.o linux_pd_path.o
     if [[ $? != 0 ]]
     then
