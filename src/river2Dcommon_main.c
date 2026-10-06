@@ -327,7 +327,7 @@ TileMap rvLoadTilemap
         set->errorcode = RV_ERROR_LOADIMAGE_PTR;
         return (TileMap){0};
     }
-    set->tilesheet->path = cstr_sv("rvLoadTilemap");
+    set->tilesheet->path = pdCstrSV("rvLoadTilemap");
 
     uint64_t sheetW = set->tilesheet->width  / *set->tilesize;
     uint64_t sheetH = set->tilesheet->height / *set->tilesize;

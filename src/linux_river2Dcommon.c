@@ -40,8 +40,8 @@ void rvResolveFunctions
     {
         char so[4096] = {0};
 
-        StringView sv_file = cstr_sv("/libriver2Dsoftware.so");
-        sv_concat(libpath, sv_file, so);
+        StringView sv_file = pdCstrSV("/libriver2Dsoftware.so");
+        pdSVConcat(libpath, sv_file, so);
 
         void *software = dlopen(so, RTLD_NOW);
         if(!software)
@@ -148,7 +148,7 @@ void rvCreateImage
     uint32_t   width,
     uint32_t   height
 ){
-    image->path   = cstr_sv("rvCreateImage");
+    image->path   = pdCstrSV("rvCreateImage");
     image->data   = calloc(width * height * RV_BPP, 1);
     image->width  = width;
     image->height = height;
@@ -195,7 +195,7 @@ void rvLoadImage_file
     uint8_t    bitdepth
 ){
     char path_cstr[4096] = {0};
-    sv_cstr(path, path_cstr);
+    pdSVCstr(path, path_cstr);
 
     image->data = imLoadFile(path_cstr, &image->width, &image->height,
                              channels, bitdepth);
@@ -232,7 +232,7 @@ void rvLoadImage_ptr
 ){
     image->data = imLoadPtr(file, IM_FILE_QOI, &image->width, &image->height,
                             channels, bitdepth);
-    image->path = cstr_sv("rvLoadImage_ptr");
+    image->path = pdCstrSV("rvLoadImage_ptr");
 
     if(!image->data)
     {
@@ -241,7 +241,7 @@ void rvLoadImage_ptr
         return;
     }
 
-    image->path   = cstr_sv("rvLoadImage_ptr");
+    image->path   = pdCstrSV("rvLoadImage_ptr");
     image->pixmap = engine->xCreatePixmap(engine->display,
                                           engine->xDefRootWindow(engine->display),
                                           image->width, image->height, 32);
@@ -298,7 +298,7 @@ f_internal uint8_t xkeyToAscii
     KeySym     sym
 ){
     char *codeString = engine->xKeySymToString(sym);
-    StringView sv    = cstr_sv(codeString);
+    StringView sv    = pdCstrSV(codeString);
 
     PD_TRACE("codeString: '"PRI_SV"'", ARG_SV(sv));
 
@@ -312,266 +312,266 @@ f_internal uint8_t xkeyToAscii
         return (uint8_t)sv.data[0];
     }
 
-    StringView lalt = cstr_sv("Alt_L");
-    if(sv_same(lalt, sv))
+    StringView lalt = pdCstrSV("Alt_L");
+    if(pdSVSame(lalt, sv))
     {
         return RV_ASCII_LALT;
     }
-    StringView ralt = cstr_sv("ISO_Level3_S");
-    if(sv_find(ralt, sv) == sv.data)
+    StringView ralt = pdCstrSV("ISO_Level3_S");
+    if(pdSVFind(ralt, sv) == sv.data)
     {
         return RV_ASCII_ALTGR;
     }
 
-    StringView backspace = cstr_sv("B");
-    if(sv_find(backspace, sv) == sv.data)
+    StringView backspace = pdCstrSV("B");
+    if(pdSVFind(backspace, sv) == sv.data)
     {
         return RV_ASCII_BACKSPACE;
     }
 
-    StringView lctrl = cstr_sv("Control_L");
-    if(sv_same(lctrl, sv))
+    StringView lctrl = pdCstrSV("Control_L");
+    if(pdSVSame(lctrl, sv))
     {
         return RV_ASCII_LCTRL;
     }
-    StringView rctrl = cstr_sv("Control_R");
-    if(sv_same(rctrl, sv))
+    StringView rctrl = pdCstrSV("Control_R");
+    if(pdSVSame(rctrl, sv))
     {
         return RV_ASCII_RCTRL;
     }
 
-    StringView delete = cstr_sv("De");
-    if(sv_find(delete, sv) == sv.data)
+    StringView delete = pdCstrSV("De");
+    if(pdSVFind(delete, sv) == sv.data)
     {
         return RV_ASCII_DELETE;
     }
 
-    StringView down = cstr_sv("Do");
-    if(sv_find(down, sv) == sv.data)
+    StringView down = pdCstrSV("Do");
+    if(pdSVFind(down, sv) == sv.data)
     {
         return RV_ASCII_DOWN;
     }
 
-    StringView escape = cstr_sv("E");
-    if(sv_find(escape, sv) == sv.data)
+    StringView escape = pdCstrSV("E");
+    if(pdSVFind(escape, sv) == sv.data)
     {
         return RV_ASCII_ESCAPE;
     }
 
-    StringView left = cstr_sv("L");
-    if(sv_find(left, sv) == sv.data)
+    StringView left = pdCstrSV("L");
+    if(pdSVFind(left, sv) == sv.data)
     {
         return RV_ASCII_LEFT;
     }
 
-    StringView enter = cstr_sv("Re");
-    if(sv_find(enter, sv) == sv.data)
+    StringView enter = pdCstrSV("Re");
+    if(pdSVFind(enter, sv) == sv.data)
     {
         return RV_ASCII_ENTER;
     }
 
-    StringView right = cstr_sv("Ri");
-    if(sv_find(right, sv) == sv.data)
+    StringView right = pdCstrSV("Ri");
+    if(pdSVFind(right, sv) == sv.data)
     {
         return RV_ASCII_RIGHT;
     }
 
-    StringView lshift = cstr_sv("Shift_L");
-    if(sv_same(lshift, sv))
+    StringView lshift = pdCstrSV("Shift_L");
+    if(pdSVSame(lshift, sv))
     {
         return RV_ASCII_LSHIFT;
     }
-    StringView rshift = cstr_sv("Shift_R");
-    if(sv_same(rshift, sv))
+    StringView rshift = pdCstrSV("Shift_R");
+    if(pdSVSame(rshift, sv))
     {
         return RV_ASCII_RSHIFT;
     }
 
-    StringView tab = cstr_sv("T");
-    if(sv_find(tab, sv) == sv.data)
+    StringView tab = pdCstrSV("T");
+    if(pdSVFind(tab, sv) == sv.data)
     {
         return RV_ASCII_TAB;
     }
 
-    StringView up = cstr_sv("U");
-    if(sv_find(up, sv) == sv.data)
+    StringView up = pdCstrSV("U");
+    if(pdSVFind(up, sv) == sv.data)
     {
         return RV_ASCII_UP;
     }
 
-    StringView ampersand = cstr_sv("am");
-    if(sv_find(ampersand, sv) == sv.data)
+    StringView ampersand = pdCstrSV("am");
+    if(pdSVFind(ampersand, sv) == sv.data)
     {
         return '&';
     }
 
-    StringView apostrophe = cstr_sv("ap");
-    if(sv_find(apostrophe, sv) == sv.data)
+    StringView apostrophe = pdCstrSV("ap");
+    if(pdSVFind(apostrophe, sv) == sv.data)
     {
         return '\'';
     }
 
-    StringView circum = cstr_sv("asciic");
-    if(sv_find(circum, sv) == sv.data)
+    StringView circum = pdCstrSV("asciic");
+    if(pdSVFind(circum, sv) == sv.data)
     {
         return '^';
     }
 
-    StringView asterisk = cstr_sv("ast");
-    if(sv_find(asterisk, sv) == sv.data)
+    StringView asterisk = pdCstrSV("ast");
+    if(pdSVFind(asterisk, sv) == sv.data)
     {
         return '*';
     }
 
-    StringView at = cstr_sv("at");
-    if(sv_same(at, sv))
+    StringView at = pdCstrSV("at");
+    if(pdSVSame(at, sv))
     {
         return '@';
     }
 
-    StringView backslash = cstr_sv("bac");
-    if(sv_find(backslash, sv) == sv.data)
+    StringView backslash = pdCstrSV("bac");
+    if(pdSVFind(backslash, sv) == sv.data)
     {
         return '\\';
     }
 
-    StringView verticalbar = cstr_sv("bar");
-    if(sv_same(verticalbar, sv))
+    StringView verticalbar = pdCstrSV("bar");
+    if(pdSVSame(verticalbar, sv))
     {
         return '|';
     }
 
-    StringView braceleft = cstr_sv("bracel");
-    if(sv_find(braceleft, sv) == sv.data)
+    StringView braceleft = pdCstrSV("bracel");
+    if(pdSVFind(braceleft, sv) == sv.data)
     {
         return '{';
     }
-    StringView braceright = cstr_sv("bracer");
-    if(sv_find(braceright, sv) == sv.data)
+    StringView braceright = pdCstrSV("bracer");
+    if(pdSVFind(braceright, sv) == sv.data)
     {
         return '}';
     }
 
-    StringView bracketleft = cstr_sv("bracketl");
-    if(sv_find(bracketleft, sv) == sv.data)
+    StringView bracketleft = pdCstrSV("bracketl");
+    if(pdSVFind(bracketleft, sv) == sv.data)
     {
         return '[';
     }
-    StringView bracketright = cstr_sv("bracketr");
-    if(sv_find(bracketright, sv) == sv.data)
+    StringView bracketright = pdCstrSV("bracketr");
+    if(pdSVFind(bracketright, sv) == sv.data)
     {
         return ']';
     }
 
-    StringView colon = cstr_sv("col");
-    if(sv_find(colon, sv) == sv.data)
+    StringView colon = pdCstrSV("col");
+    if(pdSVFind(colon, sv) == sv.data)
     {
         return ':';
     }
 
-    StringView comma = cstr_sv("com");
-    if(sv_find(comma, sv) == sv.data)
+    StringView comma = pdCstrSV("com");
+    if(pdSVFind(comma, sv) == sv.data)
     {
         return ',';
     }
 
-    StringView dollar = cstr_sv("do");
-    if(sv_find(dollar, sv) == sv.data)
+    StringView dollar = pdCstrSV("do");
+    if(pdSVFind(dollar, sv) == sv.data)
     {
         return '$';
     }
 
-    StringView equal = cstr_sv("eq");
-    if(sv_find(equal, sv) == sv.data)
+    StringView equal = pdCstrSV("eq");
+    if(pdSVFind(equal, sv) == sv.data)
     {
         return '=';
     }
 
-    StringView exclam = cstr_sv("ex");
-    if(sv_find(exclam, sv) == sv.data)
+    StringView exclam = pdCstrSV("ex");
+    if(pdSVFind(exclam, sv) == sv.data)
     {
         return '!';
     }
 
-    StringView greater = cstr_sv("gr");
-    if(sv_find(greater, sv) == sv.data)
+    StringView greater = pdCstrSV("gr");
+    if(pdSVFind(greater, sv) == sv.data)
     {
         return '>';
     }
 
-    StringView less = cstr_sv("le");
-    if(sv_find(less, sv) == sv.data)
+    StringView less = pdCstrSV("le");
+    if(pdSVFind(less, sv) == sv.data)
     {
         return '<';
     }
 
-    StringView minus = cstr_sv("mi");
-    if(sv_find(minus, sv) == sv.data)
+    StringView minus = pdCstrSV("mi");
+    if(pdSVFind(minus, sv) == sv.data)
     {
         return '-';
     }
 
-    StringView num = cstr_sv("nu");
-    if(sv_find(num, sv) == sv.data)
+    StringView num = pdCstrSV("nu");
+    if(pdSVFind(num, sv) == sv.data)
     {
         return '#';
     }
 
-    StringView parenleft = cstr_sv("parenl");
-    if(sv_find(parenleft, sv) == sv.data)
+    StringView parenleft = pdCstrSV("parenl");
+    if(pdSVFind(parenleft, sv) == sv.data)
     {
         return '(';
     }
-    StringView parenright = cstr_sv("parenr");
-    if(sv_find(parenright, sv) == sv.data)
+    StringView parenright = pdCstrSV("parenr");
+    if(pdSVFind(parenright, sv) == sv.data)
     {
         return ')';
     }
 
-    StringView percent = cstr_sv("perc");
-    if(sv_find(percent, sv) == sv.data)
+    StringView percent = pdCstrSV("perc");
+    if(pdSVFind(percent, sv) == sv.data)
     {
         return '.';
     }
 
-    StringView period = cstr_sv("peri");
-    if(sv_find(period, sv) == sv.data)
+    StringView period = pdCstrSV("peri");
+    if(pdSVFind(period, sv) == sv.data)
     {
         return '.';
     }
 
-    StringView question = cstr_sv("que");
-    if(sv_find(question, sv) == sv.data)
+    StringView question = pdCstrSV("que");
+    if(pdSVFind(question, sv) == sv.data)
     {
         return '?';
     }
 
-    StringView quote = cstr_sv("quo");
-    if(sv_find(quote, sv) == sv.data)
+    StringView quote = pdCstrSV("quo");
+    if(pdSVFind(quote, sv) == sv.data)
     {
         return '\"';
     }
 
-    StringView semicolon = cstr_sv("se");
-    if(sv_find(semicolon, sv) == sv.data)
+    StringView semicolon = pdCstrSV("se");
+    if(pdSVFind(semicolon, sv) == sv.data)
     {
         return ';';
     }
 
-    StringView slash = cstr_sv("sl");
-    if(sv_find(slash, sv) == sv.data)
+    StringView slash = pdCstrSV("sl");
+    if(pdSVFind(slash, sv) == sv.data)
     {
         return '/';
     }
 
-    StringView space = cstr_sv("sp");
-    if(sv_find(space, sv) == sv.data)
+    StringView space = pdCstrSV("sp");
+    if(pdSVFind(space, sv) == sv.data)
     {
         return ' ';
     }
 
-    StringView underscore = cstr_sv("un");
-    if(sv_find(underscore, sv) == sv.data)
+    StringView underscore = pdCstrSV("un");
+    if(pdSVFind(underscore, sv) == sv.data)
     {
         return '_';
     }

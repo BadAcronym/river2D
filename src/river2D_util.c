@@ -20,7 +20,7 @@ void rvLoadConfig
     uint32_t parsedWidth_window  = 0;
     uint32_t parsedHeight_window = 0;
 
-    StringView codePath = cstr_sv(RV_CONFIG_PATH);
+    StringView codePath = pdCstrSV(RV_CONFIG_PATH);
     uint8_t    code     = pdVerifyPath(codePath);
 
     if(code == PD_TYPE_FILE)
@@ -39,8 +39,8 @@ void rvLoadConfig
             buffer.data = buf;
             buffer.size = bufsize;
 
-            StringView FPS_sv  = cstr_sv("showFPS");
-            const char* fpsloc = sv_find(FPS_sv, buffer);
+            StringView FPS_sv  = pdCstrSV("showFPS");
+            const char* fpsloc = pdSVFind(FPS_sv, buffer);
             if(fpsloc)
             {
                 bool foundShowFps = *(fpsloc + 9) == '1' || *(fpsloc + 9) == 't';
@@ -53,8 +53,8 @@ void rvLoadConfig
                 continue;
             }
 
-            StringView cwidth_sv  = cstr_sv("canvas_width");
-            const char* cwidthloc = sv_find(cwidth_sv, buffer);
+            StringView cwidth_sv  = pdCstrSV("canvas_width");
+            const char* cwidthloc = pdSVFind(cwidth_sv, buffer);
             if(cwidthloc)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -78,8 +78,8 @@ void rvLoadConfig
                 continue;
             }
 
-            StringView cheight_sv  = cstr_sv("canvas_height");
-            const char* cheightloc = sv_find(cheight_sv, buffer);
+            StringView cheight_sv  = pdCstrSV("canvas_height");
+            const char* cheightloc = pdSVFind(cheight_sv, buffer);
             if(cheightloc)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -103,8 +103,8 @@ void rvLoadConfig
                 continue;
             }
 
-            StringView wwidth_sv  = cstr_sv("window_width");
-            const char* wwidthloc = sv_find(wwidth_sv, buffer);
+            StringView wwidth_sv  = pdCstrSV("window_width");
+            const char* wwidthloc = pdSVFind(wwidth_sv, buffer);
             if(wwidthloc && (wwidthloc + 14 - buf) < bufsize)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
@@ -128,8 +128,8 @@ void rvLoadConfig
                 continue;
             }
 
-            StringView wheight_sv  = cstr_sv("window_height");
-            const char* wheightloc = sv_find(wheight_sv, buffer);
+            StringView wheight_sv  = pdCstrSV("window_height");
+            const char* wheightloc = pdSVFind(wheight_sv, buffer);
             if(wheightloc && (wheightloc + 15 - buf) < bufsize)
             {
                 for(uint32_t i = 0; i < bufsize; ++i)
