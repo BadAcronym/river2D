@@ -47,7 +47,7 @@
     #define RV_MOUSE3 0x10
 #endif
 
-#define RV_SUCCESS                0
+#define RV_ERROR_NONE             0
 #define RV_ERROR_LOADIMAGE_PTR    1
 #define RV_ERROR_LOADIMAGE_FILE   2
 #define RV_ERROR_INVALID_HEADER   3
