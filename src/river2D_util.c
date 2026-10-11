@@ -1,5 +1,5 @@
 #include "river2D_main.h"
-#include "pd_print_macros.h"
+#include "rv_print_macros.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@ void rvLoadConfig
 ){
     if(!config)
     {
-        PD_ERROR("*config is nullptr.");
+        RV_ERROR("*config is nullptr.");
         return;
     }
     uint32_t parsedWidth_canvas  = 0;
@@ -28,7 +28,7 @@ void rvLoadConfig
         FILE *file = fopen(RV_CONFIG_PATH, "r");
         if(!file)
         {
-            PD_ERROR("could not open file '%s' for reading.", RV_CONFIG_PATH);
+            RV_ERROR("could not open file '%s' for reading.", RV_CONFIG_PATH);
             return;
         }
 
@@ -49,7 +49,7 @@ void rvLoadConfig
                     continue;
                 }
                 config->choices |= RV_CHOICE_SHOW_FPS_BIT;
-                PD_DEBUG("parsed result: showFPS: true");
+                RV_DEBUG("parsed result: showFPS: true");
                 continue;
             }
 
@@ -73,7 +73,7 @@ void rvLoadConfig
                     parsedWidth_canvas += (uint32_t)(digit - 0x30);
                 }
 
-                PD_DEBUG("parsed result: canvas_width: %u", parsedWidth_canvas);
+                RV_DEBUG("parsed result: canvas_width: %u", parsedWidth_canvas);
                 config->canvasWidth = parsedWidth_canvas;
                 continue;
             }
@@ -98,7 +98,7 @@ void rvLoadConfig
                     parsedHeight_canvas += (uint32_t)(digit - 0x30);
                 }
 
-                PD_DEBUG("parsed result: canvas_height: %u", parsedHeight_canvas);
+                RV_DEBUG("parsed result: canvas_height: %u", parsedHeight_canvas);
                 config->canvasHeight = parsedHeight_canvas;
                 continue;
             }
@@ -123,7 +123,7 @@ void rvLoadConfig
                     parsedWidth_window += (uint32_t)(digit - 0x30);
                 }
 
-                PD_DEBUG("parsed result: window_width: %u", parsedWidth_window);
+                RV_DEBUG("parsed result: window_width: %u", parsedWidth_window);
                 config->windowWidth = parsedWidth_window;
                 continue;
             }
@@ -148,7 +148,7 @@ void rvLoadConfig
                     parsedHeight_window += (uint32_t)(digit - 0x30);
                 }
 
-                PD_DEBUG("parsed result: window_height: %u", parsedHeight_window);
+                RV_DEBUG("parsed result: window_height: %u", parsedHeight_window);
                 config->windowHeight = parsedHeight_window;
                 continue;
             }
@@ -158,15 +158,15 @@ void rvLoadConfig
     }
     else if(code == PD_TYPE_ERROR)
     {
-        PD_WARN("can't find the file '%s', default config loaded.", RV_CONFIG_PATH);
+        RV_WARN("can't find the file '%s', default config loaded.", RV_CONFIG_PATH);
     }
     else if(code == PD_TYPE_DIRECTORY)
     {
-        PD_WARN("'%s' is a directory! Default config loaded.", RV_CONFIG_PATH);
+        RV_WARN("'%s' is a directory! Default config loaded.", RV_CONFIG_PATH);
     }
     else if(code == PD_TYPE_OTHER)
     {
-        PD_WARN("unknown filetype for '%s', default config loaded.", RV_CONFIG_PATH);
+        RV_WARN("unknown filetype for '%s', default config loaded.", RV_CONFIG_PATH);
     }
 
     if(!parsedWidth_canvas)

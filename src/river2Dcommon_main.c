@@ -1,6 +1,7 @@
 #include "river2D_main.h"
+#include "rv_print_macros.h"
+
 #include "imgsurf_main.h"
-#include "pd_print_macros.h"
 
 #include <stdlib.h>
 
@@ -15,11 +16,11 @@ f_internal void calcDelta
 ){
     if(time1->ns > BILLION)
     {
-        PD_WARN("time1 is malformed.");
+        RV_WARN("time1 is malformed.");
     }
     if(time2->ns > BILLION)
     {
-        PD_WARN("time2 is malformed.");
+        RV_WARN("time2 is malformed.");
     }
 
     // uninitialized times
@@ -55,7 +56,7 @@ RiverTime rvDeltaTime
 ){
     if(!time1 || !time2)
     {
-        PD_WARN("passed uninitialized timestamp.");
+        RV_WARN("passed uninitialized timestamp.");
         RiverTime time = {0, 0};
         return time;
     }
@@ -75,7 +76,7 @@ float rvDeltaTime_ms
 ){
     if(!time1 || !time2)
     {
-        PD_WARN("passed uninitialized timestamp.");
+        RV_WARN("passed uninitialized timestamp.");
         return 0;
     }
 
@@ -93,7 +94,7 @@ int64_t rvDeltaTime_ns
 ){
     if(!time1 || !time2)
     {
-        PD_WARN("passed uninitialized timestamp.");
+        RV_WARN("passed uninitialized timestamp.");
         return 0;
     }
 
@@ -110,7 +111,7 @@ RiverTime rvDeltaTime_now
 ){
     if(!time || !time->s)
     {
-        PD_WARN("passed uninitialized timestamp.");
+        RV_WARN("passed uninitialized timestamp.");
         RiverTime result = {0, 0};
         return result;
     }
@@ -121,7 +122,7 @@ RiverTime rvDeltaTime_now
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        PD_ERROR("timestamp lies in the future.");
+        RV_ERROR("timestamp lies in the future.");
         RiverTime result = {0, 0};
         return result;
     }
@@ -138,7 +139,7 @@ float rvDeltaTime_now_ms
 ){
     if(!time)
     {
-        PD_ERROR("passed uninitialized timestamp.");
+        RV_ERROR("passed uninitialized timestamp.");
         return 0;
     }
 
@@ -148,7 +149,7 @@ float rvDeltaTime_now_ms
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        PD_ERROR("timestamp lies in the future.");
+        RV_ERROR("timestamp lies in the future.");
         return 0;
     }
 
@@ -163,7 +164,7 @@ uint64_t rvDeltaTime_now_ns
 ){
     if(!time)
     {
-        PD_ERROR("passed uninitialized timestamp.");
+        RV_ERROR("passed uninitialized timestamp.");
         return 0;
     }
 
@@ -173,7 +174,7 @@ uint64_t rvDeltaTime_now_ns
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
-        PD_ERROR("timestamp lies in the future.");
+        RV_ERROR("timestamp lies in the future.");
         return 0;
     }
 
@@ -215,7 +216,7 @@ void rvAppendImage
     }
     else
     {
-        PD_ERROR("unknown direction, cannot append.");
+        RV_ERROR("unknown direction, cannot append.");
         return;
     }
 
@@ -262,7 +263,7 @@ void rvDestroyImage
 ){
     if(!image)
     {
-        PD_WARN("No image to free.");
+        RV_WARN("No image to free.");
         return;
     }
 
@@ -280,13 +281,13 @@ TileMap rvLoadTilemap
 ){
     if(!set)
     {
-        PD_ERROR("set cannot be null.");
+        RV_ERROR("set cannot be null.");
         set->errorcode = RV_ERROR_NULLPTR;
         return (TileMap){0};
     }
     if(!set->file)
     {
-        PD_ERROR("file is not open. cannot read from nullptr.");
+        RV_ERROR("file is not open. cannot read from nullptr.");
         set->errorcode = RV_ERROR_NULLPTR;
         return (TileMap){0};
     }
@@ -310,7 +311,7 @@ TileMap rvLoadTilemap
        ((elements = fread(set->mapHeight, 4, 1, set->file)) != 1) ||
        ((elements = fread(set->mapLayers, 1, 1, set->file)) != 1)
     ){
-        PD_ERROR("could not validate .rte header.");
+        RV_ERROR("could not validate .rte header.");
         set->errorcode = RV_ERROR_INVALID_HEADER;
         return (TileMap){0};
     }
@@ -323,7 +324,7 @@ TileMap rvLoadTilemap
 
     if(!set->tilesheet->data)
     {
-        PD_WARN("failed to load tilesheet from pointer: %p", (void*)set->file);
+        RV_WARN("failed to load tilesheet from pointer: %p", (void*)set->file);
         set->errorcode = RV_ERROR_LOADIMAGE_PTR;
         return (TileMap){0};
     }

@@ -1,6 +1,7 @@
 #include "river2D_main.h"
+#include "rv_print_macros.h"
+
 #include "imgsurf_main.h"
-#include "pd_print_macros.h"
 
 #include <sys/stat.h>
 
@@ -13,10 +14,10 @@ f_internal void resolveFunction
     *fptr = GetProcAddress(renderer, name);
     if(!(*fptr))
     {
-        PD_ERROR("unable to load symbol: '%s'", name);
+        RV_ERROR("unable to load symbol: '%s'", name);
         return;
     }
-    PD_DEBUG("Loaded symbol: %s at %p", name, *fptr);
+    RV_DEBUG("Loaded symbol: %s at %p", name, *fptr);
 }
 
 void rvResolveFunctions
@@ -35,7 +36,7 @@ void rvResolveFunctions
         HMODULE software = LoadLibraryA("river2Dsoftware.dll");
         if(!software)
         {
-            PD_ERROR("unable to load software renderer. Tried to load from libpath: '"
+            RV_ERROR("unable to load software renderer. Tried to load from libpath: '"
                      PRI_SV"'.", libpath);
             return;
         }
@@ -48,19 +49,19 @@ void rvResolveFunctions
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
-        PD_WARN("OpenGL renderer not built yet for river2D.");
+        RV_WARN("OpenGL renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_VULKAN)
     {
-        PD_WARN("Vulkan renderer not built yet for river2D.");
+        RV_WARN("Vulkan renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_DIRECTX)
     {
-        PD_WARN("DirectX renderer not built yet for river2D.");
+        RV_WARN("DirectX renderer not built yet for river2D.");
     }
     else
     {
-        PD_ERROR("invalid renderer specified in rvResolveFunctions.");
+        RV_ERROR("invalid renderer specified in rvResolveFunctions.");
     }
 }
 
@@ -92,7 +93,7 @@ void rvLoadImage_file
 
     if(!image->data)
     {
-        PD_ERROR("failed to load image from file: '%s'", path_buf);
+        RV_ERROR("failed to load image from file: '%s'", path_buf);
         writeMissingTexture(image);
     }
 }
@@ -109,7 +110,7 @@ void rvLoadImage_ptr
                             channels, bitdepth);
     if(!image->data)
     {
-        PD_ERROR("failed to load image to pointer.");
+        RV_ERROR("failed to load image to pointer.");
     }
 
     image->path = cstr_sv("rvLoadImage_ptr");

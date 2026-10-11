@@ -1,6 +1,7 @@
 #include "river2D_main.h"
+#include "rv_print_macros.h"
+
 #include "imgsurf_main.h"
-#include "pd_print_macros.h"
 
 #include <memory.h>
 #include <pthread.h>
@@ -23,7 +24,7 @@ f_internal Visual* findVisual
                                                 &visualInfo, &numVisuals);
     if(!found)
     {
-        PD_ERROR("No valid visuals could be found for the desired depth of %i.",
+        RV_ERROR("No valid visuals could be found for the desired depth of %i.",
                  visualInfo.depth);
       return 0;
     }
@@ -110,26 +111,26 @@ void init
     engine->display = engine->xOpenDisplay(0);
     if(!engine->display)
     {
-        PD_ERROR("failed to open default display.");
+        RV_ERROR("failed to open default display.");
     }
 
     engine->screen = DefaultScreenOfDisplay(engine->display);
     if(!engine->screen)
     {
-        PD_ERROR("failed to get default screen.");
+        RV_ERROR("failed to get default screen.");
     }
 
     engine->visual = findVisual(engine, RV_PIXDEPTH);
     if(!engine->visual)
     {
-        PD_ERROR("no matching visual could be found.");
+        RV_ERROR("no matching visual could be found.");
     }
 
     engine->format = engine->xRenderFindStFormat(engine->display, PictStandardARGB32);
 
     if(!engine->format)
     {
-        PD_ERROR("no matching format could be found.");
+        RV_ERROR("no matching format could be found.");
     }
 
     if(!engine->windowName)
@@ -139,13 +140,13 @@ void init
     engine->window = rvOpenWindow(engine);
     if(!engine->window)
     {
-        PD_ERROR("failed to create window.");
+        RV_ERROR("failed to create window.");
     }
 
     engine->context = engine->xCreateGC(engine->display, engine->window, 0, 0);
     if(!engine->context)
     {
-        PD_ERROR("failed to create GC.");
+        RV_ERROR("failed to create GC.");
     }
 
     if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
@@ -161,7 +162,7 @@ void init
 
     if(!engine->backbuffer.picture)
     {
-        PD_ERROR("failed to create XRenderPicture for backbuffer.");
+        RV_ERROR("failed to create XRenderPicture for backbuffer.");
     }
 
     engine->blitDstPict = engine->xRenderCreatePicture(engine->display, engine->window,
@@ -201,42 +202,42 @@ void compositeImage
 ){
     if(!src)
     {
-        PD_ERROR("no image to composite with.");
+        RV_ERROR("no image to composite with.");
         return;
     }
     if(!src->data)
     {
-        PD_ERROR("src->data is nullptr.");
+        RV_ERROR("src->data is nullptr.");
         return;
     }
 
     if(!dst)
     {
-        PD_ERROR("no image to composite onto.");
+        RV_ERROR("no image to composite onto.");
         return;
     }
     if(!dst->data)
     {
-        PD_ERROR("dst->data is nullptr.");
+        RV_ERROR("dst->data is nullptr.");
         return;
     }
 
     if(!src->picture)
     {
-        PD_ERROR("src image was created incorrectly.");
-        PD_DEBUG("image->path:    "PRI_SV, ARG_SV(src->path));
-        PD_DEBUG("image->picture: %lu",    src->picture);
-        PD_DEBUG("image->width:   %u",     src->width);
-        PD_DEBUG("image->height:  %u",     src->height);
+        RV_ERROR("src image was created incorrectly.");
+        RV_DEBUG("image->path:    "PRI_SV, ARG_SV(src->path));
+        RV_DEBUG("image->picture: %lu",    src->picture);
+        RV_DEBUG("image->width:   %u",     src->width);
+        RV_DEBUG("image->height:  %u",     src->height);
         return;
     }
     if(!dst->picture)
     {
-        PD_ERROR("dst image was created incorrectly.");
-        PD_DEBUG("image->path:    "PRI_SV, ARG_SV(dst->path));
-        PD_DEBUG("image->picture: %lu",    dst->picture);
-        PD_DEBUG("image->width:   %u",     dst->width);
-        PD_DEBUG("image->height:  %u",     dst->height);
+        RV_ERROR("dst image was created incorrectly.");
+        RV_DEBUG("image->path:    "PRI_SV, ARG_SV(dst->path));
+        RV_DEBUG("image->picture: %lu",    dst->picture);
+        RV_DEBUG("image->width:   %u",     dst->width);
+        RV_DEBUG("image->height:  %u",     dst->height);
         return;
     }
 
@@ -280,13 +281,13 @@ void loadText
 ){
     if(!engine->planes[font].data)
     {
-        PD_ERROR("font not found. check loaded planes.");
+        RV_ERROR("font not found. check loaded planes.");
         return;
     }
 
     if(!image)
     {
-        PD_ERROR("destination image is null.");
+        RV_ERROR("destination image is null.");
         return;
     }
 
@@ -304,12 +305,12 @@ void loadText
 
     if(offsetX > image->width)
     {
-        PD_ERROR("offsetX too large.");
+        RV_ERROR("offsetX too large.");
         return;
     }
     if(offsetY > image->height)
     {
-        PD_ERROR("offsetY too large.");
+        RV_ERROR("offsetY too large.");
         return;
     }
 

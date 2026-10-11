@@ -1,6 +1,7 @@
 #include "river2D_main.h"
+#include "rv_print_macros.h"
+
 #include "imgsurf_main.h"
-#include "pd_print_macros.h"
 
 #include "pd_string_view.h"
 
@@ -20,11 +21,11 @@ f_internal void resolve
     *fptr = dlsym(libPtr, name);
     if((*error = dlerror()))
     {
-        PD_ERROR("could not load symbol: '%s': %s", name, *error);
+        RV_ERROR("could not load symbol: '%s': %s", name, *error);
     }
     else
     {
-        PD_DEBUG("Loaded symbol: %s from %p at %p", name, libPtr, *fptr);
+        RV_DEBUG("Loaded symbol: %s from %p at %p", name, libPtr, *fptr);
     }
 }
 
@@ -46,7 +47,7 @@ void rvResolveFunctions
         void *software = dlopen(so, RTLD_NOW);
         if(!software)
         {
-            PD_ERROR("Software renderer could not be loaded from specified folder: '"
+            RV_ERROR("Software renderer could not be loaded from specified folder: '"
                      PRI_SV"'. dlerror: %s", ARG_SV(libpath), dlerror());
             return;
         }
@@ -59,26 +60,26 @@ void rvResolveFunctions
     }
     else if(renderer == RV_RENDERER_OPENGL)
     {
-        PD_WARN("OpenGL renderer not built yet for river2D.");
+        RV_WARN("OpenGL renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_VULKAN)
     {
-        PD_WARN("Vulkan renderer not built yet for river2D.");
+        RV_WARN("Vulkan renderer not built yet for river2D.");
     }
     else if(renderer == RV_RENDERER_DIRECTX)
     {
-        PD_ERROR("DirectX renderer not supported on linux.");
+        RV_ERROR("DirectX renderer not supported on linux.");
     }
     else
     {
-        PD_ERROR("unknown renderer specified in rvResolveFunctions.");
+        RV_ERROR("unknown renderer specified in rvResolveFunctions.");
     }
 
     const char *x11Path = "/usr/lib/libX11.so";
     void *x11 = dlopen(x11Path, RTLD_NOW);
     if(!x11)
     {
-        PD_ERROR("X11 library could not be loaded from path: '/usr/lib/libX11.so'."
+        RV_ERROR("X11 library could not be loaded from path: '/usr/lib/libX11.so'."
                  "dlerror: %s", dlerror());
         return;
     }
@@ -113,7 +114,7 @@ void rvResolveFunctions
     void *xcur = dlopen(xcursorPath, RTLD_NOW);
     if(!xcur)
     {
-        PD_ERROR("Xcursor library could not be loaded from path: "
+        RV_ERROR("Xcursor library could not be loaded from path: "
                  "'/usr/lib/libXcursor.so'. dlerror: %s", dlerror());
     }
 
@@ -124,7 +125,7 @@ void rvResolveFunctions
     void *xrender = dlopen(xrenderPath, RTLD_NOW);
     if(!xrender)
     {
-        PD_ERROR("Xrender library could not be loaded from path: "
+        RV_ERROR("Xrender library could not be loaded from path: "
                  "'/usr/lib/libXrender.so'. dlerror: %s", dlerror());
         return;
     }
@@ -170,7 +171,7 @@ void rvCreateImage
                                                   engine->format, 0, 0);
     if(!image->picture)
     {
-        PD_ERROR("failed to create XRenderPicture.");
+        RV_ERROR("failed to create XRenderPicture.");
     }
 }
 
@@ -203,7 +204,7 @@ void rvLoadImage_file
 
     if(!image->data)
     {
-        PD_WARN("failed to load image from file: '%s'.", path_cstr);
+        RV_WARN("failed to load image from file: '%s'.", path_cstr);
         writeMissingTexture(image);
         return;
     }
@@ -218,7 +219,7 @@ void rvLoadImage_file
                                                   engine->format, 0, 0);
     if(!image->picture)
     {
-        PD_WARN("failed to create XRenderPicture from file: '%s'.", path_cstr);
+        RV_WARN("failed to create XRenderPicture from file: '%s'.", path_cstr);
     }
 }
 
@@ -236,7 +237,7 @@ void rvLoadImage_ptr
 
     if(!image->data)
     {
-        PD_WARN("failed to load image from pointer: %p.", file);
+        RV_WARN("failed to load image from pointer: %p.", file);
         writeMissingTexture(image);
         return;
     }
@@ -252,7 +253,7 @@ void rvLoadImage_ptr
                                                   engine->format, 0, 0);
     if(!image->picture)
     {
-        PD_WARN("failed to create XRenderPicture from pointer: %p.", file);
+        RV_WARN("failed to create XRenderPicture from pointer: %p.", file);
     }
 }
 
@@ -300,7 +301,7 @@ f_internal uint8_t xkeyToAscii
     char *codeString = engine->xKeySymToString(sym);
     StringView sv    = pdCstrSV(codeString);
 
-    PD_TRACE("codeString: '"PRI_SV"'", ARG_SV(sv));
+    RV_TRACE("codeString: '"PRI_SV"'", ARG_SV(sv));
 
     if(sv.size == 0)
     {
@@ -576,7 +577,7 @@ f_internal uint8_t xkeyToAscii
         return '_';
     }
 
-    PD_DEBUG("Key not evaluated: '"PRI_SV"'", ARG_SV(sv));
+    RV_DEBUG("Key not evaluated: '"PRI_SV"'", ARG_SV(sv));
     return 0;
 }
 
@@ -706,7 +707,7 @@ void rvSyncImage
 
     if(!ximg)
     {
-        PD_WARN("failed to sync ximg.");
+        RV_WARN("failed to sync ximg.");
     }
 
     if(image->data)

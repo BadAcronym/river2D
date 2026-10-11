@@ -1,8 +1,7 @@
 #include "river2D_main.h"
+#include "rv_print_macros.h"
 
 #include "win32_river2Dsoftware_platform.h"
-
-#include "pd_print_macros.h"
 
 void rvResizeBackbuffer
 (
@@ -29,7 +28,7 @@ void rvResizeBackbuffer
                                            MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if(!engine->backbuffer.data)
     {
-        PD_ERROR("failed to resize backbuffer.");
+        RV_ERROR("failed to resize backbuffer.");
     }
 }
 
@@ -83,29 +82,29 @@ void _compositeImage
 ){
     if(pictop != RV_PICTOP_OVER)
     {
-        PD_ERROR("pictop %u not implemented on windows.", pictop);
+        RV_ERROR("pictop %u not implemented on windows.", pictop);
         return;
     }
 
     if(!src)
     {
-        PD_ERROR("no image to composite with.");
+        RV_ERROR("no image to composite with.");
         return;
     }
     if(!src->data)
     {
-        PD_ERROR("src->data is nullptr.");
+        RV_ERROR("src->data is nullptr.");
         return;
     }
 
     if(!dst)
     {
-        PD_ERROR("no image to composite onto.");
+        RV_ERROR("no image to composite onto.");
         return;
     }
     if(!dst->data)
     {
-        PD_ERROR("dst->data is nullptr.");
+        RV_ERROR("dst->data is nullptr.");
         return;
     }
 
@@ -179,13 +178,13 @@ void _loadText
 ){
     if(!engine->planes[font].data)
     {
-        PD_ERROR("font not found. Check loaded planes.");
+        RV_ERROR("font not found. Check loaded planes.");
         return;
     }
 
     if(!image)
     {
-        PD_ERROR("destination image is null.");
+        RV_ERROR("destination image is null.");
         return;
     }
 
@@ -203,12 +202,12 @@ void _loadText
 
     if(offsetX > image->width)
     {
-        PD_ERROR("offsetX too large.");
+        RV_ERROR("offsetX too large.");
         return;
     }
     if(offsetY > image->height)
     {
-        PD_ERROR("offsetY too large.");
+        RV_ERROR("offsetY too large.");
         return;
     }
 
