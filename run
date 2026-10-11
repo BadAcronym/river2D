@@ -44,14 +44,14 @@ args_software="src/linux_river2Dsoftware.c \
 
 args_release="-O2"
 
-args_debug="-DDEBUG -g -O0"
+args_debug="-DDEBUG -DRV_PRI_DEBUG -g -O0"
 
 args_asan="$args_debug -DASAN \
 -fsanitize=address,leak,undefined \
 -fno-omit-frame-pointer \
 -static-libasan"
 
-args_trace="$args_debug -DTRACE"
+args_trace="$args_debug -DRV_PRI_TRACE"
 
 function compile()
 {
