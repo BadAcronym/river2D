@@ -1,5 +1,5 @@
-#ifndef DATASURF_PRINT_MACROS
-#define DATASURF_PRINT_MACROS
+#ifndef RIVER2D_PRINT_MACROS
+#define RIVER2D_PRINT_MACROS
 
 #include <stdio.h>
 #include <stdlib.h>
