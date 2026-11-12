@@ -9,7 +9,7 @@
 f_internal Visual* findVisual
 (
     EngineData *engine,
-    uint8_t    depth
+    u08        depth
 ){
     Visual  *visual  = {0};
     Display *display = engine->display;
@@ -18,7 +18,7 @@ f_internal Visual* findVisual
     visualInfo.screen = DefaultScreen(display);
     visualInfo.depth  = depth;
 
-    int numVisuals;
+    int numVisuals = 0;
     XVisualInfo *found = engine->xGetVisualInfo(display,
                                                 VisualScreenMask | VisualDepthMask,
                                                 &visualInfo, &numVisuals);
@@ -51,10 +51,9 @@ Window rvOpenWindow
 (
     EngineData *engine
 ){
-    unsigned long valuemask = CWBackPixel | CWBorderPixel |
-                              CWColormap  | CWOverrideRedirect;
+    u64 valuemask = CWBackPixel | CWBorderPixel | CWColormap  | CWOverrideRedirect;
 
-    XSetWindowAttributes attr;
+    XSetWindowAttributes attr = {0};
     attr.override_redirect = false;
     attr.background_pixel  = BlackPixel(engine->display,
                                         DefaultScreen(engine->display));
@@ -87,8 +86,8 @@ Window rvOpenWindow
 void rvResizeBackbuffer
 (
     EngineData *engine,
-    uint32_t   width,
-    uint32_t   height
+    u32        width,
+    u32        height
 ){
     if(engine->backbuffer.pixmap)
     {
@@ -169,11 +168,11 @@ void init
                                                        engine->format, 0, 0);
 }
 
-int32_t shutdown
+i32 shutdown
 (
     EngineData *engine
 ){
-    for(uint8_t i = 0; i < RV_MAX_PLANES; ++i)
+    for(u08 i = 0; i < RV_MAX_PLANES; ++i)
     {
         rvDestroyImage(&engine->planes[i]);
     }
@@ -192,13 +191,13 @@ void compositeImage
     EngineData *engine,
     RiverImage *src,
     RiverImage *dst,
-    uint8_t    pictop,
-    uint32_t   offsetSrcX,
-    uint32_t   offsetSrcY,
-    uint32_t   offsetDstX,
-    uint32_t   offsetDstY,
-    uint32_t   cropWidth,
-    uint32_t   cropHeight
+    u08        pictop,
+    u32        offsetSrcX,
+    u32        offsetSrcY,
+    u32        offsetDstX,
+    u32        offsetDstY,
+    u32        cropWidth,
+    u32        cropHeight
 ){
     if(!src)
     {
@@ -250,8 +249,8 @@ void bltBuffer
 (
     EngineData *engine
 ){
-    float x_s = (float)engine->backbuffer.width  / (float)engine->config.windowWidth;
-    float y_s = (float)engine->backbuffer.height / (float)engine->config.windowHeight;
+    f32 x_s = (f32)engine->backbuffer.width  / (f32)engine->config.windowWidth;
+    f32 y_s = (f32)engine->backbuffer.height / (f32)engine->config.windowHeight;
 
     XTransform transform =
     {{
@@ -273,11 +272,11 @@ void loadText
     EngineData *engine,
     RiverImage *image,
     StringView *sv,
-    uint8_t    font,
-    uint16_t   charsize,
-    uint32_t   spacing,
-    uint32_t   offsetX,
-    uint32_t   offsetY
+    u08        font,
+    u16        charsize,
+    u32        spacing,
+    u32        offsetX,
+    u32        offsetY
 ){
     if(!engine->planes[font].data)
     {
@@ -291,7 +290,7 @@ void loadText
         return;
     }
 
-    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)sv->size;
+    u32 minTextWidth = (charsize + spacing) * (u32)sv->size;
 
     if(image->width < minTextWidth || image->height < charsize)
     {
@@ -314,10 +313,10 @@ void loadText
         return;
     }
 
-    uint32_t fontImgWidth = engine->planes[font].width;
-    uint32_t imageChars = (image->width) / ((charsize + spacing));
+    u32 fontImgWidth = engine->planes[font].width;
+    u32 imageChars = (image->width) / ((charsize + spacing));
 
-    for(uint32_t i = 0; i < imageChars; ++i)
+    for(u32 i = 0; i < imageChars; ++i)
     {
         char character = 0x20;
         if(i < sv->size && sv->data[i])
@@ -325,36 +324,36 @@ void loadText
             character = sv->data[i];
         }
 
-        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
-        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
+        u32 charBigX = (u32)(character - 0x21) * charsize % fontImgWidth;
+        u32 charBigY = (u32)(character - 0x21) * charsize / fontImgWidth;
 
         if(character == 0x20)
         {
-            charBigX = (uint32_t)(0x5F) * charsize % fontImgWidth;
-            charBigY = (uint32_t)(0x5F) * charsize / fontImgWidth;
+            charBigX = (u32)(0x5F) * charsize % fontImgWidth;
+            charBigY = (u32)(0x5F) * charsize / fontImgWidth;
         }
         else if(character == RV_ASCII_CURSOR)
         {
-            charBigX = (uint32_t)(0x5E) * charsize % fontImgWidth;
-            charBigY = (uint32_t)(0x5E) * charsize / fontImgWidth;
+            charBigX = (u32)(0x5E) * charsize % fontImgWidth;
+            charBigY = (u32)(0x5E) * charsize / fontImgWidth;
         }
         else if(character < 0x20)
         {
             continue;
         }
 
-        uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
+        u64 trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
                                  RV_BPP;
-        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i *
+        u64 trueDestOffset = (offsetY * image->width + offsetX + i *
                                   (charsize + spacing)) * RV_BPP;
 
-        uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
-        uint8_t* destloc = image->data + trueDestOffset;
+        u08* charloc = engine->planes[font].data + trueSrcOffset;
+        u08* destloc = image->data + trueDestOffset;
 
-        for(uint32_t j = 0; j < charsize; ++j)
+        for(u32 j = 0; j < charsize; ++j)
         {
-            uint8_t* charlineLoc = charloc + j * fontImgWidth * RV_BPP;
-            uint8_t* destlineLoc = destloc + j * image->width * RV_BPP;
+            u08* charlineLoc = charloc + j * fontImgWidth * RV_BPP;
+            u08* destlineLoc = destloc + j * image->width * RV_BPP;
 
             memcpy(destlineLoc, charlineLoc, charsize * RV_BPP);
         }

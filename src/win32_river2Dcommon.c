@@ -24,10 +24,10 @@ void rvResolveFunctions
 (
     EngineData *engine,
     StringView libpath,
-    uint8_t    renderer
+    u08        renderer
 ){
     char libpath_cstr[libpath.size + 1];
-    sv_cstr(libpath, libpath_cstr);
+    pdSVCstr(libpath, libpath_cstr);
 
     SetDllDirectoryA(libpath_cstr);
 
@@ -69,11 +69,11 @@ f_internal void writeMissingTexture
 (
     RiverImage *image
 ){
-    uint64_t imgsize = image->width * image->height;
+    u64 imgsize = image->width * image->height;
 
-    for(uint64_t i = 0; i < imgsize; ++i)
+    for(u64 i = 0; i < imgsize; ++i)
     {
-        ((uint32_t*)image->data)[i] = 0xC64FACFF;
+        ((u32*)image->data)[i] = 0xC64FACFF;
     }
 }
 
@@ -82,12 +82,12 @@ void rvLoadImage_file
     EngineData *engine,
     StringView path,
     RiverImage *image,
-    uint8_t    format,
-    uint8_t    bitdepth
+    u08        format,
+    u08        bitdepth
 ){
     (void)engine;
     char path_buf[path.size + 1];
-    sv_cstr(path, path_buf);
+    pdSVCstr(path, path_buf);
 
     image->data = imLoadFile(path_buf, &image->width, &image->height, format, bitdepth);
 
@@ -103,8 +103,8 @@ void rvLoadImage_ptr
     EngineData *engine,
     void       *file,
     RiverImage *image,
-    uint8_t    channels,
-    uint8_t    bitdepth
+    u08        channels,
+    u08        bitdepth
 ){
     image->data = imLoadPtr(file, IM_FILE_QOI, &image->width, &image->height,
                             channels, bitdepth);
@@ -113,17 +113,17 @@ void rvLoadImage_ptr
         RV_ERROR("failed to load image to pointer.");
     }
 
-    image->path = cstr_sv("rvLoadImage_ptr");
+    image->path = pdCstrSV("rvLoadImage_ptr");
 }
 
 void rvCreateImage
 (
     EngineData *engine,
     RiverImage *image,
-    uint32_t   width,
-    uint32_t   height
+    u32        width,
+    u32        height
 ){
-    image->path   = cstr_sv("rvCreateImage");
+    image->path   = pdCstrSV("rvCreateImage");
     image->data   = calloc(width * height * RV_BPP, 1);
     image->width  = width;
     image->height = height;
@@ -152,11 +152,10 @@ RiverTime rvQueryTime
     LARGE_INTEGER counter;
     QueryPerformanceCounter(&counter);
 
-    int64_t seconds   = (int64_t)(counter.QuadPart / freq.QuadPart);
-    int64_t remainder = (int64_t)(counter.QuadPart % freq.QuadPart);
+    i64 seconds   = (i64)(counter.QuadPart / freq.QuadPart);
+    i64 remainder = (i64)(counter.QuadPart % freq.QuadPart);
 
-    int64_t nanoseconds = (int64_t)(((float)remainder * 1000000000.0f) /
-                                    (float)freq.QuadPart);
+    i64 nanoseconds = (i64)(((f32)remainder * 1000000000.0f) / (f32)freq.QuadPart);
 
     RiverTime time;
     time.s  = seconds;
@@ -167,11 +166,11 @@ RiverTime rvQueryTime
 
 AsciiKey rvProcessWin32Key
 (
-    WPARAM  wParam,
-    uint8_t ascii
+    WPARAM wParam,
+    u08    ascii
 ){
     AsciiKey key = {0};
-    key.key = (uint8_t)wParam;
+    key.key = (u08)wParam;
     key.raw = ascii;
 
     if(key.key > 0x40 && key.key < 0x5B)
@@ -234,7 +233,7 @@ AsciiKey rvProcessWin32Key
     return key;
 }
 
-// uint8_t rvCharToKey
+// u08 rvCharToKey
 // (
 //     char inp
 // ){
@@ -268,8 +267,8 @@ Dimensions rvGetWindowSize
 
     GetWindowRect(engine->window, &rect);
 
-    dim.width  = (uint32_t)(rect.right  - rect.left);
-    dim.height = (uint32_t)(rect.bottom - rect.top);
+    dim.width  = (u32)(rect.right  - rect.left);
+    dim.height = (u32)(rect.bottom - rect.top);
 
     return dim;
 }
@@ -290,29 +289,29 @@ void rvChangeCursor
 
     BITMAPINFO bmi              = {0};
     bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth       = (int32_t)image->width;
-    bmi.bmiHeader.biHeight      = -((int32_t)image->height);
+    bmi.bmiHeader.biWidth       = (i32)image->width;
+    bmi.bmiHeader.biHeight      = -((i32)image->height);
     bmi.bmiHeader.biPlanes      = 1;
     bmi.bmiHeader.biBitCount    = 32;
     bmi.bmiHeader.biSizeImage   = 0;
     bmi.bmiHeader.biCompression = BI_RGB;
 
-    uint32_t *data = 0;
-    engine->cursorBitmap = CreateDIBSection(0, &bmi, DIB_RGB_COLORS, (void**)&data, 0, 0);
+    u32 *data = 0;
+    engine->cursorBitmap = CreateDIBSection(0, &bmi, DIB_RGB_COLORS, (void**)&data,
+                                            0, 0);
 
     bool null_cursor = true;
 
-    for(uint32_t i = 0; i < image->height * image->width; ++i)
+    for(u32 i = 0; i < image->height * image->width; ++i)
     {
-        data[i] = ((uint32_t*)image->data)[i];
+        data[i] = ((u32*)image->data)[i];
         if(data[i] & 0x000000FF)
         {
             null_cursor = false;
         }
     }
 
-    engine->cursorMask = CreateBitmap((int32_t)image->width, (int32_t)image->height,
-                                      1, 1, 0);
+    engine->cursorMask = CreateBitmap((i32)image->width, (i32)image->height, 1, 1, 0);
 
     ICONINFO iconInfo = {0};
     iconInfo.hbmColor = engine->cursorBitmap;
@@ -339,7 +338,7 @@ void rvInit
     engine->init(engine, planes);
 }
 
-int32_t rvShutdown
+i32 rvShutdown
 (
     EngineData *engine
 ){

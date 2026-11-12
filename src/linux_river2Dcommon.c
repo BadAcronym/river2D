@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <dlfcn.h>
-#include <stdio.h>
 
 f_internal void resolve
 (
@@ -33,7 +32,7 @@ void rvResolveFunctions
 (
     EngineData *engine,
     StringView libpath,
-    uint8_t    renderer
+    u08        renderer
 ){
     char *error = 0;
 
@@ -146,8 +145,8 @@ void rvCreateImage
 (
     EngineData *engine,
     RiverImage *image,
-    uint32_t   width,
-    uint32_t   height
+    u32        width,
+    u32        height
 ){
     image->path   = pdCstrSV("rvCreateImage");
     image->data   = calloc(width * height * RV_BPP, 1);
@@ -179,11 +178,11 @@ f_internal void writeMissingTexture
 (
     RiverImage *image
 ){
-    uint64_t imgsize = image->width * image->height;
+    u64 imgsize = image->width * image->height;
 
-    for(uint64_t i = 0; i < imgsize; ++i)
+    for(u64 i = 0; i < imgsize; ++i)
     {
-        ((uint32_t*)image->data)[i] = 0xC64FACFF;
+        ((u32*)image->data)[i] = 0xC64FACFF;
     }
 }
 
@@ -192,8 +191,8 @@ void rvLoadImage_file
     EngineData *engine,
     StringView path,
     RiverImage *image,
-    uint8_t    channels,
-    uint8_t    bitdepth
+    u08        channels,
+    u08        bitdepth
 ){
     char path_cstr[4096] = {0};
     pdSVCstr(path, path_cstr);
@@ -228,8 +227,8 @@ void rvLoadImage_ptr
     EngineData *engine,
     void       *file,
     RiverImage *image,
-    uint8_t    channels,
-    uint8_t    bitdepth
+    u08        channels,
+    u08        bitdepth
 ){
     image->data = imLoadPtr(file, IM_FILE_QOI, &image->width, &image->height,
                             channels, bitdepth);
@@ -262,7 +261,7 @@ void rvClearImage
     EngineData *engine,
     RiverImage *image
 ){
-    for(uint64_t i = 0; i < image->width * image->height; ++i)
+    for(u64 i = 0; i < image->width * image->height; ++i)
     {
         image->data[i] = 0;
     }
@@ -286,20 +285,20 @@ RiverTime rvQueryTime
 
     RiverTime time =
     {
-        .s  = (int64_t)spec.tv_sec,
-        .ns = (int64_t)spec.tv_nsec
+        .s  = (i64)spec.tv_sec,
+        .ns = (i64)spec.tv_nsec
     };
 
     return time;
 }
 
-f_internal uint8_t xkeyToAscii
+f_internal u08 xkeyToAscii
 (
     EngineData *engine,
     KeySym     sym
 ){
     char *codeString = engine->xKeySymToString(sym);
-    StringView sv    = pdCstrSV(codeString);
+    StringView sv = pdCstrSV(codeString);
 
     RV_TRACE("codeString: '"PRI_SV"'", ARG_SV(sv));
 
@@ -310,7 +309,7 @@ f_internal uint8_t xkeyToAscii
 
     if(sv.size == 1)
     {
-        return (uint8_t)sv.data[0];
+        return (u08)sv.data[0];
     }
 
     StringView lalt = pdCstrSV("Alt_L");
@@ -604,13 +603,13 @@ Dimensions rvGetWindowSize
 (
     EngineData *engine
 ){
-    XWindowAttributes attr;
+    XWindowAttributes attr = {0};
     engine->xGetWinAttr(engine->display, engine->window, &attr);
 
     Dimensions dim =
     {
-        (uint32_t)attr.width,
-        (uint32_t)attr.height
+        (u32)attr.width,
+        (u32)attr.height
     };
 
     return dim;
@@ -627,9 +626,9 @@ void rvChangeCursor
     }
 
     XcursorImage ximg = {0};
-    ximg.pixels       = (uint32_t*)image->data;
-    ximg.width        = image->width;
-    ximg.height       = image->height;
+    ximg.pixels = (u32*)image->data;
+    ximg.width  = image->width;
+    ximg.height = image->height;
 
     Cursor cursor = engine->xCursorImgLoad(engine->display, &ximg);
 
@@ -646,7 +645,7 @@ void rvInit
     engine->init(engine, planes);
 }
 
-int32_t rvShutdown
+i32 rvShutdown
 (
     EngineData *engine
 ){
@@ -714,7 +713,7 @@ void rvSyncImage
     {
         free(image->data);
     }
-    image->data = (uint8_t*)ximg->data;
+    image->data = (u08*)ximg->data;
 
     ximg->data = NULL;
     XDestroyImage(ximg);

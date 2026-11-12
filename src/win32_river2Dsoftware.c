@@ -6,8 +6,8 @@
 void rvResizeBackbuffer
 (
     EngineData *engine,
-    uint32_t   width,
-    uint32_t   height
+    u32   width,
+    u32   height
 ){
     if(engine->backbuffer.data)
     {
@@ -48,16 +48,16 @@ void _init
     if(engine->config.choices & RV_CHOICE_STATIC_CANVAS_BIT)
     {
         rvCreateImage(engine, &engine->backbuffer,
-                            engine->config.canvasWidth, engine->config.canvasHeight);
+                      engine->config.canvasWidth, engine->config.canvasHeight);
     }
     else
     {
         rvCreateImage(engine, &engine->backbuffer,
-                            engine->config.windowWidth, engine->config.windowHeight);
+                      engine->config.windowWidth, engine->config.windowHeight);
     }
 }
 
-int32_t _shutdown
+i32 _shutdown
 (
     EngineData *engine
 ){
@@ -72,13 +72,13 @@ void _compositeImage
     EngineData *engine,
     RiverImage *src,
     RiverImage *dst,
-    uint8_t    pictop,
-    uint32_t   offsetSrcX,
-    uint32_t   offsetSrcY,
-    uint32_t   offsetDstX,
-    uint32_t   offsetDstY,
-    uint32_t   cropWidth,
-    uint32_t   cropHeight
+    u08        pictop,
+    u32        offsetSrcX,
+    u32        offsetSrcY,
+    u32        offsetDstX,
+    u32        offsetDstY,
+    u32        cropWidth,
+    u32        cropHeight
 ){
     if(pictop != RV_PICTOP_OVER)
     {
@@ -108,8 +108,8 @@ void _compositeImage
         return;
     }
 
-    uint64_t copyWidth = src->width * RV_BPP;
-    uint64_t bufWidth  = dst->width * RV_BPP;
+    u64 copyWidth = src->width * RV_BPP;
+    u64 bufWidth  = dst->width * RV_BPP;
 
     if(offsetDstX + cropWidth > engine->backbuffer.width)
     {
@@ -121,19 +121,19 @@ void _compositeImage
         cropHeight = engine->backbuffer.height - offsetDstY;
     }
 
-    uint8_t *dstData = dst->data + offsetDstY * bufWidth  + offsetDstX * RV_BPP;
-    uint8_t *srcData = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
+    u08 *dstData = dst->data + offsetDstY * bufWidth  + offsetDstX * RV_BPP;
+    u08 *srcData = src->data + offsetSrcY * copyWidth + offsetSrcX * RV_BPP;
 
-    uint8_t *maxDst = dst->data + dst->width * dst->height * RV_BPP - 1;
-    uint8_t *maxSrc = src->data + src->width * src->height * RV_BPP - 1;
+    u08 *maxDst = dst->data + dst->width * dst->height * RV_BPP - 1;
+    u08 *maxSrc = src->data + src->width * src->height * RV_BPP - 1;
 
     cropWidth *= RV_BPP;
-    for(uint32_t y = 0; y < cropHeight; ++y)
+    for(u32 y = 0; y < cropHeight; ++y)
     {
-        for(uint32_t x = 0; x < cropWidth; x += RV_BPP)
+        for(u32 x = 0; x < cropWidth; x += RV_BPP)
         {
-            uint64_t srcIndex = y * copyWidth + x;
-            uint64_t dstIndex = y * bufWidth  + x;
+            u64 srcIndex = y * copyWidth + x;
+            u64 dstIndex = y * bufWidth  + x;
 
             if(dstData + dstIndex > maxDst ||
                srcData + srcIndex > maxSrc
@@ -170,11 +170,11 @@ void _loadText
     EngineData *engine,
     RiverImage *image,
     StringView *sv,
-    uint8_t    font,
-    uint16_t   charsize,
-    uint32_t   spacing,
-    uint32_t   offsetX,
-    uint32_t   offsetY
+    u08        font,
+    u16        charsize,
+    u32        spacing,
+    u32        offsetX,
+    u32        offsetY
 ){
     if(!engine->planes[font].data)
     {
@@ -188,7 +188,7 @@ void _loadText
         return;
     }
 
-    uint32_t minTextWidth = (charsize + spacing) * (uint32_t)sv->size;
+    u32 minTextWidth = (charsize + spacing) * (u32)sv->size;
 
     if(image->width < minTextWidth || image->height < charsize)
     {
@@ -211,10 +211,10 @@ void _loadText
         return;
     }
 
-    uint32_t fontImgWidth = engine->planes[font].width;
-    uint32_t imageChars = (image->width) / ((charsize + spacing));
+    u32 fontImgWidth = engine->planes[font].width;
+    u32 imageChars = (image->width) / ((charsize + spacing));
 
-    for(uint32_t i = 0; i < imageChars; ++i)
+    for(u32 i = 0; i < imageChars; ++i)
     {
         char character = 0x20;
         if(i < sv->size && sv->data[i])
@@ -222,36 +222,35 @@ void _loadText
             character = sv->data[i];
         }
 
-        uint32_t charBigX = (uint32_t)(character - 0x21) * charsize % fontImgWidth;
-        uint32_t charBigY = (uint32_t)(character - 0x21) * charsize / fontImgWidth;
+        u32 charBigX = (u32)(character - 0x21) * charsize % fontImgWidth;
+        u32 charBigY = (u32)(character - 0x21) * charsize / fontImgWidth;
 
         if(character == 0x20)
         {
-            charBigX = (uint32_t)(0x5F) * charsize % fontImgWidth;
-            charBigY = (uint32_t)(0x5F) * charsize / fontImgWidth;
+            charBigX = (u32)(0x5F) * charsize % fontImgWidth;
+            charBigY = (u32)(0x5F) * charsize / fontImgWidth;
         }
         else if(character == RV_ASCII_CURSOR)
         {
-            charBigX = (uint32_t)(0x5E) * charsize % fontImgWidth;
-            charBigY = (uint32_t)(0x5E) * charsize / fontImgWidth;
+            charBigX = (u32)(0x5E) * charsize % fontImgWidth;
+            charBigY = (u32)(0x5E) * charsize / fontImgWidth;
         }
         else if(character < 0x20)
         {
             continue;
         }
 
-        uint64_t trueSrcOffset = (charBigY * charsize * fontImgWidth + charBigX) *
-                                 RV_BPP;
-        uint64_t trueDestOffset = (offsetY * image->width + offsetX + i *
-                                  (charsize + spacing)) * RV_BPP;
+        u64 trueSrcOffset  = (charBigY * charsize * fontImgWidth + charBigX) * RV_BPP;
+        u64 trueDestOffset = (offsetY * image->width + offsetX + i *
+                              (charsize + spacing)) * RV_BPP;
 
-        uint8_t* charloc = engine->planes[font].data + trueSrcOffset;
-        uint8_t* destloc = image->data + trueDestOffset;
+        u08* charloc = engine->planes[font].data + trueSrcOffset;
+        u08* destloc = image->data + trueDestOffset;
 
-        for(uint32_t j = 0; j < charsize; ++j)
+        for(u32 j = 0; j < charsize; ++j)
         {
-            uint8_t* charlineLoc = charloc + j * fontImgWidth * RV_BPP;
-            uint8_t* destlineLoc = destloc + j * image->width * RV_BPP;
+            u08* charlineLoc = charloc + j * fontImgWidth * RV_BPP;
+            u08* destlineLoc = destloc + j * image->width * RV_BPP;
 
             memcpy(destlineLoc, charlineLoc, charsize * RV_BPP);
         }

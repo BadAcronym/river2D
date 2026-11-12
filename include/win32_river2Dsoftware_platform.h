@@ -3,8 +3,6 @@
 
 #include "river2D_main.h"
 
-#include <stdint.h>
-
 #define EXPORT __declspec(dllexport)
 
 EXPORT void _init
@@ -28,13 +26,13 @@ EXPORT void _compositeImage
     EngineData *engine,
     RiverImage *src,
     RiverImage *dst,
-    uint8_t    pictop,
-    uint32_t   offsetDstX,
-    uint32_t   offsetDstY,
-    uint32_t   offsetSrcX,
-    uint32_t   offsetSrcY,
-    uint32_t   cropWidth,
-    uint32_t   cropHeight
+    u08        pictop,
+    u32        offsetDstX,
+    u32        offsetDstY,
+    u32        offsetSrcX,
+    u32        offsetSrcY,
+    u32        cropWidth,
+    u32        cropHeight
 );
 
 EXPORT void _loadText
@@ -42,11 +40,11 @@ EXPORT void _loadText
     EngineData *engine,
     RiverImage *image,
     StringView *sv,
-    uint8_t    font,
-    uint16_t   charsize,
-    uint32_t   spacing,
-    uint32_t   offsetX,
-    uint32_t   offsetY
+    u08        font,
+    u16        charsize,
+    u32        spacing,
+    u32        offsetX,
+    u32        offsetY
 );
 
 #endif

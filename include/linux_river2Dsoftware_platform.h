@@ -12,7 +12,7 @@ extern void river2D_loadText
 extern void river2D_bltBuffer
 (
     EngineData *engine,
-    uint8_t factor
+    u08        factor
 );
 
 #endif

@@ -4,7 +4,6 @@
 #include "pd_path.h"
 #include "pd_string_view.h"
 
-#include <stdint.h>
 #include <stdio.h>
 
 #define bool  _Bool
@@ -159,34 +158,34 @@
 
 typedef struct PerformanceCounter
 {
-    uint64_t time;
-    uint64_t freq;
+    u64 time;
+    u64 freq;
 }
 PerformanceCounter;
 
 typedef struct RiverConfig
 {
-    uint8_t  renderer;
-    uint8_t  backgrounds;
-    uint32_t windowWidth;
-    uint32_t windowHeight;
-    uint32_t canvasWidth;
-    uint32_t canvasHeight;
-    uint32_t choices;
+    u08 renderer;
+    u08 backgrounds;
+    u32 windowWidth;
+    u32 windowHeight;
+    u32 canvasWidth;
+    u32 canvasHeight;
+    u32 choices;
 }
 RiverConfig;
 
 typedef struct RiverImage
 {
     StringView path;
-    uint8_t    *data;
-    uint8_t    channels;
-    uint32_t   width;
-    uint32_t   height;
+    u08        *data;
+    u08        channels;
+    u32        width;
+    u32        height;
 
     #ifdef BUILD_LINUX
-    Pixmap   pixmap;
-    Picture  picture;
+    Pixmap     pixmap;
+    Picture    picture;
     #endif
 
     #ifdef BUILD_WINDOWS
@@ -197,29 +196,29 @@ RiverImage;
 
 typedef struct RiverTime
 {
-    int64_t s;
-    int64_t ns;
+    i64 s;
+    i64 ns;
 }
 RiverTime;
 
 typedef struct AsciiKey
 {
-    uint8_t key;
-    uint8_t raw;
+    u08 key;
+    u08 raw;
 }
 AsciiKey;
 
 typedef struct Coordinates
 {
-    float x;
-    float y;
+    f32 x;
+    f32 y;
 }
 Coordinates;
 
 typedef struct TileCoords
 {
-    uint16_t x;
-    uint16_t y;
+    u16 x;
+    u16 y;
 }
 TileCoords;
 
@@ -243,29 +242,29 @@ typedef struct Button
 {
     StringView name;
     Rect       area;
-    uint8_t    status;
+    u08        status;
 }
 Button;
 
 typedef struct Dimensions
 {
-    uint32_t width;
-    uint32_t height;
+    u32 width;
+    u32 height;
 }
 Dimensions;
 
 typedef struct TileMetadata
 {
-    uint8_t  fps;
-    uint8_t  flags;
-    int16_t  next;
+    u08 fps;
+    u08 flags;
+    i16 next;
 }
 TileMetadata;
 
 typedef struct TileIndex
 {
-    uint16_t x;
-    uint16_t y;
+    u16 x;
+    u16 y;
 }
 TileIndex;
 
@@ -278,14 +277,14 @@ TileMap;
 
 typedef struct RiverControls
 {
-    uint64_t     keymap;
-    uint64_t     buttonmap;
-    Coordinates  pointer;
-    RiverTime    lastScrollTime;
-    uint64_t     rumble;
-    uint8_t      keycodes[128];
-    uint8_t      buttoncodes[64];
-    char         ascii;
+    u64         keymap;
+    u64         buttonmap;
+    Coordinates pointer;
+    RiverTime   lastScrollTime;
+    u64         rumble;
+    u08         keycodes[128];
+    u08         buttoncodes[64];
+    char        ascii;
 }
 RiverControls;
 
@@ -319,19 +318,19 @@ typedef struct EngineData
 #endif
 
     void    (*init)           (struct EngineData *engine, RiverImage *planes);
-    int32_t (*shutdown)       (struct EngineData *engine);
+    i32     (*shutdown)       (struct EngineData *engine);
     void    (*bltBuffer)      (struct EngineData *engine);
 
     void    (*loadText)       (struct EngineData *engine,    RiverImage *image,
-                               StringView        *sv,        uint8_t    font,
-                               uint16_t          charsize,   uint32_t   spacing,
-                               uint32_t          offsetX,    uint32_t   offsetY);
+                               StringView        *sv,        u08        font,
+                               u16          charsize,   u32        spacing,
+                               u32               offsetX,    u32        offsetY);
 
     void    (*compositeImage) (struct EngineData *engine,    RiverImage *src,
-                               RiverImage        *dst,       uint8_t    pictop,
-                               uint32_t          offsetSrcX, uint32_t   offsetSrcY,
-                               uint32_t          offsetDstX, uint32_t   offsetDstY,
-                               uint32_t          cropWidth,  uint32_t   cropHeight);
+                               RiverImage        *dst,       u08        pictop,
+                               u32               offsetSrcX, u32        offsetSrcY,
+                               u32               offsetDstX, u32        offsetDstY,
+                               u32               cropWidth,  u32        cropHeight);
 
 #ifdef BUILD_LINUX
     // X11
@@ -349,61 +348,61 @@ typedef struct EngineData
                                         XWindowAttributes *wAttr);
 
     Status       (*xSetWMProtocols)    (Display *display, Window  w,
-                                        Atom    *proto,   int32_t count);
+                                        Atom    *proto,   i32 count);
 
     Colormap     (*xCreateColormap)    (Display *display, Window  w,
-                                        Visual  *visual,  int32_t alloc);
+                                        Visual  *visual,  i32 alloc);
 
     XVisualInfo* (*xGetVisualInfo)     (Display     *display, long infoMask,
                                         XVisualInfo *vInfo,   int  *nItems);
 
     char*        (*xKeySymToString)    (KeySym keysym);
 
-    XImage*      (*xCreateImage)       (Display  *display, Visual   *visual,
-                                        uint32_t depth,    int32_t  format,
-                                        int32_t  offset,   char     *data,
-                                        uint32_t width,    uint32_t height,
-                                        int32_t  bitPad,   int32_t  bytesPL);
+    XImage*      (*xCreateImage)       (Display *display, Visual *visual,
+                                        u32     depth,    i32    format,
+                                        i32     offset,   char   *data,
+                                        u32     width,    u32    height,
+                                        i32     bitPad,   i32    bytesPL);
 
-    XImage*      (*xGetImage)          (Display  *display, Drawable d,
-                                        int32_t  x,        int32_t  y,
-                                        uint32_t width,    uint32_t height,
-                                        uint64_t plane,    int32_t  format);
+    XImage*      (*xGetImage)          (Display *display, Drawable d,
+                                        i32     x,        i32      y,
+                                        u32     width,    u32      height,
+                                        u64     plane,    i32      format);
 
-    int          (*xPutImage)          (Display  *display, Drawable d,
-                                        GC       gc,       XImage   *image,
-                                        int32_t  srcX,     int32_t  srcY,
-                                        int32_t  dstX,     int32_t  dstY,
-                                        uint32_t width,    uint32_t height);
+    int          (*xPutImage)          (Display *display, Drawable d,
+                                        GC      gc,       XImage   *image,
+                                        i32     srcX,     i32      srcY,
+                                        i32     dstX,     i32      dstY,
+                                        u32     width,    u32      height);
 
-    Pixmap       (*xCreatePixmap)      (Display  *display, Drawable d,
-                                        uint32_t width,    uint32_t height,
-                                        uint32_t depth);
+    Pixmap       (*xCreatePixmap)      (Display *display, Drawable d,
+                                        u32     width,    u32      height,
+                                        u32     depth);
 
-    int          (*xFreePixmap)        (Display  *display, Pixmap pixmap);
+    int          (*xFreePixmap)        (Display *display, Pixmap pixmap);
 
     Window       (*xDefRootWindow)     (Display *display);
 
     KeySym       (*xkbcodeToKeysym)    (Display *display, KeyCode kc,
-                                        int32_t group,    int32_t level);
+                                        i32     group,    i32     level);
 
     Window       (*xCreateWindow)      (Display  *display, Window               parent,
-                                        int32_t  x,        int32_t              y,
-                                        uint32_t width,    uint32_t             height,
-                                        uint32_t borderW,  int32_t              depth,
-                                        uint32_t class,    Visual               *visual,
-                                        uint64_t mask,     XSetWindowAttributes *attr);
+                                        i32      x,        i32                  y,
+                                        u32      width,    u32                  height,
+                                        u32      borderW,  i32                  depth,
+                                        u32      class,    Visual               *visual,
+                                        u64      mask,     XSetWindowAttributes *attr);
 
     int          (*xStoreName)         (Display    *display, Window w,
                                         const char *name);
 
     int          (*xSelectInput)       (Display *display, Window w,
-                                        int64_t eventMask);
+                                        i64     eventMask);
 
     int          (*xMapWindow)         (Display *display, Window w);
 
     GC           (*xCreateGC)          (Display  *display, Drawable  d,
-                                        uint64_t mask,     XGCValues *values);
+                                        u64      mask,     XGCValues *values);
 
     int          (*xFreeGC)            (Display *display, GC gc);
 
@@ -427,19 +426,19 @@ typedef struct EngineData
     XRenderPictFormat* (*xRenderFindStFormat) (Display *display, int format);
 
     void (*xRenderComp) (Display *display,
-                         int      op,      Picture  src,
-                         Picture  mask,    Picture  dst,
-                         int32_t  src_x,   int32_t  src_y,
-                         int32_t  mask_x,  int32_t  mask_y,
-                         int32_t  dst_x,   int32_t  dst_y,
-                         uint32_t width,   uint32_t height);
+                         int     op,      Picture src,
+                         Picture mask,    Picture dst,
+                         i32     src_x,   i32     src_y,
+                         i32     mask_x,  i32     mask_y,
+                         i32     dst_x,   i32     dst_y,
+                         u32     width,   u32     height);
 
     void (*xRenderSetPicTrans)  (Display    *display, Picture picture,
                                  XTransform *transform);
 
     void (*xRenderSetPicFilter) (Display    *display, Picture picture,
                                  const char *filter,  XFixed  *params,
-                                 int32_t    nparams);
+                                 i32        nparams);
 #endif
 }
 EngineData;
@@ -450,34 +449,34 @@ typedef struct rvButtonSettings
     Coordinates point;
     StringView  *name;
     Button      *button;
-    uint8_t     alignment;
-    uint8_t     font;
-    uint16_t    charsize;
-    uint32_t    spacing;
+    u08         alignment;
+    u08         font;
+    u16    charsize;
+    u32         spacing;
 }
 rvButtonSettings;
 
 typedef struct rvLoadMapSettings
 {
     FILE       *file;
-    uint16_t   *tilesize;
-    uint32_t   *mapWidth;
-    uint32_t   *mapHeight;
-    uint8_t    *mapLayers;
+    u16   *tilesize;
+    u32        *mapWidth;
+    u32        *mapHeight;
+    u08        *mapLayers;
     RiverImage *tilesheet;
-    uint8_t    errorcode;
+    u08        errorcode;
 }
 rvLoadMapSettings;
 
 typedef struct rvSaveMapSettings
 {
     FILE         *file;
-    uint16_t     tilesize;
-    uint32_t     mapWidth;
-    uint32_t     mapHeight;
-    uint8_t      mapLayers;
+    u16     tilesize;
+    u32          mapWidth;
+    u32          mapHeight;
+    u08          mapLayers;
     RiverImage   *tilesheet;
-    uint8_t      errorcode;
+    u08          errorcode;
     TileMetadata *metadata;
     TileIndex    *indices;
 }
@@ -488,8 +487,8 @@ extern void rvLoadImage_file
     EngineData *engine,
     StringView path,
     RiverImage *image,
-    uint8_t    channels,
-    uint8_t    bitdepth
+    u08        channels,
+    u08        bitdepth
 );
 
 extern void rvLoadImage_ptr
@@ -497,16 +496,16 @@ extern void rvLoadImage_ptr
     EngineData *engine,
     void       *file,
     RiverImage *image,
-    uint8_t    channels,
-    uint8_t    bitdepth
+    u08        channels,
+    u08        bitdepth
 );
 
 extern void rvCreateImage
 (
     EngineData *engine,
     RiverImage *image,
-    uint32_t   width,
-    uint32_t   height
+    u32        width,
+    u32        height
 );
 
 extern void rvAppendImage
@@ -514,7 +513,7 @@ extern void rvAppendImage
     EngineData *engine,
     RiverImage *src,
     RiverImage *dst,
-    uint8_t    direction
+    u08        direction
 );
 
 extern void rvSyncImage
@@ -548,14 +547,14 @@ extern RiverTime rvDeltaTime
 );
 
 // delta is taken from time2 - time1.
-extern float rvDeltaTime_ms
+extern f32 rvDeltaTime_ms
 (
     const RiverTime *time1,
     const RiverTime *time2
 );
 
 // delta is taken from time2 - time1.
-extern int64_t rvDeltaTime_ns
+extern i64 rvDeltaTime_ns
 (
     const RiverTime *time1,
     const RiverTime *time2
@@ -566,12 +565,12 @@ extern RiverTime rvDeltaTime_now
     const RiverTime *time
 );
 
-extern float rvDeltaTime_now_ms
+extern f32 rvDeltaTime_now_ms
 (
     const RiverTime *time
 );
 
-extern uint64_t rvDeltaTime_now_ns
+extern u64 rvDeltaTime_now_ns
 (
     const RiverTime *time
 );
@@ -592,7 +591,7 @@ extern void rvResolveFunctions
 (
     EngineData *engine,
     StringView libpath,
-    uint8_t    renderer
+    u08    renderer
 );
 
 #ifdef BUILD_LINUX
@@ -607,7 +606,7 @@ extern AsciiKey rvProcessXKey
 extern AsciiKey rvProcessWin32Key
 (
     WPARAM  wParam,
-    uint8_t ascii
+    u08 ascii
 );
 #endif
 
@@ -653,7 +652,7 @@ extern void rvInit
 );
 
 // shuts down the engine and safely frees all used resources.
-extern int32_t rvShutdown
+extern i32 rvShutdown
 (
     EngineData *engine
 );
@@ -669,11 +668,11 @@ typedef struct rvLoadTextSettings
 {
     RiverImage *image;
     StringView *sv;
-    uint8_t    font;
-    uint16_t   charsize;
-    uint32_t   spacing;
-    uint32_t   offsetX;
-    uint32_t   offsetY;
+    u08        font;
+    u16        charsize;
+    u32        spacing;
+    u32        offsetX;
+    u32        offsetY;
 }
 rvLoadTextSettings;
 
@@ -690,13 +689,13 @@ typedef struct rvCompositeSettings
 {
     RiverImage *src;
     RiverImage *dst;
-    uint8_t    pictop;
-    uint32_t   offsetSrcX;
-    uint32_t   offsetSrcY;
-    uint32_t   offsetDstX;
-    uint32_t   offsetDstY;
-    uint32_t   cropWidth;
-    uint32_t   cropHeight;
+    u08        pictop;
+    u32        offsetSrcX;
+    u32        offsetSrcY;
+    u32        offsetDstX;
+    u32        offsetDstY;
+    u32        cropWidth;
+    u32        cropHeight;
 }
 rvCompositeSettings;
 

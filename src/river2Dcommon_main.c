@@ -11,8 +11,8 @@ f_internal void calcDelta
 (
     const RiverTime *time1,
     const RiverTime *time2,
-    int64_t      *deltaS,
-    int64_t      *deltaNS
+    i64   *deltaS,
+    i64   *deltaNS
 ){
     if(time1->ns > BILLION)
     {
@@ -61,15 +61,15 @@ RiverTime rvDeltaTime
         return time;
     }
 
-    int64_t deltaS  = 0;
-    int64_t deltaNS = 0;
+    i64 deltaS  = 0;
+    i64 deltaNS = 0;
     calcDelta(time1, time2, &deltaS, &deltaNS);
 
     RiverTime delta = {deltaS, deltaNS};
     return delta;
 }
 
-float rvDeltaTime_ms
+f32 rvDeltaTime_ms
 (
     const RiverTime *time1,
     const RiverTime *time2
@@ -80,14 +80,14 @@ float rvDeltaTime_ms
         return 0;
     }
 
-    int64_t deltaS  = 0;
-    int64_t deltaNS = 0;
+    i64 deltaS  = 0;
+    i64 deltaNS = 0;
     calcDelta(time1, time2, &deltaS, &deltaNS);
 
-    return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
+    return (f32)((f32)deltaS * 1e3f + (f32)deltaNS / 1e6f);
 }
 
-int64_t rvDeltaTime_ns
+i64 rvDeltaTime_ns
 (
     const RiverTime *time1,
     const RiverTime *time2
@@ -98,8 +98,8 @@ int64_t rvDeltaTime_ns
         return 0;
     }
 
-    int64_t deltaS  = 0;
-    int64_t deltaNS = 0;
+    i64 deltaS  = 0;
+    i64 deltaNS = 0;
     calcDelta(time1, time2, &deltaS, &deltaNS);
 
     return (deltaS * BILLION + deltaNS);
@@ -117,8 +117,8 @@ RiverTime rvDeltaTime_now
     }
 
     RiverTime current = rvQueryTime();
-    int64_t   deltaS  = 0;
-    int64_t   deltaNS = 0;
+    i64       deltaS  = 0;
+    i64       deltaNS = 0;
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
@@ -133,7 +133,7 @@ RiverTime rvDeltaTime_now
     return delta;
 }
 
-float rvDeltaTime_now_ms
+f32 rvDeltaTime_now_ms
 (
     const RiverTime *time
 ){
@@ -144,8 +144,8 @@ float rvDeltaTime_now_ms
     }
 
     RiverTime current = rvQueryTime();
-    int64_t   deltaS  = 0;
-    int64_t   deltaNS = 0;
+    i64       deltaS  = 0;
+    i64       deltaNS = 0;
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
@@ -155,10 +155,10 @@ float rvDeltaTime_now_ms
 
     calcDelta(time, &current, &deltaS, &deltaNS);
 
-    return (float)((float)deltaS * 1e3f + (float)deltaNS / 1e6f);
+    return (f32)((f32)deltaS * 1e3f + (f32)deltaNS / 1e6f);
 }
 
-uint64_t rvDeltaTime_now_ns
+u64 rvDeltaTime_now_ns
 (
     const RiverTime *time
 ){
@@ -169,8 +169,8 @@ uint64_t rvDeltaTime_now_ns
     }
 
     RiverTime current = rvQueryTime();
-    int64_t   deltaS  = 0;
-    int64_t   deltaNS = 0;
+    i64       deltaS  = 0;
+    i64       deltaNS = 0;
 
     if(time->s > current.s || (time->ns > current.ns && time->s == current.s))
     {
@@ -180,7 +180,7 @@ uint64_t rvDeltaTime_now_ns
 
     calcDelta(time, &current, &deltaS, &deltaNS);
 
-    return(uint64_t)(deltaS * BILLION + deltaNS);
+    return(u64)(deltaS * BILLION + deltaNS);
 }
 
 void rvAppendImage
@@ -188,13 +188,13 @@ void rvAppendImage
     EngineData *engine,
     RiverImage *src,
     RiverImage *dst,
-    uint8_t    direction
+    u08        direction
 ){
-    uint32_t og_width  = dst->width;
-    uint32_t og_height = dst->height;
+    u32 ogWidth  = dst->width;
+    u32 ogHeight = dst->height;
 
-    uint32_t width  = dst->width;
-    uint32_t height = dst->height;
+    u32 width  = dst->width;
+    u32 height = dst->height;
 
     if(direction == RV_HORIZONTAL)
     {
@@ -239,8 +239,8 @@ void rvAppendImage
     }
 
     comp.src        = src;
-    comp.offsetDstX = direction == RV_HORIZONTAL ? og_width  : 0;
-    comp.offsetDstY = direction == RV_VERTICAL   ? og_height : 0;
+    comp.offsetDstX = direction == RV_HORIZONTAL ? ogWidth  : 0;
+    comp.offsetDstY = direction == RV_VERTICAL   ? ogHeight : 0;
     comp.cropHeight = src->height;
     comp.cropWidth  = src->width;
 
@@ -293,9 +293,9 @@ TileMap rvLoadTilemap
     }
 
     const char header[9] = "r2Dtiles";
-    int byte;
+    int byte = 0;
 
-    for(uint8_t i = 0; i < 8 && ((byte = fgetc(set->file)) != EOF); ++i)
+    for(u08 i = 0; i < 8 && ((byte = fgetc(set->file)) != EOF); ++i)
     {
         if(byte != header[i])
         {
@@ -304,7 +304,7 @@ TileMap rvLoadTilemap
         }
     }
 
-    size_t elements = 0;
+    size elements = 0;
 
     if(((elements = fread(set->tilesize,  2, 1, set->file)) != 1) ||
        ((elements = fread(set->mapWidth,  4, 1, set->file)) != 1) ||
@@ -330,11 +330,11 @@ TileMap rvLoadTilemap
     }
     set->tilesheet->path = pdCstrSV("rvLoadTilemap");
 
-    uint64_t sheetW = set->tilesheet->width  / *set->tilesize;
-    uint64_t sheetH = set->tilesheet->height / *set->tilesize;
+    u64 sheetW = set->tilesheet->width  / *set->tilesize;
+    u64 sheetH = set->tilesheet->height / *set->tilesize;
 
-    uint64_t maxdatabyte  = sheetW * sheetH * sizeof(TileMetadata);
-    uint64_t maxindexbyte = *set->mapLayers * *set->mapWidth * *set->mapHeight *
+    u64 maxdatabyte  = sheetW * sheetH * sizeof(TileMetadata);
+    u64 maxindexbyte = *set->mapLayers * *set->mapWidth * *set->mapHeight *
                            sizeof(TileIndex);
 
     TileMap map = {0};
@@ -342,14 +342,14 @@ TileMap rvLoadTilemap
     map.metadata = malloc(maxdatabyte);
     map.indices  = malloc(maxindexbyte);
 
-    for(uint64_t i = 0; i < maxdatabyte && ((byte = fgetc(set->file)) != EOF); ++i)
+    for(u64 i = 0; i < maxdatabyte && ((byte = fgetc(set->file)) != EOF); ++i)
     {
-        ((uint8_t*)map.metadata)[i] = (uint8_t)byte;
+        ((u08*)map.metadata)[i] = (u08)byte;
     }
 
-    for(uint64_t i = 0; i < maxindexbyte && ((byte = fgetc(set->file)) != EOF); ++i)
+    for(u64 i = 0; i < maxindexbyte && ((byte = fgetc(set->file)) != EOF); ++i)
     {
-        ((uint8_t*)map.indices)[i] = (uint8_t)byte;
+        ((u08*)map.indices)[i] = (u08)byte;
     }
 
     return map;
@@ -363,7 +363,7 @@ void rvSaveTilemap
     const char header[9] = "r2Dtiles";
     fwrite(header, sizeof(header) - 1, 1, set->file);
 
-    size_t elems = 0;
+    size elems = 0;
 
     if(((elems = fwrite(&set->tilesize,  2, 1, set->file)) != 1) ||
        ((elems = fwrite(&set->mapWidth,  4, 1, set->file)) != 1) ||
@@ -390,15 +390,15 @@ void rvSaveTilemap
         return;
     }
 
-    uint64_t dataC = set->tilesheet->width  / set->tilesize *
-                     set->tilesheet->height / set->tilesize;
+    u64 dataC = set->tilesheet->width  / set->tilesize *
+                set->tilesheet->height / set->tilesize;
     if((elems = fwrite(set->metadata, sizeof(TileMetadata), dataC, set->file) != dataC))
     {
         set->errorcode = RV_ERROR_WRITE_METADATA;
         return;
     }
 
-    uint64_t indexC = set->mapLayers * set->mapHeight * set->mapWidth;
+    u64 indexC = set->mapLayers * set->mapHeight * set->mapWidth;
     if((elems = fwrite(set->indices, sizeof(TileIndex), indexC, set->file) != indexC))
     {
         set->errorcode = RV_ERROR_WRITE_INDICES;

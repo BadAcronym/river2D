@@ -1,7 +1,6 @@
 #include "river2D_main.h"
 #include "rv_print_macros.h"
 
-#include <stdint.h>
 #include <stdio.h>
 
 #define bufsize 32
@@ -15,13 +14,13 @@ void rvLoadConfig
         RV_ERROR("*config is nullptr.");
         return;
     }
-    uint32_t parsedWidth_canvas  = 0;
-    uint32_t parsedHeight_canvas = 0;
-    uint32_t parsedWidth_window  = 0;
-    uint32_t parsedHeight_window = 0;
+    u32 parsedWidth_canvas  = 0;
+    u32 parsedHeight_canvas = 0;
+    u32 parsedWidth_window  = 0;
+    u32 parsedHeight_window = 0;
 
     StringView codePath = pdCstrSV(RV_CONFIG_PATH);
-    uint8_t    code     = pdVerifyPath(codePath);
+    u08        code     = pdVerifyPath(codePath);
 
     if(code == PD_TYPE_FILE)
     {
@@ -57,7 +56,7 @@ void rvLoadConfig
             const char* cwidthloc = pdSVFind(cwidth_sv, buffer);
             if(cwidthloc)
             {
-                for(uint32_t i = 0; i < bufsize; ++i)
+                for(u32 i = 0; i < bufsize; ++i)
                 {
                     if(cwidthloc + 14 + i - buf > bufsize)
                     {
@@ -70,7 +69,7 @@ void rvLoadConfig
                         break;
                     }
                     parsedWidth_canvas *= 10;
-                    parsedWidth_canvas += (uint32_t)(digit - 0x30);
+                    parsedWidth_canvas += (u32)(digit - 0x30);
                 }
 
                 RV_DEBUG("parsed result: canvas_width: %u", parsedWidth_canvas);
@@ -82,7 +81,7 @@ void rvLoadConfig
             const char* cheightloc = pdSVFind(cheight_sv, buffer);
             if(cheightloc)
             {
-                for(uint32_t i = 0; i < bufsize; ++i)
+                for(u32 i = 0; i < bufsize; ++i)
                 {
                     if(cheightloc + 15 + i - buf > bufsize)
                     {
@@ -95,7 +94,7 @@ void rvLoadConfig
                         break;
                     }
                     parsedHeight_canvas *= 10;
-                    parsedHeight_canvas += (uint32_t)(digit - 0x30);
+                    parsedHeight_canvas += (u32)(digit - 0x30);
                 }
 
                 RV_DEBUG("parsed result: canvas_height: %u", parsedHeight_canvas);
@@ -107,7 +106,7 @@ void rvLoadConfig
             const char* wwidthloc = pdSVFind(wwidth_sv, buffer);
             if(wwidthloc && (wwidthloc + 14 - buf) < bufsize)
             {
-                for(uint32_t i = 0; i < bufsize; ++i)
+                for(u32 i = 0; i < bufsize; ++i)
                 {
                     if(wwidthloc + 14 + i - buf > bufsize)
                     {
@@ -120,7 +119,7 @@ void rvLoadConfig
                         break;
                     }
                     parsedWidth_window *= 10;
-                    parsedWidth_window += (uint32_t)(digit - 0x30);
+                    parsedWidth_window += (u32)(digit - 0x30);
                 }
 
                 RV_DEBUG("parsed result: window_width: %u", parsedWidth_window);
@@ -132,7 +131,7 @@ void rvLoadConfig
             const char* wheightloc = pdSVFind(wheight_sv, buffer);
             if(wheightloc && (wheightloc + 15 - buf) < bufsize)
             {
-                for(uint32_t i = 0; i < bufsize; ++i)
+                for(u32 i = 0; i < bufsize; ++i)
                 {
                     if(wheightloc + 15 + i - buf > bufsize)
                     {
@@ -145,7 +144,7 @@ void rvLoadConfig
                         break;
                     }
                     parsedHeight_window *= 10;
-                    parsedHeight_window += (uint32_t)(digit - 0x30);
+                    parsedHeight_window += (u32)(digit - 0x30);
                 }
 
                 RV_DEBUG("parsed result: window_height: %u", parsedHeight_window);
@@ -211,30 +210,28 @@ void rvCreateButton
     EngineData       *engine,
     rvButtonSettings *settings
 ){
-    float imgWidth  = (float)settings->img->width;
-    float imgHeight = (float)settings->img->height;
+    f32 imgWidth  = (f32)settings->img->width;
+    f32 imgHeight = (f32)settings->img->height;
 
-    float floatWidth  = (float)settings->name->size *
-                        (float)(settings->charsize + settings->spacing) / imgWidth;
-    float floatHeight = (float)settings->charsize / imgHeight;
+    f32 f32Width  = (f32)settings->name->size *
+                    (f32)(settings->charsize + settings->spacing) / imgWidth;
+    f32 f32Height = (f32)settings->charsize / imgHeight;
 
-    float offsetX = (settings->point.x - floatWidth / 2.0f) *
-                    (float)imgWidth;
-    float offsetY = (settings->point.y - floatHeight / 2.0f) *
-                    (float)imgHeight;
+    f32 offsetX = (settings->point.x - f32Width / 2.0f)  * (f32)imgWidth;
+    f32 offsetY = (settings->point.y - f32Height / 2.0f) * (f32)imgHeight;
 
     if(settings->alignment == RV_ALIGN_TOPLEFT   ||
        settings->alignment == RV_ALIGN_TOPCENTER ||
        settings->alignment == RV_ALIGN_TOPRIGHT
     ){
-        offsetY = settings->point.y * (float)imgHeight;
+        offsetY = settings->point.y * (f32)imgHeight;
     }
 
     if(settings->alignment == RV_ALIGN_BOTTOMLEFT   ||
        settings->alignment == RV_ALIGN_BOTTOMCENTER ||
        settings->alignment == RV_ALIGN_BOTTOMRIGHT
     ){
-        offsetY = (settings->point.y - floatHeight) * imgHeight;
+        offsetY = (settings->point.y - f32Height) * imgHeight;
     }
 
     if(settings->alignment == RV_ALIGN_TOPLEFT    ||
@@ -248,13 +245,13 @@ void rvCreateButton
        settings->alignment == RV_ALIGN_CENTERRIGHT ||
        settings->alignment == RV_ALIGN_BOTTOMRIGHT
     ){
-        offsetX = (settings->point.x - floatWidth) * imgWidth;
+        offsetX = (settings->point.x - f32Width) * imgWidth;
     }
 
     settings->button->area.upLeft.x   = offsetX / imgWidth;
     settings->button->area.upLeft.y   = offsetY / imgHeight;
-    settings->button->area.lowRight.x = settings->button->area.upLeft.x + floatWidth;
-    settings->button->area.lowRight.y = settings->button->area.upLeft.y + floatHeight;
+    settings->button->area.lowRight.x = settings->button->area.upLeft.x + f32Width;
+    settings->button->area.lowRight.y = settings->button->area.upLeft.y + f32Height;
 
     settings->button->name = *settings->name;
 
@@ -264,8 +261,8 @@ void rvCreateButton
     set.font     = settings->font;
     set.spacing  = settings->spacing;
     set.charsize = settings->charsize;
-    set.offsetX  = (uint32_t)offsetX;
-    set.offsetY  = (uint32_t)offsetY;
+    set.offsetX  = (u32)offsetX;
+    set.offsetY  = (u32)offsetY;
 
     rvLoadText(engine, &set);
 }
