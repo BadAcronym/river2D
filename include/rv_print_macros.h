@@ -12,8 +12,8 @@
 #define __LINE_STR __TO_STRING(__LINE__)
 #define __LOCATION__ "[" __FILE__ ":" __LINE_STR "]"
 
-// to make compatible with c99, without GNU extensions.
-// from Richard Hansen via StackOverflow:
+// to make compatible with c99, without GNU or C23 extensions.
+// adapted from Richard Hansen via StackOverflow:
 // https://stackoverflow.com/a/11172679
 #define FIRST(...) FIRST_HELPER(__VA_ARGS__, throwaway)
 #define FIRST_HELPER(first, ...) first
