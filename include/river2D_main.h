@@ -1,7 +1,6 @@
 #ifndef RV_HEADER
 #define RV_HEADER
 
-#include "pd_path.h"
 #include "pd_string_view.h"
 
 #include <stdio.h>
@@ -20,11 +19,6 @@
     #include <X11/XKBlib.h>
     #include <X11/Xcursor/Xcursor.h>
     #include <X11/extensions/Xrender.h>
-
-    #ifndef  __USE_POSIX199309
-        #define __USE_POSIX199309
-    #endif
-    #include <time.h>
 
     #include <pthread.h>
     #define  RV_SCANLINE 32

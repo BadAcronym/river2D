@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <dlfcn.h>
+#include <time.h>
 
 f_internal void resolve
 (

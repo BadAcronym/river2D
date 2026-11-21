@@ -1,6 +1,8 @@
 #include "river2D_main.h"
 #include "rv_print_macros.h"
 
+#include "pd_path.h"
+
 #include <stdio.h>
 
 #define bufsize 32
