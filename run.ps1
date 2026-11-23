@@ -16,7 +16,6 @@ if($build -eq $null -or $build -eq "")
 
 $args_always=@("-DBUILD_WINDOWS",
 "vendor/imgsurf/vendor/datasurf/src/datasurf_zlib.c",
-"vendor/imgsurf/vendor/datasurf/src/datasurf_huffman.c",
 "vendor/imgsurf/vendor/datasurf/src/datasurf_algo_deflate.c",
 "-Iinclude",
 "-Ivendor/imgsurf/include",
@@ -109,11 +108,11 @@ function compile
     Write-Host ""
     if($build -eq "asan")
     {
-        &ar rcs ./bin/$build/river2Dcommon.lib datasurf_algo_deflate.obj datasurf_huffman.obj datasurf_zlib.obj imgsurf_format_bmp.obj imgsurf_format_png.obj imgsurf_format_qoi.obj imgsurf_main.obj river2D_util.obj pd_string_view.obj river2Dcommon_main.obj win32_river2Dcommon.obj win32_pd_path.obj
+        &ar rcs ./bin/$build/river2Dcommon.lib datasurf_algo_deflate.obj datasurf_zlib.obj imgsurf_format_bmp.obj imgsurf_format_png.obj imgsurf_format_qoi.obj imgsurf_main.obj river2D_util.obj pd_string_view.obj river2Dcommon_main.obj win32_river2Dcommon.obj win32_pd_path.obj
     }
     else
     {
-        &ar rcs ./bin/$build/river2Dcommon.lib datasurf_algo_deflate.o datasurf_huffman.o datasurf_zlib.o imgsurf_format_bmp.o imgsurf_format_png.o imgsurf_format_qoi.o imgsurf_main.o river2D_util.o pd_string_view.o river2Dcommon_main.o win32_river2Dcommon.o win32_pd_path.o
+        &ar rcs ./bin/$build/river2Dcommon.lib datasurf_algo_deflate.o datasurf_zlib.o imgsurf_format_bmp.o imgsurf_format_png.o imgsurf_format_qoi.o imgsurf_main.o river2D_util.o pd_string_view.o river2Dcommon_main.o win32_river2Dcommon.o win32_pd_path.o
     }
     if($LASTEXITCODE -ne 0)
     {
